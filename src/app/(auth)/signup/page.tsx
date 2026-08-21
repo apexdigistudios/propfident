@@ -1,0 +1,150 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ShieldCheck, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+
+export default function SignupPage() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-white">
+      <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
+      <div className="hero-radial absolute inset-0 pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-md rounded-2xl border border-purple-500/30 bg-slate-900/90 p-8 shadow-2xl backdrop-blur-md">
+        <div className="text-center">
+          <Link href="/" className="inline-flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">
+              <ShieldCheck className="h-6 w-6 text-white" strokeWidth={2.5} />
+            </div>
+            <span className="text-2xl font-extrabold tracking-tighter text-white">
+              Propfident
+            </span>
+          </Link>
+          <h1 className="mt-6 text-xl font-bold tracking-tight text-white">
+            Create your Propfident account
+          </h1>
+          <p className="mt-2 text-xs text-slate-400">
+            Start protecting your prop firm accounts in 60 seconds
+          </p>
+        </div>
+
+        {error && (
+          <div className="mt-6 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSignup} className="mt-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Full Name
+            </label>
+            <div className="relative mt-1.5">
+              <User className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Alex Trader"
+                className="w-full rounded-xl border border-purple-500/30 bg-slate-950 px-4 py-3 pl-10 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Email Address
+            </label>
+            <div className="relative mt-1.5">
+              <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="trader@propfident.io"
+                className="w-full rounded-xl border border-purple-500/30 bg-slate-950 px-4 py-3 pl-10 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Password
+            </label>
+            <div className="relative mt-1.5">
+              <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-purple-500/30 bg-slate-950 px-4 py-3 pl-10 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-gradient-brand px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition-all duration-300 hover:shadow-purple-600/50 hover:-translate-y-0.5 disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <span className="flex items-center gap-2">
+                  Create Account
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              )}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-6 text-center text-xs text-slate-400">
+          Already have an account?{" "}
+          <Link href="/login" className="font-bold text-purple-400 hover:underline">
+            Sign in
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

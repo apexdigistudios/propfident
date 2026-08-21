@@ -1,0 +1,151 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ShieldAlert, Sparkles, Lock } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { ConnectAccountWizard } from "@/components/dashboard/connect-account-wizard";
+import { MagicCard } from "@/components/magicui/magic-card";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
+
+export default function ConnectAccountPage() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [tierLoading, setTierLoading] = useState(true);
+  const [subscriptionTier, setSubscriptionTier] = useState("free");
+  const [accountCount, setAccountCount] = useState(0);
+
+  useEffect(() => {
+    async function loadGateState() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("subscription_tier")
+        .eq("id", user.id)
+        .single();
+
+      const { count } = await supabase
+        .from("mt5_accounts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("is_active", true);
+
+      setSubscriptionTier(profile?.subscription_tier || "free");
+      setAccountCount(count || 0);
+      setTierLoading(false);
+    }
+
+    loadGateState();
+  }, [router, supabase]);
+
+  if (tierLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Free tier is hard-locked at 0 accounts
+  if (subscriptionTier === "free") {
+    return <LockedConnectCard accountCount={accountCount} />;
+  }
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+          Link Your Trading Terminal
+        </h1>
+        <p className="mt-2 text-sm text-slate-400">
+          Propfident automatically syncs trades, monitors drawdown, and alerts you
+          before any breach occurs.
+        </p>
+      </div>
+
+      <ConnectAccountWizard />
+
+      <p className="mt-6 text-center text-xs text-slate-500">
+        We only request read-only investor credentials. No withdrawal permissions
+        are ever transmitted.
+      </p>
+    </div>
+  );
+}
+
+function LockedConnectCard({ accountCount }: { accountCount: number }) {
+  return (
+    <div className="mx-auto max-w-3xl">
+      <MagicCard
+        gradientSize={220}
+        gradientColor="#4f46e5"
+        className="overflow-hidden rounded-2xl border border-purple-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-purple-950/20"
+      >
+        <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
+        <div className="relative text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-300">
+            <Lock className="h-8 w-8" />
+          </div>
+          <h2 className="mt-6 text-2xl font-black tracking-tight text-white">
+            Account Integration Requires Pro
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
+            Free Tier users cannot connect manual or MetaApi prop accounts.
+            Upgrade to Pro or Elite Pass to unlock MT4/MT5 account integration,
+            live drawdown tracking, and automated journaling.
+          </p>
+
+          <div className="mt-6 rounded-xl border border-purple-500/20 bg-slate-950/70 p-4 text-left">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+              Current Free Plan Status
+            </p>
+            <p className="mt-2 text-sm text-slate-300">
+              Connected accounts: <span className="font-bold text-white">{accountCount}</span> / 0
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-5 text-left">
+              <p className="text-lg font-black text-white">Pro</p>
+              <p className="mt-1 text-sm text-purple-200">$19/mo</p>
+              <p className="mt-3 text-xs text-slate-400">
+                Connect up to 3 accounts with full MetaApi auto-sync.
+              </p>
+            </div>
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-left">
+              <p className="text-lg font-black text-white">Elite Pass</p>
+              <p className="mt-1 text-sm text-amber-200">$39/mo</p>
+              <p className="mt-3 text-xs text-slate-400">
+                Unlimited accounts, WebSocket sync, and advanced alerts.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href="/pricing">
+              <ShimmerButton className="w-full justify-center sm:w-auto">
+                <Sparkles className="h-4 w-4" />
+                Upgrade to Unlock Accounts
+              </ShimmerButton>
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-800 px-6 py-3 text-sm font-bold text-slate-200 transition hover:bg-slate-700"
+            >
+              Return to Overview
+            </Link>
+          </div>
+        </div>
+      </MagicCard>
+    </div>
+  );
+}

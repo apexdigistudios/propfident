@@ -1,0 +1,144 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Primary UI / headings: Plus Jakarta Sans */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Financial figures: JetBrains Mono (tabular, crisp) */
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+  --color-brand-start: #9333ea;
+  --color-brand-end: #4f46e5;
+}
+
+/* Adaptive brand gradient: lighter in light mode, deeper in dark mode */
+:root {
+  --brand-gradient: linear-gradient(to right, #a855f7, #6366f1);
+}
+
+.dark {
+  --brand-gradient: linear-gradient(to right, #9333ea, #4f46e5);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #020617;
+  color: #f1f5f9;
+}
+
+html {
+  color-scheme: dark;
+}
+
+/* Light mode uses lighter purple/indigo, dark mode uses deeper tones */
+.text-gradient-brand {
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dark .text-gradient-brand {
+  background: linear-gradient(to right, #9333ea, #4f46e5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-brand {
+  background-image: linear-gradient(to right, #a855f7, #6366f1);
+}
+
+.dark .bg-gradient-brand {
+  background-image: linear-gradient(to right, #9333ea, #4f46e5);
+}
+
+.glow-brand {
+  box-shadow:
+    0 0 0 1px rgba(168, 85, 247, 0.18),
+    0 12px 40px -12px rgba(99, 102, 241, 0.25);
+}
+
+.dark .glow-brand {
+  box-shadow:
+    0 0 0 1px rgba(147, 51, 234, 0.3),
+    0 12px 40px -8px rgba(99, 102, 241, 0.45);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.09) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.dark .bg-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+}
+
+.hero-radial {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(147, 51, 234, 0.16) 0%,
+    rgba(79, 70, 229, 0.06) 40%,
+    transparent 72%
+  );
+}
+
+/* Magic UI animations */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - var(--gap, 1.5rem))); }
+}
+.animate-marquee {
+  animation: marquee var(--duration, 34s) linear infinite;
+}
+
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.aurora-text {
+  background-image: linear-gradient(90deg, #c084fc, #7c3aed, #4f46e5, #a78bfa, #c084fc);
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: aurora-shift 7s ease-in-out infinite;
+}
+
+@keyframes shimmer-slide {
+  to { transform: translate(toreach, toreach); }
+}
+
+@keyframes spin-around {
+  0% { transform: translateZ(0) rotate(0); }
+  100% { transform: translateZ(0) rotate(360deg); }
+}
+
+.animate-shimmer-slide {
+  animation: shimmer-slide var(--speed) ease-in-out infinite alternate;
+}
+
+.animate-spin-around {
+  animation: spin-around calc(var(--speed) * 2) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .aurora-text,
+  .animate-shimmer-slide,
+  .animate-spin-around {
+    animation: none;
+  }
+  html { scroll-behavior: auto; }
+}
