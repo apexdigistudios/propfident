@@ -61,21 +61,61 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const balance = Number(body.initial_balance ?? body.balance ?? 0) || 0;
+    const initial_balance = Number(body.initial_balance || body.balance || 0);
+    const accountName = body.account_name ?? body.accountName;
+    const accountNumber = body.login_id ?? body.accountNumber;
+    const brokerServer = body.server ?? body.brokerServer;
+    const brokerName = body.broker ?? body.brokerName;
+    const requiredFields: Array<[string, unknown]> = [
+      ["account_name", accountName],
+      ["login_id", accountNumber],
+      ["password", body.password],
+      ["server", brokerServer],
+      ["broker", brokerName],
+      ["platform", body.platform],
+    ];
+    const missingField = requiredFields.find(
+      ([, value]) => typeof value !== "string" || !value.trim()
+    )?.[0];
+
+    if (missingField) {
+      const message = `Missing required field: ${missingField}.`;
+      return NextResponse.json(
+        { success: false, message, error: message },
+        { status: 400 }
+      );
+    }
+
+    if (body.platform !== "MT5") {
+      const message = "Only MT5 accounts can be connected at this time.";
+      return NextResponse.json(
+        { success: false, message, error: message },
+        { status: 400 }
+      );
+    }
+
+    if (!Number.isFinite(initial_balance) || initial_balance <= 0) {
+      const message = "Initial balance must be a positive number.";
+      return NextResponse.json(
+        { success: false, message, error: message },
+        { status: 400 }
+      );
+    }
+
     const input = {
       ...body,
       // The server action re-reads auth from cookies and uses that identity
       // for the mt5_accounts.user_id insert; this is the route-authenticated ID.
       authenticatedUserId: user.id,
-      accountName: body.account_name ?? body.accountName,
-      accountNumber: body.login_id ?? body.accountNumber,
+      accountName,
+      accountNumber,
       password: body.password,
-      brokerServer: body.server ?? body.brokerServer,
-      brokerName: body.broker ?? body.brokerName,
+      brokerServer,
+      brokerName,
       accountCurrency: body.account_currency ?? body.accountCurrency,
       accountType: body.account_type ?? body.accountType,
-      initial_balance: balance,
-      initialBalance: balance,
+      initial_balance,
+      initialBalance: initial_balance,
       maxTotalDrawdownPct: body.max_total_drawdown ?? body.maxTotalDrawdownPct,
       maxDailyDrawdownPct: body.max_daily_drawdown ?? body.maxDailyDrawdownPct,
       drawdownType: body.drawdown_type ?? body.drawdownType,

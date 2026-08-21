@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="overflow-hidden">
+      <main className="w-full max-w-full overflow-x-hidden">
         <Reveal delay={0}>
           <Hero />
         </Reveal>

@@ -88,7 +88,7 @@ function LockedConnectCard({ accountCount }: { accountCount: number }) {
       <MagicCard
         gradientSize={220}
         gradientColor="#4f46e5"
-        className="overflow-hidden rounded-2xl border border-purple-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-purple-950/20"
+        className="overflow-hidden rounded-2xl border border-purple-500/30 bg-slate-900/90 p-4 shadow-2xl shadow-purple-950/20 sm:p-6"
       >
         <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
         <div className="relative text-center">

@@ -76,9 +76,9 @@ export default function FeatureShowcase() {
   return (
     <section
       id="features"
-      className="border-b border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950"
+      className="w-full max-w-full overflow-hidden border-b border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950"
     >
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl overflow-hidden px-4 py-16 md:px-6 md:py-24 lg:px-8">
         {/* Header */}
         <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/10 px-4 py-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300">
@@ -96,18 +96,18 @@ export default function FeatureShowcase() {
         </div>
 
         {/* Alternating rows */}
-        <div className="flex flex-col gap-16 md:gap-24 lg:gap-32">
+        <div className="flex max-w-full flex-col gap-16 overflow-hidden md:gap-24 lg:gap-32">
           {features.map((feature, idx) => {
             const reversed = idx % 2 === 1;
             return (
               <Reveal key={feature.id} delay={0.05}>
                 <div
                   id={feature.id}
-                  className="flex scroll-mt-24 flex-col items-center gap-8 md:gap-10 lg:grid lg:grid-cols-2 lg:gap-16"
+                  className="flex max-w-full scroll-mt-24 flex-col items-center gap-8 overflow-hidden md:gap-10 lg:grid lg:grid-cols-2 lg:gap-16"
                 >
                   {/* Visual */}
-                  <div className={`w-full ${reversed ? "lg:order-2" : ""}`}>
-                    <div className="relative aspect-[5/4] w-full">
+                  <div className={`w-full max-w-full ${reversed ? "lg:order-2" : ""}`}>
+                    <div className="relative aspect-[5/4] w-full max-w-full overflow-hidden">
                       <feature.Visual />
                     </div>
                   </div>
