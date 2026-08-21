@@ -82,7 +82,7 @@ export default function AccountsPage() {
   if (accounts.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="rounded-2xl border border-dashed border-purple-500/30 bg-slate-900/50 p-12 text-center">
+        <div className="rounded-2xl border border-dashed border-purple-500/30 bg-slate-900/50 p-6 text-center sm:p-12">
           <Server className="mx-auto h-12 w-12 text-slate-600" />
           <h3 className="mt-4 text-lg font-bold text-slate-400">Connect your MT5 account to unlock Account Intel</h3>
           <p className="mt-2 text-sm text-slate-500">
@@ -104,7 +104,7 @@ export default function AccountsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">Prop Firm Accounts</h2>
           <p className="text-sm text-slate-400">
@@ -129,7 +129,7 @@ export default function AccountsPage() {
       </div>
 
       {/* Accounts Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         {accounts.map((account) => (
           <AccountCard key={account.id} account={account} />
         ))}
@@ -170,14 +170,14 @@ function AccountRiskOverview({ accounts }: { accounts: PropAccount[] }) {
         <RiskKpi label="Breach Floor" value={usd(metrics.effectiveBreachFloor)} Icon={ShieldAlert} accent="text-rose-400" />
         <RiskKpi label="Shield Buffer" value={usd(metrics.remainingBufferUsd)} Icon={ShieldCheck} accent={metrics.status === "SAFE" ? "text-emerald-400" : "text-red-400"} />
       </div>
-      <div className="grid gap-6 xl:grid-cols-2">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 md:p-8">
+      <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 sm:p-6 md:p-8">
           <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><Gauge className="h-5 w-5 text-purple-400" /><h3 className="text-lg font-bold text-white">Proximity to Breach Floor</h3></div><span className={`rounded-full border px-3 py-1 font-mono text-xs font-bold ${STATUS_STYLES[metrics.status]}`}>{metrics.status}</span></div>
           <p className="mt-6 font-mono text-5xl font-black text-white">{metrics.remainingBufferPct.toFixed(2)}%</p>
           <p className="mt-1 font-mono text-sm text-slate-400">{usd(metrics.remainingBufferUsd)} until breach at {usd(metrics.effectiveBreachFloor)}</p>
           <RiskBar value={Math.max(0, Math.min(100, (metrics.remainingBufferPct / (totalLimit || 1)) * 100))} tone={metrics.status === "SAFE" ? "bg-emerald-500" : metrics.status === "WARNING" ? "bg-amber-500" : "bg-red-500"} />
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 md:p-8">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 sm:p-6 md:p-8">
           <div className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-purple-400" /><h3 className="text-lg font-bold text-white">Limit Thresholds</h3></div>
           <RiskRule label="Max Total Drawdown" limit={totalLimit} used={totalUsed} floor={metrics.maxDrawdownFloor} buffer={metrics.totalBufferUsd} />
           <RiskRule label="Max Daily Drawdown" limit={dailyLimit} used={dailyUsed} floor={metrics.dailyLossFloor} buffer={metrics.dailyBufferUsd} />
@@ -223,20 +223,20 @@ function AccountCard({ account }: { account: PropAccount }) {
   };
 
   return (
-    <div className="group rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6 transition-all hover:border-purple-500/40">
-      <div className="mb-4 flex items-start justify-between">
-        <div className="flex items-center gap-3">
+    <div className="group rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 transition-all hover:border-purple-500/40 sm:p-6">
+      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">
             <Server className="h-6 w-6 text-white" />
           </div>
-          <div>
-            <h3 className="font-bold text-white">{account.account_name}</h3>
+          <div className="min-w-0">
+            <h3 className="truncate font-bold text-white">{account.account_name}</h3>
             <p className="text-xs text-slate-400">
               {account.platform} • {account.broker_name || "Unknown Broker"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start">
           {isSynced ? (
             <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
               <CheckCircle className="h-3 w-3" />
@@ -272,7 +272,7 @@ function AccountCard({ account }: { account: PropAccount }) {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-3">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <Link
           href="#shield"
           className="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 transition hover:bg-purple-500/20"

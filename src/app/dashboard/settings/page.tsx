@@ -109,7 +109,7 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6">
+      <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6">
         {activeTab === "profile" && profile && (
           <ProfileTab profile={profile} setProfile={setProfile} />
         )}
@@ -128,8 +128,8 @@ export default function SettingsPage() {
         <span className="text-sm font-semibold text-white">Changes saved successfully!</span>
       </div>
 
-      <div className="flex justify-end">
-        <ShimmerButton onClick={handleSave} className="px-6 py-3 text-sm">
+      <div className="flex justify-stretch sm:justify-end">
+        <ShimmerButton onClick={handleSave} className="w-full justify-center px-6 py-3 text-sm sm:w-auto">
           {saving ? (
             <>
               <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
@@ -243,7 +243,7 @@ function ToggleRow({
   onToggle: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-purple-500/20 bg-slate-800/50 p-4">
+    <div className="flex flex-col gap-3 rounded-xl border border-purple-500/20 bg-slate-800/50 p-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p className="text-sm font-semibold text-white">{label}</p>
         <p className="text-xs text-slate-400">{description}</p>
@@ -251,7 +251,8 @@ function ToggleRow({
       <button
         type="button"
         onClick={onToggle}
-        className={`relative h-6 w-11 rounded-full transition ${enabled ? "bg-purple-500" : "bg-slate-700"}`}
+        aria-label={`${label}: ${enabled ? "enabled" : "disabled"}`}
+        className={`relative h-6 w-11 shrink-0 self-end rounded-full transition sm:self-auto ${enabled ? "bg-purple-500" : "bg-slate-700"}`}
       >
         <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${enabled ? "translate-x-5" : ""}`} />
       </button>

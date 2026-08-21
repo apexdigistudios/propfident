@@ -166,7 +166,7 @@ export default function NewTradePage() {
 
       <form
         onSubmit={handleSubmit}
-        className="min-w-0 space-y-6 rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6"
+        className="min-w-0 space-y-6 rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6"
       >
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">

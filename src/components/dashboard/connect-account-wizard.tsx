@@ -216,9 +216,9 @@ export function ConnectAccountWizard() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-6 shadow-2xl md:p-8">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-4 shadow-2xl sm:p-6 md:p-8">
       {/* ── Visual step indicator bar ────────────────────────────── */}
-      <ol className="mb-8 flex items-center">
+      <ol className="mb-8 flex min-w-0 items-center">
         {STEP_META.map((item, index) => {
           const done = step > item.n;
           const active = step === item.n;
@@ -246,7 +246,7 @@ export function ConnectAccountWizard() {
               </div>
               {index < STEP_META.length - 1 && (
                 <span
-                  className={`mx-3 h-0.5 flex-1 rounded transition-colors duration-300 ${
+                    className={`mx-2 h-0.5 min-w-3 flex-1 rounded transition-colors duration-300 sm:mx-3 ${
                     step > item.n ? "bg-emerald-500" : "bg-slate-800"
                   }`}
                 />
@@ -487,12 +487,12 @@ export function ConnectAccountWizard() {
       )}
 
       {/* Nav buttons */}
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           type="button"
           onClick={() => goTo(step - 1)}
           disabled={step === 1}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
           <ChevronLeft className="h-4 w-4" />
           Back
@@ -502,7 +502,7 @@ export function ConnectAccountWizard() {
           <button
             type="button"
             onClick={() => goTo(step + 1)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 transition hover:brightness-110"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-brand px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 transition hover:brightness-110 sm:w-auto"
           >
             Next
             <ChevronRight className="h-4 w-4" />
@@ -512,7 +512,7 @@ export function ConnectAccountWizard() {
             type="button"
             onClick={handleSubmit}
             disabled={submitting}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 transition hover:brightness-110 disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-brand px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 transition hover:brightness-110 disabled:opacity-50 sm:w-auto"
           >
             {submitting ? (
               <>

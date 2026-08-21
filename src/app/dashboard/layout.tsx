@@ -105,18 +105,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-slate-950 text-white">
+    <div className="flex h-screen w-full max-w-full overflow-hidden bg-slate-950 text-white">
       <button
         type="button"
         onClick={() => setSidebarOpen((open) => !open)}
-        className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-slate-300 transition hover:text-white lg:hidden"
+        className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-slate-300 transition hover:text-white md:hidden"
         aria-label="Toggle dashboard navigation"
       >
         {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 shrink-0 transform border-r border-slate-800 bg-slate-900/95 backdrop-blur-md transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 shrink-0 transform border-r border-slate-800 bg-slate-900/95 backdrop-blur-md transition-transform duration-300 md:static md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -213,15 +213,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {sidebarOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-20 bg-black/50 md:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-label="Close dashboard navigation overlay"
         />
       )}
 
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main className="flex min-w-0 max-w-full flex-1 flex-col overflow-hidden">
         <header className="z-20 shrink-0 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
-          <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex min-w-0 h-16 items-center justify-between gap-3 px-4 pr-16 sm:px-6">
             <h1 className="min-w-0 truncate text-lg font-bold capitalize text-slate-100">
               {title}
             </h1>
@@ -233,7 +233,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 md:p-6">
+        <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 sm:p-5 md:p-6">
           {children}
         </div>
       </main>

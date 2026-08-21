@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "Propfident — Never Breach a Prop Firm Account Again",
   description:
@@ -28,7 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="bg-slate-950 text-slate-100 antialiased">{children}</body>
+      <body className="w-full max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">{children}</body>
     </html>
   );
 }

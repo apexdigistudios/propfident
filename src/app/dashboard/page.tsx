@@ -119,7 +119,7 @@ export default async function DashboardOverviewPage({
 
       <MetricsGrid account={activeAccount} totalPnl={totalPnl} />
 
-      <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
+      <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">
