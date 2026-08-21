@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const viewport = {
@@ -34,7 +35,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="w-full max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">{children}</body>
+      <body className="w-full max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
