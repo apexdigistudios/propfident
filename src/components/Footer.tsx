@@ -32,7 +32,7 @@ const footerLinks = {
   Legal: [
     { label: "Pricing", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
-    { label: "Security", href: "#security" },
+    { label: "Security", href: "/security" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Risk Disclaimer", href: "/risk" },
