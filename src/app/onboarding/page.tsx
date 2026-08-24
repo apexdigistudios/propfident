@@ -39,6 +39,7 @@ export default function OnboardingPage() {
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [skipping, setSkipping] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function update<K extends keyof ManualForm>(key: K, value: ManualForm[K]) {
@@ -68,13 +69,31 @@ export default function OnboardingPage() {
       return;
     }
 
-    router.replace("/dashboard");
-    router.refresh();
+    setCompleted(true);
+    setTimeout(() => {
+      router.replace("/dashboard");
+      router.refresh();
+    }, 1500);
   }
 
   function skip() {
     setSkipping(true);
     router.replace("/dashboard");
+  }
+
+  if (completed) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-white">
+        <div className="text-center">
+          <div className="mx-auto flex h-20 w-20 animate-pulse items-center justify-center rounded-3xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 shadow-lg shadow-emerald-500/10">
+            <ShieldCheck className="h-10 w-10" strokeWidth={2.5} />
+          </div>
+          <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-emerald-400">🟢 Shield Active</p>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight">You&apos;re all set! 🛡️</h1>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-400">Your account parameters are saved. Redirecting to your protected dashboard...</p>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -137,9 +156,9 @@ export default function OnboardingPage() {
 }
 
 function Field({ label, placeholder, value, onChange, type = "text", required = false }: { label: string; placeholder?: string; value: string; onChange: (value: string) => void; type?: string; required?: boolean }) {
-  return <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">{label}<input type={type} required={required} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} className={inputClass} /></label>;
+  return <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">{label}<input type={type} inputMode={type === "number" ? "decimal" : undefined} required={required} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} className={inputClass} /></label>;
 }
 
 function LimitField({ label, value, mode, onValue, onMode }: { label: string; value: string; mode: LimitMode; onValue: (value: string) => void; onMode: (value: LimitMode) => void }) {
-  return <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">{label}<div className="mt-1.5 flex"><input type="number" required min="0" step="any" value={value} onChange={(event) => onValue(event.target.value)} className={`${inputClass} mt-0 rounded-r-none`} /><select value={mode} onChange={(event) => onMode(event.target.value as LimitMode)} className="rounded-r-xl border border-l-0 border-slate-700 bg-slate-900 px-3 text-sm text-white outline-none"><option>$</option><option>%</option></select></div></label>;
+  return <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">{label}<div className="mt-1.5 flex"><input type="number" inputMode="decimal" required min="0" step="any" value={value} onChange={(event) => onValue(event.target.value)} className={`${inputClass} mt-0 rounded-r-none`} /><select value={mode} onChange={(event) => onMode(event.target.value as LimitMode)} className="rounded-r-xl border border-l-0 border-slate-700 bg-slate-900 px-3 text-sm text-white outline-none"><option>$</option><option>%</option></select></div></label>;
 }

@@ -5,32 +5,32 @@ const TRADER_REVIEWS = [
   {
     quote:
       "The trailing drawdown shield saved my $100k account twice this month during high news volatility.",
-    trader: "Verified Trader",
+    trader: "Kwamefx-lord.",
   },
   {
     quote:
       "Finally a journal that syncs automatically. No more filling out spreadsheets after bad sessions.",
-    trader: "Funded Trader - Marcus K.",
+    trader: "Mark A.",
   },
   {
     quote:
       "Position sizing calculator alone is worth it. Never miscalculated lot sizes since.",
-    trader: "Alex M.",
+    trader: "Sophia-trades.",
   },
   {
     quote:
       "The live risk view makes it easier to respect my rules before every session.",
-    trader: "David R.",
+    trader: "David-fx.",
   },
   {
     quote:
       "Automatic trade journaling gives me a much clearer picture of my execution habits.",
-    trader: "Verified User",
+    trader: "Ayesha M.",
   },
   {
     quote:
       "Having drawdown and position sizing in one workflow keeps my process consistent.",
-    trader: "Verified User",
+    trader: "Forex-queen Mabel.",
   },
 ] as const;
 

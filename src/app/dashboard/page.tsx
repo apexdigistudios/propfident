@@ -6,6 +6,7 @@ import { AccountSelector } from "@/components/dashboard/account-selector";
 import { UpgradeBanner } from "@/components/dashboard/upgrade-banner";
 import { RealtimeSync } from "@/components/dashboard/realtime-sync";
 import { toNumber } from "@/components/dashboard/format";
+import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +89,7 @@ export default async function DashboardOverviewPage({
   return (
     <div className="mx-auto w-full min-w-0 max-w-[1600px] space-y-8 text-slate-100">
       <RealtimeSync userId={user.id} />
+      <WelcomeBanner />
       <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight text-white">

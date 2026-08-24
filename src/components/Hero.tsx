@@ -52,7 +52,7 @@ export default function Hero() {
                 <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
               ))}
             </span>
-            <span>Trader count not yet verified</span>
+            <span>Join the community</span>
             <span className="hidden h-1 w-1 rounded-full bg-slate-400 sm:block" />
             <span>No credit card required</span>
           </div>
@@ -76,7 +76,7 @@ function DashboardPreview() {
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
         </div>
         <span className="hidden text-[10px] font-medium text-slate-600 sm:block dark:text-slate-400">
-          app.propfident.io / command-center
+          app.propfident.com / Account-intel
         </span>
         <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
           <span className="relative flex h-2 w-2">

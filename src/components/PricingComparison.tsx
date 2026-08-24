@@ -1,7 +1,7 @@
 import { Check, Minus } from "lucide-react";
 
 const rows = [
-  ["Account Connections", "1", "1", "10"],
+  ["Account Connections", "1", "5", "10"],
   ["Dynamic Lot Calculator", "check", "check", "check"],
   ["Static Drawdown Tracking", "check", "check", "check"],
   ["Live Trailing Shield", "—", "check", "check"],
@@ -36,8 +36,8 @@ export default function PricingComparison() {
             <tr className="border-b border-slate-200 dark:border-purple-500/20">
               <th className="px-4 py-4 font-bold text-slate-900 dark:text-white">Features</th>
               <th className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">Free ($0)</th>
-              <th className="px-4 py-4 text-center font-bold text-purple-600 dark:text-purple-300">Pro ($24/mo)</th>
-              <th className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">Elite ($79/mo)</th>
+              <th className="px-4 py-4 text-center font-bold text-purple-600 dark:text-purple-300">Pro ($25/mo)</th>
+              <th className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">Elite ($50/mo)</th>
             </tr>
           </thead>
           <tbody>
