@@ -19,19 +19,17 @@ export default function Hero() {
           </div>
 
           <h1 className="mt-7 text-4xl font-extrabold leading-[1.06] tracking-tighter text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
-            Never Breach A Prop Firm Account Ever Again with{" "}
-            <AuroraText>Propfident</AuroraText>.
+            Never Breach Your Prop Firm Account Again.
           </h1>
 
           <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-400 md:text-lg lg:text-xl">
-            The ultimate trading utility with real-time drawdown shields and
-            hands-free MT4/MT5 trade auto-journaling.
+            Monitor your drawdown in real time, calculate position size automatically, and journal every MT4/MT5 trade without manual entry.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
             <ShimmerButton href="/signup" className="w-full justify-center sm:w-auto">
               <span className="flex items-center gap-2">
-                Get Started
+                Start Protecting Your Account — Free
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </span>
             </ShimmerButton>
@@ -55,7 +53,7 @@ export default function Hero() {
                 <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
               ))}
             </span>
-            <span>Trusted by 12,400+ funded traders</span>
+            <span>Trader count not yet verified</span>
             <span className="hidden h-1 w-1 rounded-full bg-slate-400 sm:block" />
             <span>No credit card required</span>
           </div>
@@ -95,6 +93,11 @@ function DashboardPreview() {
           <Metric label="Headroom" value="$3,240" accent />
           <Metric label="Daily loss" value="1.8%" />
           <Metric label="Lot size" value="0.42" />
+            <div className="col-span-3 flex flex-wrap gap-2 md:col-span-1">
+              <StatusBadge tone="safe">🟢 SAFE</StatusBadge>
+              <StatusBadge tone="warning">🟡 WARNING</StatusBadge>
+              <StatusBadge tone="danger">🔴 DANGER</StatusBadge>
+            </div>
         </div>
 
         {/* Chart container */}
@@ -109,6 +112,26 @@ function DashboardPreview() {
         </div>
       </div>
     </div>
+  );
+}
+
+function StatusBadge({
+  tone,
+  children,
+}: {
+  tone: "safe" | "warning" | "danger";
+  children: string;
+}) {
+  const styles = {
+    safe: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    warning: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    danger: "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  };
+
+  return (
+    <span className={`rounded-full border px-2 py-1 text-[9px] font-bold uppercase tracking-wider ${styles[tone]}`}>
+      {children}
+    </span>
   );
 }
 
