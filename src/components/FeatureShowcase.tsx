@@ -27,7 +27,7 @@ const features: Feature[] = [
     bullets: [
       "Live trailing & static drawdown tracking",
       "Instant breach-warning alerts at custom thresholds",
-      "Works with every major prop firm rule set",
+      "Supports major prop-firm drawdown models.",
     ],
     Visual: DrawdownShieldVisual,
   },
@@ -86,8 +86,7 @@ export default function FeatureShowcase() {
             Everything a funded trader needs
           </div>
           <h2 className="text-3xl font-extrabold tracking-tighter text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
-            Four tools. One{" "}
-            <span className="text-gradient-brand">unbreachable</span> workflow.
+            Four tools. One risk-control workflow.
           </h2>
           <p className="mt-4 text-base text-slate-600 md:text-lg dark:text-slate-400">
             Protect your account, size every trade correctly, and let your

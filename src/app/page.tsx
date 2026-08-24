@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import HowItWorks from "@/components/HowItWorks";
 import PayoutsMarquee from "@/components/PayoutsMarquee";
 import FeatureShowcase from "@/components/FeatureShowcase";
 import Pricing from "@/components/Pricing";
@@ -13,6 +14,9 @@ export default function HomePage() {
       <main className="w-full max-w-full overflow-x-hidden">
         <Reveal delay={0}>
           <Hero />
+        </Reveal>
+        <Reveal delay={0.05}>
+          <HowItWorks />
         </Reveal>
         <Reveal delay={0.1}>
           <PayoutsMarquee />

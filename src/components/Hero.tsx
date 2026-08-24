@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, Plug, ShieldCheck, Star, Activity } from "lucide-react";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import EquityChart from "@/components/EquityChart";
 
@@ -93,11 +92,6 @@ function DashboardPreview() {
           <Metric label="Headroom" value="$3,240" accent />
           <Metric label="Daily loss" value="1.8%" />
           <Metric label="Lot size" value="0.42" />
-            <div className="col-span-3 flex flex-wrap gap-2 md:col-span-1">
-              <StatusBadge tone="safe">🟢 SAFE</StatusBadge>
-              <StatusBadge tone="warning">🟡 WARNING</StatusBadge>
-              <StatusBadge tone="danger">🔴 DANGER</StatusBadge>
-            </div>
         </div>
 
         {/* Chart container */}
@@ -112,26 +106,6 @@ function DashboardPreview() {
         </div>
       </div>
     </div>
-  );
-}
-
-function StatusBadge({
-  tone,
-  children,
-}: {
-  tone: "safe" | "warning" | "danger";
-  children: string;
-}) {
-  const styles = {
-    safe: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    warning: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
-    danger: "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400",
-  };
-
-  return (
-    <span className={`rounded-full border px-2 py-1 text-[9px] font-bold uppercase tracking-wider ${styles[tone]}`}>
-      {children}
-    </span>
   );
 }
 
