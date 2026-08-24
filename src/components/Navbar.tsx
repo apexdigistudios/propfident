@@ -110,7 +110,7 @@ export default function Navbar() {
 
       {/* Full-screen mobile overlay */}
       <div
-        className={`fixed inset-0 z-50 bg-white transition-all duration-300 md:hidden dark:bg-slate-950 ${
+        className={`fixed inset-0 z-50 w-full max-w-full overflow-hidden border-l border-slate-200 bg-white transition-all duration-300 md:hidden dark:border-purple-500/20 dark:bg-slate-950 ${
           open
             ? "pointer-events-auto translate-x-0 opacity-100"
             : "pointer-events-none translate-x-full opacity-0"
@@ -128,14 +128,14 @@ export default function Navbar() {
           </button>
         </div>
 
-        <nav className="flex h-[calc(100%-4rem)] flex-col justify-between px-4 py-8">
+        <nav className="flex h-[calc(100%-4rem)] min-w-0 flex-col justify-between overflow-y-auto bg-white px-4 py-8 dark:bg-slate-950">
           <ul className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-xl border border-slate-200 bg-white px-4 py-4 text-lg font-extrabold tracking-tighter text-slate-900 transition-colors hover:border-purple-400 dark:border-purple-500/30 dark:bg-slate-900/90 dark:text-white"
+                  className="block max-w-full rounded-xl border border-slate-200 bg-white px-4 py-4 text-lg font-extrabold tracking-tighter text-slate-900 transition-colors hover:border-purple-400 dark:border-purple-500/30 dark:bg-slate-900 dark:text-white"
                 >
                   {link.label}
                 </Link>

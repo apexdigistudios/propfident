@@ -55,7 +55,7 @@ export default function PayoutsMarquee() {
         </p>
       </div>
 
-      <div className="relative mt-10 md:mt-12">
+      <div className="relative mt-10 w-full max-w-full overflow-hidden md:mt-12">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-white to-transparent sm:w-40 dark:from-slate-950" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-l from-white to-transparent sm:w-40 dark:from-slate-950" />
 

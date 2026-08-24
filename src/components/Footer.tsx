@@ -42,7 +42,7 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl min-w-0 overflow-hidden px-4 py-16 md:px-6 md:py-24 lg:px-8">
         {/* PWA prompt */}
         <div className="mb-14 flex flex-col items-start justify-between gap-6 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 dark:border-purple-500/30 dark:bg-slate-900/90 lg:flex-row lg:items-center lg:p-10">
           <div className="max-w-xl">
@@ -80,7 +80,7 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid min-w-0 grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">

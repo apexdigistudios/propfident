@@ -8,26 +8,32 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
+  ReferenceDot,
   ReferenceLine,
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
 interface DataPoint {
   day: string;
+  timestamp: string;
+  balance: number;
   equity: number;
 }
 
 const data: DataPoint[] = [
-  { day: "D1", equity: 49000 },
-  { day: "D5", equity: 50800 },
-  { day: "D10", equity: 52500 },
-  { day: "D15", equity: 53600 },
-  { day: "D20", equity: 55100 },
-  { day: "D25", equity: 56450 },
-  { day: "D30", equity: 58450 },
+  { day: "D1", timestamp: "2026-07-25T09:30:00Z", balance: 49000, equity: 49000 },
+  { day: "D5", timestamp: "2026-07-29T09:30:00Z", balance: 50600, equity: 50800 },
+  { day: "D10", timestamp: "2026-08-03T09:30:00Z", balance: 52200, equity: 52500 },
+  { day: "D15", timestamp: "2026-08-08T09:30:00Z", balance: 53400, equity: 53600 },
+  { day: "D20", timestamp: "2026-08-13T09:30:00Z", balance: 54800, equity: 55100 },
+  { day: "D25", timestamp: "2026-08-18T09:30:00Z", balance: 56200, equity: 56450 },
+  { day: "D30", timestamp: "2026-08-23T09:30:00Z", balance: 58100, equity: 58450 },
 ];
 
 const maxDrawdown = 50000;
+const peak = data.reduce((current, point) => point.equity > current.equity ? point : current, data[0]);
+const latest = data[data.length - 1];
 
 export default function EquityChart() {
   return (
@@ -51,6 +57,7 @@ export default function EquityChart() {
                 <stop offset="100%" stopColor="#a855f7" stopOpacity={0} />
               </linearGradient>
             </defs>
+            <CartesianGrid stroke="#334155" strokeOpacity={0.25} vertical={false} />
             <XAxis
               dataKey="day"
               axisLine={false}
@@ -79,10 +86,14 @@ export default function EquityChart() {
                 fontFamily: "inherit",
                 padding: "10px 14px",
               }}
-              formatter={(value: unknown) => [`$${Number(value || 0).toLocaleString()}`, "Equity"]}
-              labelFormatter={(label: unknown) => String(label || "")}
+              formatter={(value: unknown, name: unknown) => [`$${Number(value || 0).toLocaleString()}`, String(name) === "balance" ? "Balance" : "Equity"]}
+              labelFormatter={(_, payload) => {
+                const timestamp = payload?.[0]?.payload?.timestamp;
+                return timestamp ? new Date(timestamp).toLocaleString() : "";
+              }}
             />
             <ReferenceLine y={maxDrawdown} stroke="#f87171" strokeDasharray="6 4" strokeWidth={1.5} label={{ position: "insideTopRight", value: "Breach Limit", fill: "#f87171", fontSize: 9, fontWeight: 600, dx: 10, dy: -14 }} />
+            <Area type="monotone" dataKey="balance" stroke="#64748b" strokeWidth={1.5} strokeDasharray="4 4" fill="none" dot={false} />
             <Area
               type="monotone"
               dataKey="equity"
@@ -92,6 +103,8 @@ export default function EquityChart() {
               dot={{ r: 3, fill: "#7c3aed", strokeWidth: 2, stroke: "#a855f7" }}
               activeDot={{ r: 5, fill: "#a855f7", stroke: "#fff", strokeWidth: 2 }}
             />
+            <ReferenceDot x={peak.day} y={peak.equity} r={5} fill="#34d399" stroke="#ecfdf5" strokeWidth={2} label={{ value: "Peak", position: "top", fill: "#34d399", fontSize: 9 }} />
+            <ReferenceDot x={latest.day} y={latest.equity} r={5} fill="#a855f7" stroke="#fff" strokeWidth={2} />
           </AreaChart>
         </ResponsiveContainer>
       </div>

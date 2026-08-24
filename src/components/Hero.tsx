@@ -68,7 +68,7 @@ export default function Hero() {
 
 function DashboardPreview() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-xl dark:border-purple-500/30 dark:bg-slate-900/90">
+    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-xl dark:border-purple-500/30 dark:bg-slate-900/90">
       <div className="flex h-12 items-center justify-between border-b border-slate-200 px-4 md:px-5 dark:border-purple-500/20">
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
@@ -87,8 +87,8 @@ function DashboardPreview() {
         </span>
       </div>
 
-      <div className="grid gap-4 p-4 md:grid-cols-[180px_1fr] md:p-6">
-        <div className="grid grid-cols-3 gap-3 md:grid-cols-1">
+      <div className="grid min-w-0 max-w-full gap-4 p-4 md:grid-cols-[180px_1fr] md:p-6">
+        <div className="grid min-w-0 max-w-full grid-cols-3 gap-3 md:grid-cols-1">
           <Metric label="Headroom" value="$3,240" accent />
           <Metric label="Daily loss" value="1.8%" />
           <Metric label="Lot size" value="0.42" />
