@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import PricingComparison from "@/components/PricingComparison";
 
 const tiers = [
-  { name: "Free", description: "Start protecting one evaluation account.", monthly: 0, yearly: 0, cta: "Start free", features: ["Manual trade journal", "Dynamic lot calculator", "Static drawdown tracking", "Community support"] },
+  { name: "Free", description: "Start protecting one evaluation account.", monthly: 0, yearly: 0, cta: "Protect Your First Account — Free", features: ["Manual trade journal", "Dynamic lot calculator", "Static drawdown tracking", "Community support"] },
   { name: "Pro", description: "Automated protection for funded traders.", monthly: 29, yearly: 24, cta: "Start 7-day trial", recommended: true, features: ["1 MT4/MT5 MetaApi connection", "Live trailing drawdown shield", "Automated trade journal", "Telegram & email alerts", "Advanced performance metrics"] },
-  { name: "Elite Pass", description: "Multi-account control for scaling traders.", monthly: 99, yearly: 79, cta: "Choose Elite", features: ["Up to 10 MT4/MT5 connections", "Cross-account risk controls", "Advanced expectancy analytics", "Priority breach alerts", "24/7 priority support"] },
+  { name: "Elite", description: "Multi-account control for scaling traders.", monthly: 99, yearly: 79, cta: "Choose Elite", features: ["Up to 10 MT4/MT5 connections", "Cross-account risk controls", "Advanced expectancy analytics", "Priority breach alerts", "24/7 priority support"] },
 ];
 
 export default function Pricing() {
@@ -38,6 +39,7 @@ export default function Pricing() {
               {tier.recommended && <span className="absolute right-6 top-6 rounded-full bg-gradient-brand px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white">Recommended</span>}
               <h3 className={`text-xl font-extrabold tracking-tighter ${tier.recommended ? "text-purple-600 dark:text-purple-400" : "text-slate-900 dark:text-white"}`}>{tier.name}</h3>
               <p className="mt-3 min-h-10 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{tier.description}</p>
+              {tier.recommended && <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">7-day free trial. Cancel anytime.</p>}
               <div className="my-7 flex items-end gap-2 border-b border-slate-200 pb-7 dark:border-purple-500/20"><span className="text-4xl font-extrabold tracking-tighter text-slate-900 md:text-5xl dark:text-white">${annual ? tier.yearly : tier.monthly}</span><span className="pb-1 text-sm text-slate-600 dark:text-slate-400">/ month</span></div>
               <ul className="flex-1 space-y-4">
                 {tier.features.map((feature) => <li key={feature} className="flex gap-3 text-sm text-slate-700 dark:text-slate-300"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/10"><Check className="h-3 w-3 text-purple-500" strokeWidth={3} /></span>{feature}</li>)}
@@ -54,6 +56,7 @@ export default function Pricing() {
             </MagicCard>
           ))}
         </div>
+        <PricingComparison />
       </div>
     </section>
   );

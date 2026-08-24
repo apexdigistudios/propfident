@@ -1,8 +1,8 @@
-import { Plug, Check, RefreshCw, Server } from "lucide-react";
+import { Plug, Check, RefreshCw, Server, ShieldCheck } from "lucide-react";
 
 export default function MetaApiVisual() {
   return (
-    <div className="glow-brand relative h-full w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 dark:border-purple-500/30 dark:bg-slate-900/90">
+    <div id="security" className="glow-brand relative h-full w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 dark:border-purple-500/30 dark:bg-slate-900/90">
       <div className="flex items-center gap-2 text-purple-600 dark:text-purple-300">
         <Plug className="h-5 w-5" strokeWidth={2.5} />
         <span className="text-xs font-bold uppercase tracking-wider">
@@ -39,25 +39,34 @@ export default function MetaApiVisual() {
         />
       </div>
 
-      {/* Sync checklist */}
       <div className="mt-10 space-y-2.5">
         {[
-          "Read-only broker credentials — investor password supported",
-          "Trades auto-imported the instant they close",
-          "Supports 40+ prop firms & retail brokers",
-          "Bank-grade encryption, no withdrawal access",
-        ].map((line) => (
+          ["01", "Connect MT4/MT5", "Enter read-only investor password"],
+          ["02", "Read-Only Data", "Propfident receives execution & trade metrics"],
+          ["03", "Real-Time Analysis", "Drawdown shield & auto-journal update continuously"],
+          ["04", "Zero Execution Risk", "Propfident NEVER holds trading or withdrawal authority"],
+        ].map(([number, title, description]) => (
           <div
-            key={line}
-            className="flex items-start gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700 dark:border-purple-500/20 dark:bg-slate-900/40 dark:text-slate-300"
+            key={number}
+            className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-700 dark:border-purple-500/20 dark:bg-slate-900/40 dark:text-slate-300"
           >
-            <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/15">
-              <Check className="h-2.5 w-2.5 text-emerald-500" strokeWidth={3} />
-            </span>
-            {line}
+            <span className="font-mono text-[10px] font-bold text-purple-600 dark:text-purple-400">{number}</span>
+            <div>
+              <p className="font-bold text-slate-900 dark:text-white">{title}</p>
+              <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{description}</p>
+            </div>
           </div>
         ))}
       </div>
+
+      <div className="mt-5 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+        <ShieldCheck className="h-4 w-4 shrink-0" />
+        Bank-Grade Encryption | Read-Only Access | Zero Withdrawal Authority
+      </div>
+
+      <a href="#security" className="mt-4 inline-flex text-xs font-bold text-purple-600 underline-offset-4 hover:underline dark:text-purple-300">
+        Read our Security &amp; Privacy Guide
+      </a>
 
       {/* Status */}
       <div className="mt-5 flex items-center justify-between rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-3 dark:bg-emerald-500/10">
