@@ -52,7 +52,7 @@ export default function SignupPage() {
         );
         setLoading(false);
       } else {
-        router.push("/dashboard");
+        router.push("/onboarding");
         router.refresh();
       }
     } catch {
