@@ -18,22 +18,24 @@ const footerLinks = {
     { label: "MT4 / MT5 Sync", href: "#metaapi" },
   ],
   Company: [
-    { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "How It Works", href: "#how-it-works" },
+    { label: "Blog", href: "#faq" },
+    { label: "Careers", href: "mailto:careers@propfident.io" },
+    { label: "Contact", href: "mailto:hello@propfident.io" },
   ],
   Resources: [
-    { label: "Documentation", href: "#" },
-    { label: "MetaApi setup guide", href: "#" },
-    { label: "Prop firm rules", href: "#" },
-    { label: "Status", href: "#" },
+    { label: "Documentation", href: "#features" },
+    { label: "MetaApi setup guide", href: "#security" },
+    { label: "Prop firm rules", href: "#features" },
+    { label: "Status", href: "#security" },
   ],
   Legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
-    { label: "Risk disclaimer", href: "#" },
-    { label: "Cookies", href: "#" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Security", href: "#security" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Risk Disclaimer", href: "/risk" },
   ],
 };
 
@@ -92,6 +94,9 @@ export default function Footer() {
               Real-time drawdown protection, dynamic lot sizing and hands-free
               MT4/MT5 journaling for serious prop traders.
             </p>
+            <p className="mt-4 max-w-xl text-xs leading-relaxed text-slate-500 dark:text-slate-500">
+              Propfident is an independent software tool and is not affiliated with, endorsed by, or sponsored by FTMO, Topstep, MetaQuotes, or any mentioned prop trading firm.
+            </p>
 
             {/* MetaApi badge */}
             <div className="mt-5 inline-flex items-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/5 px-3 py-2 dark:bg-purple-500/10">
@@ -112,7 +117,7 @@ export default function Footer() {
               ].map(({ Icon, label }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={label === "Website" ? "/" : label === "Blog" ? "#faq" : "mailto:hello@propfident.io"}
                   aria-label={label}
                   className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-purple-400 hover:text-purple-600 dark:border-purple-500/30 dark:text-slate-400 dark:hover:border-purple-500/60 dark:hover:text-purple-400"
                 >

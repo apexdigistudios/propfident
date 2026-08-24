@@ -4,6 +4,7 @@ import HowItWorks from "@/components/HowItWorks";
 import PayoutsMarquee from "@/components/PayoutsMarquee";
 import FeatureShowcase from "@/components/FeatureShowcase";
 import Pricing from "@/components/Pricing";
+import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 
@@ -27,8 +28,11 @@ export default function HomePage() {
         <Reveal delay={0.2}>
           <Pricing />
         </Reveal>
+        <Reveal delay={0.25}>
+          <Faq />
+        </Reveal>
       </main>
-      <Reveal delay={0.25}>
+      <Reveal delay={0.3}>
         <Footer />
       </Reveal>
     </>
