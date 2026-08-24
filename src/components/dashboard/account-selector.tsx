@@ -22,7 +22,7 @@ export function AccountSelector({
   const searchParams = useSearchParams();
   const currentAccount = searchParams.get("account") || accounts[0]?.id || "";
 
-  if (isFreeTier) {
+  if (isFreeTier && !accounts.length) {
     return (
       <Link
         href="/pricing"

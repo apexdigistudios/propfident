@@ -31,9 +31,9 @@ CREATE TABLE public.mt5_accounts (
   -- Current application names
   account_name TEXT NOT NULL,
   account_number TEXT NOT NULL,
-  account_password TEXT NOT NULL,
+  account_password TEXT,
   broker_name TEXT NOT NULL,
-  broker_server TEXT NOT NULL,
+  broker_server TEXT,
 
   -- Explicit MT5 integration names retained for direct SQL/API consumers
   login_id TEXT,
@@ -41,6 +41,8 @@ CREATE TABLE public.mt5_accounts (
   server TEXT,
   broker TEXT,
   platform TEXT NOT NULL DEFAULT 'MT5' CHECK (platform = 'MT5'),
+  connection_type TEXT NOT NULL DEFAULT 'metaapi'
+    CHECK (connection_type IN ('manual', 'metaapi')),
 
   -- MetaApi provisioning and lifecycle state
   metaapi_account_id TEXT UNIQUE,

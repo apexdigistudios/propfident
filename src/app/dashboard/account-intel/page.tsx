@@ -68,8 +68,8 @@ export default function AccountsPage() {
   }, []);
 
   const subscriptionTier = profile?.subscription_tier || "free";
-  const maxAccounts = subscriptionTier === "free" ? 0 : subscriptionTier === "pro" ? 3 : 999;
-  const canAddMore = accounts.length < maxAccounts;
+  const maxAccounts = subscriptionTier === "free" ? Math.max(1, accounts.length) : subscriptionTier === "pro" ? 3 : 999;
+  const canAddMore = subscriptionTier !== "free" && accounts.length < maxAccounts;
 
   if (loading) {
     return (

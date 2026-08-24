@@ -109,8 +109,12 @@ export default async function DashboardOverviewPage({
         />
       </div>
 
-      {isFreeTier && (
+      {isFreeTier && !activeAccount && (
         <UpgradeBanner message="Free Plan: Account connection is locked. Upgrade to Pro or Elite to connect your MT4/MT5 accounts." />
+      )}
+
+      {isFreeTier && activeAccount && (
+        <UpgradeBanner message="Manual tracking is active. Upgrade to Pro or Elite to unlock automated live MT5 sync and trade ingestion." />
       )}
 
       {!activeAccount && !isFreeTier && (
