@@ -95,14 +95,14 @@ export default function FeatureShowcase() {
         </div>
 
         {/* Alternating rows */}
-        <div className="flex max-w-full flex-col gap-16 overflow-hidden md:gap-24 lg:gap-32">
+        <div className="flex w-full min-w-0 max-w-full flex-col gap-16 overflow-hidden md:gap-24 lg:gap-32">
           {features.map((feature, idx) => {
             const reversed = idx % 2 === 1;
             return (
               <Reveal key={feature.id} delay={0.05}>
                 <div
                   id={feature.id}
-                  className="flex max-w-full scroll-mt-24 flex-col items-center gap-8 overflow-hidden md:gap-10 lg:grid lg:grid-cols-2 lg:gap-16"
+                  className="flex w-full min-w-0 max-w-full scroll-mt-24 flex-col items-center gap-8 overflow-hidden md:gap-10 lg:grid lg:grid-cols-2 lg:gap-16"
                 >
                   {/* Visual */}
                   <div className={`w-full max-w-full ${reversed ? "lg:order-2" : ""}`}>

@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Trader Results", href: "#payouts" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 function Logo({ onClick }: { onClick?: () => void }) {
@@ -128,7 +129,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <nav className="flex h-[calc(100%-4rem)] min-w-0 flex-col justify-between overflow-y-auto bg-white px-4 py-8 dark:bg-slate-950">
+        <nav className="flex h-[calc(100%-4rem)] min-w-0 flex-col justify-between overflow-y-auto bg-white px-4 py-8 dark:bg-slate-950" aria-label="Mobile navigation">
           <ul className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <li key={link.href}>

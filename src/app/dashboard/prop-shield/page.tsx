@@ -15,5 +15,5 @@ export default async function PropShieldPage() {
     .eq("id", user.id)
     .maybeSingle();
 
-  return <TradePlanGenerator isFreeTier={(profile?.subscription_tier || "free") === "free"} />;
+  return <TradePlanGenerator isFreeTier={(profile?.subscription_tier || "free") === "free"} userId={user.id} />;
 }

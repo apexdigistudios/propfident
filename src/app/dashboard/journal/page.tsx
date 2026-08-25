@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Plus, Search, ArrowUpRight, ArrowDownRight, Trash2, Loader2, Check, X } from "lucide-react";
+import { Plus, Search, ArrowUpRight, ArrowDownRight, Trash2, Loader2, Check, X, Brain, SlidersHorizontal } from "lucide-react";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { deleteJournalTrade } from "@/app/actions/journal";
 
@@ -22,6 +22,20 @@ interface Trade {
   account_id: string | null;
 }
 
+type Emotion = "Disciplined" | "FOMO" | "Anxious" | "Revenge Trade" | "Confident" | "Hesitant";
+type TradeNote = { id: string; text: string; symbol: string; opened: string; emotion_tag: Emotion; execution_remark: string };
+
+const emotionStyles: Record<"All" | Emotion, string> = {
+  All: "border-slate-600 bg-slate-800 text-slate-200",
+  Disciplined: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+  FOMO: "border-orange-500/40 bg-orange-500/10 text-orange-300",
+  Anxious: "border-amber-500/40 bg-amber-500/10 text-amber-300",
+  "Revenge Trade": "border-rose-700/50 bg-rose-950/40 text-rose-300",
+  Confident: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
+  Hesitant: "border-purple-500/40 bg-purple-500/10 text-purple-300",
+};
+const emotionFilters: Array<"All" | Emotion> = ["All", "Disciplined", "FOMO", "Anxious", "Revenge Trade", "Confident", "Hesitant"];
+
 const statusStyles: Record<string, string> = {
   OPEN: "border-sky-500/30 bg-sky-500/10 text-sky-400",
   WIN: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
@@ -37,6 +51,10 @@ export default function JournalPage() {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [showNotes, setShowNotes] = useState(false);
+  const [selectedEmotion, setSelectedEmotion] = useState("All");
+  const [tradeNotes, setTradeNotes] = useState<TradeNote[]>([]);
+  const [analyzingNotes, setAnalyzingNotes] = useState(false);
 
   useEffect(() => {
     async function loadJournal() {
@@ -57,6 +75,19 @@ export default function JournalPage() {
         .order("open_time", { ascending: false });
 
       setTrades(data || []);
+      const notes = (data || []).filter((trade) => trade.notes?.trim());
+      setAnalyzingNotes(notes.length > 0);
+      const analyzed = await Promise.all(notes.map(async (trade) => {
+        try {
+          const response = await fetch("/api/ai/analyze-note", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: trade.notes }) });
+          const result = await response.json();
+          return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: result.emotionTag as Emotion, execution_remark: result.executionRemark as string };
+        } catch {
+          return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: "Disciplined" as Emotion, execution_remark: "Recorded your trading mindset for later review and pattern analysis." };
+        }
+      }));
+      setTradeNotes(analyzed);
+      setAnalyzingNotes(false);
       setLoading(false);
     }
 
@@ -93,6 +124,13 @@ export default function JournalPage() {
         .eq("user_id", user.id)
         .order("open_time", { ascending: false });
       setTrades(data || []);
+      const notes = (data || []).filter((trade) => trade.notes?.trim());
+      const analyzed = await Promise.all(notes.map(async (trade) => {
+        const response = await fetch("/api/ai/analyze-note", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: trade.notes }) });
+        const result = await response.json();
+        return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: result.emotionTag as Emotion, execution_remark: result.executionRemark as string };
+      }));
+      setTradeNotes(analyzed);
     }
     router.refresh();
     showToast("success", "Trade deleted and account balance recalculated.");
@@ -105,6 +143,11 @@ export default function JournalPage() {
         tag.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );
+  const emotionCounts = emotionFilters.reduce<Record<string, number>>((counts, emotion) => {
+    counts[emotion] = emotion === "All" ? tradeNotes.length : tradeNotes.filter((note) => note.emotion_tag === emotion).length;
+    return counts;
+  }, {});
+  const filteredNotes = selectedEmotion === "All" ? tradeNotes : tradeNotes.filter((note) => note.emotion_tag === selectedEmotion);
 
   if (loading) {
     return (
@@ -140,13 +183,27 @@ export default function JournalPage() {
             {trades.length} trade{trades.length === 1 ? "" : "s"} logged directly in Supabase.
           </p>
         </div>
-        <Link href="/dashboard/journal/new" className="w-fit">
-          <ShimmerButton className="px-5 py-2.5 text-sm">
+        <div className="flex flex-wrap gap-3">
+          <ShimmerButton onClick={() => setShowNotes((visible) => !visible)} className="px-5 py-2.5 text-sm">
+            <Brain className="mr-1.5 h-4 w-4" />
+            Trade Notes &amp; Insights
+          </ShimmerButton>
+          <Link href="/dashboard/journal/new" className="w-fit">
+            <ShimmerButton className="px-5 py-2.5 text-sm">
             <Plus className="mr-1.5 h-4 w-4" />
             Manual Entry
-          </ShimmerButton>
-        </Link>
+            </ShimmerButton>
+          </Link>
+        </div>
       </div>
+
+      {showNotes && <section className="min-w-0 rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 shadow-xl sm:p-6" aria-label="Trade notes and insights">
+        <div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">AI mindset review</p><h3 className="mt-1 text-xl font-bold text-white">Trade Notes &amp; Insights</h3><p className="mt-1 text-sm text-slate-400">Review the emotions and execution patterns attached to your manual trade notes.</p></div><SlidersHorizontal className="h-5 w-5 text-purple-400" /></div>
+        <div className="mt-5 flex max-w-full gap-2 overflow-x-auto py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {emotionFilters.map((emotion) => <button key={emotion} type="button" onClick={() => setSelectedEmotion(emotion)} className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold transition ${selectedEmotion === emotion ? emotionStyles[emotion] : "border-slate-700 bg-slate-950 text-slate-400 hover:border-purple-500/50"}`} aria-pressed={selectedEmotion === emotion}>{emotion}<span className="rounded-full bg-black/20 px-1.5 py-0.5 text-[10px]">{emotionCounts[emotion]}</span></button>)}
+        </div>
+        {analyzingNotes ? <div className="flex items-center justify-center gap-2 py-10 text-sm text-slate-400"><Loader2 className="h-4 w-4 animate-spin" />Analyzing notes...</div> : filteredNotes.length === 0 ? <div className="rounded-xl border border-dashed border-slate-700 p-8 text-center"><p className="text-sm text-slate-400">{tradeNotes.length === 0 ? "No trade notes have been added yet." : `No trade notes found with the tag '${selectedEmotion}'.`}</p>{selectedEmotion !== "All" && <button type="button" onClick={() => setSelectedEmotion("All")} className="mt-4 rounded-lg border border-purple-500/30 px-4 py-2 text-xs font-bold text-purple-300 hover:bg-purple-500/10">Reset Filter</button>}</div> : <div className="mt-4 grid min-w-0 gap-3">{filteredNotes.map((note) => <article key={note.id} className="min-w-0 rounded-xl border border-slate-800 bg-slate-950/70 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><span className="font-mono text-xs text-slate-500">{note.symbol} · {new Date(note.opened).toLocaleDateString()}</span><span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold ${emotionStyles[note.emotion_tag]}`}>{note.emotion_tag}</span></div><p className="mt-3 text-sm leading-relaxed text-slate-200">{note.text}</p><p className="mt-3 border-l-2 border-purple-500/50 pl-3 text-xs leading-relaxed text-slate-400">{note.execution_remark}</p><span className="mt-3 inline-flex rounded-full bg-slate-800 px-2 py-1 text-[10px] font-bold text-slate-400">AI insight</span></article>)}</div>}
+      </section>}
 
       {/* Search */}
       <div className="relative min-w-0 w-full sm:max-w-md">

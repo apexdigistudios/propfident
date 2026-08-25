@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
 
   const { data: profile } = await supabase.from("profiles").select("subscription_tier").eq("id", user.id).maybeSingle();
-  if ((profile?.subscription_tier || "free") === "free") return NextResponse.json({ error: "Upgrade your plan to use Trade Assist V2." }, { status: 403 });
+  const isFreeTier = (profile?.subscription_tier || "free") === "free";
 
   let body: RequestBody;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }
@@ -39,6 +39,7 @@ export async function POST(request: Request) {
     .select("id, metaapi_account_id, account_currency, currency, balance, equity, current_balance, current_equity, connection_status")
     .eq("user_id", user.id)
     .eq("platform", "MT5")
+    .eq("connection_type", isFreeTier ? "manual" : "metaapi")
     .eq("connection_status", "CONNECTED")
     .order("updated_at", { ascending: false })
     .maybeSingle();
