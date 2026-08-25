@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   let currency = account.account_currency || account.currency || "USD";
   let pairPrice: number | null = null;
 
-  if (isMetaApiConfigured() && account.metaapi_account_id) {
+  if (!isFreeTier && isMetaApiConfigured() && account.metaapi_account_id) {
     try {
       const metaAccount = await getMetaApi().metatraderAccountApi.getAccount(account.metaapi_account_id);
       const rpc = metaAccount.getRPCConnection();
@@ -74,6 +74,7 @@ export async function POST(request: Request) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   const snapshot = { accountBalance, equity, freeMargin, currency, pair, pairPrice, maxDailyRisk, lotSize, riskPercent, stopLossPips, pipValue };
+  if (isFreeTier) return NextResponse.json({ snapshot, plan: fallbackPlan(snapshot) });
   if (!apiKey) return NextResponse.json({ snapshot, plan: fallbackPlan(snapshot) });
 
   const prompt = `You are an elite prop firm risk manager. Based on the user's live account balance of ${equity} and strategy inputs, analyze their plan and explain their trade rules in clear, simple 6th-grade English. Emphasize why the calculated lot size of ${lotSize} protects their account from breaching prop firm rules. Analyze the user's trading strategy, prop firm rules, and personal plan. Generate a clear, highly practical trading execution plan written in simple 6th-grade English. Use these server-calculated numbers exactly: live account balance ${accountBalance} ${currency}, equity ${equity}, free margin ${freeMargin}, pair ${pair}, pair price ${pairPrice ?? "unavailable"}, selected risk ${riskPercent}%, max daily risk ${maxDailyRisk} ${currency}, stop loss ${stopLossPips} pips, pip value ${pipValue}, calculated lot size ${lotSize}. Strategy: ${strategy}. Prop firm rules and objectives: ${rules}. Personal risk tolerance and plan: ${personalPlan}. Return valid JSON with exactly these string fields: dailyRiskLimit, lotSizes, goldenRules, executionSchedule.`;

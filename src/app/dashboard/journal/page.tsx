@@ -22,7 +22,7 @@ interface Trade {
   account_id: string | null;
 }
 
-type Emotion = "Disciplined" | "FOMO" | "Anxious" | "Revenge Trade" | "Confident" | "Hesitant";
+type Emotion = "Disciplined" | "FOMO" | "Anxious" | "Revenge Trade" | "Confident" | "Hesitant" | "Executed Strategy";
 type TradeNote = { id: string; text: string; symbol: string; opened: string; emotion_tag: Emotion; execution_remark: string };
 
 const emotionStyles: Record<"All" | Emotion, string> = {
@@ -33,8 +33,18 @@ const emotionStyles: Record<"All" | Emotion, string> = {
   "Revenge Trade": "border-rose-700/50 bg-rose-950/40 text-rose-300",
   Confident: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
   Hesitant: "border-purple-500/40 bg-purple-500/10 text-purple-300",
+  "Executed Strategy": "border-slate-500/40 bg-slate-500/10 text-slate-300",
 };
-const emotionFilters: Array<"All" | Emotion> = ["All", "Disciplined", "FOMO", "Anxious", "Revenge Trade", "Confident", "Hesitant"];
+const emotionFilters: Array<"All" | Emotion> = ["All", "Disciplined", "FOMO", "Anxious", "Revenge Trade", "Confident", "Hesitant", "Executed Strategy"];
+
+function detectEmotion(note: string): Emotion {
+  const text = note.toLowerCase();
+  if (/revenge|make back|ticked off|lost big then|doubled lot/.test(text)) return "Revenge Trade";
+  if (/chased|late entry|scared to miss|fomo|jumped in early/.test(text)) return "FOMO";
+  if (/nervous|scared|too early|panicked|closed too soon/.test(text)) return "Anxious";
+  if (/followed plan|stuck to risk|tp hit|clean setup|patient/.test(text)) return "Disciplined";
+  return "Executed Strategy";
+}
 
 const statusStyles: Record<string, string> = {
   OPEN: "border-sky-500/30 bg-sky-500/10 text-sky-400",
@@ -83,7 +93,7 @@ export default function JournalPage() {
           const result = await response.json();
           return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: result.emotionTag as Emotion, execution_remark: result.executionRemark as string };
         } catch {
-          return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: "Disciplined" as Emotion, execution_remark: "Recorded your trading mindset for later review and pattern analysis." };
+          return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: detectEmotion(trade.notes), execution_remark: "Recorded your trading mindset for later review and pattern analysis." };
         }
       }));
       setTradeNotes(analyzed);
@@ -128,7 +138,7 @@ export default function JournalPage() {
       const analyzed = await Promise.all(notes.map(async (trade) => {
         const response = await fetch("/api/ai/analyze-note", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: trade.notes }) });
         const result = await response.json();
-        return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: result.emotionTag as Emotion, execution_remark: result.executionRemark as string };
+        return { id: trade.id, text: trade.notes, symbol: trade.symbol, opened: trade.open_time, emotion_tag: result.emotionTag as Emotion || detectEmotion(trade.notes), execution_remark: result.executionRemark as string };
       }));
       setTradeNotes(analyzed);
     }

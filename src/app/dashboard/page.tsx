@@ -125,7 +125,7 @@ export default async function DashboardOverviewPage({
 
       <MetricsGrid account={activeAccount} totalPnl={totalPnl} />
 
-      <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
+      {activeAccount ? <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">
@@ -146,7 +146,10 @@ export default async function DashboardOverviewPage({
           initialBalance={activeAccount?.initial_balance || 0}
           trades={tradesData}
         />
-      </div>
+      </div> : <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 p-10 text-center shadow-xl shadow-black/20">
+        <h2 className="text-lg font-semibold text-slate-200">Performance curve unavailable</h2>
+        <p className="mt-2 text-sm text-slate-400">Connect your MT5 account to view live performance &amp; equity curve.</p>
+      </div>}
     </div>
   );
 }

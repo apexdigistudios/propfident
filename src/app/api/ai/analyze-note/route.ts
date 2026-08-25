@@ -2,21 +2,19 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { GoogleGenAI } from "@google/genai";
 
-const EMOTIONS = ["Disciplined", "FOMO", "Anxious", "Revenge Trade", "Confident", "Hesitant"] as const;
+const EMOTIONS = ["Disciplined", "FOMO", "Anxious", "Revenge Trade", "Confident", "Hesitant", "Executed Strategy"] as const;
 
 function fallbackAnalysis(note: string) {
   const text = note.toLowerCase();
-  const emotion = text.includes("revenge") || text.includes("make it back")
+  const emotion = /revenge|make back|ticked off|lost big then|doubled lot/.test(text)
     ? "Revenge Trade"
-    : text.includes("fomo") || text.includes("missed") || text.includes("late")
+    : /chased|late entry|scared to miss|fomo|jumped in early/.test(text)
       ? "FOMO"
-      : text.includes("anxious") || text.includes("fear") || text.includes("nervous")
+      : /nervous|scared|too early|panicked|closed too soon/.test(text)
         ? "Anxious"
-        : text.includes("hesitat") || text.includes("uncertain")
-          ? "Hesitant"
-          : text.includes("confident") || text.includes("clear")
-            ? "Confident"
-            : "Disciplined";
+          : /followed plan|stuck to risk|tp hit|clean setup|patient/.test(text)
+            ? "Disciplined"
+            : "Executed Strategy";
 
   return {
     emotionTag: emotion,

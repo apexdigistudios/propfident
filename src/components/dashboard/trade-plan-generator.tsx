@@ -43,6 +43,8 @@ export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean
   const [copied, setCopied] = useState(false);
   const [freeGenerationsUsed, setFreeGenerationsUsed] = useState(0);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [freePlanVariant, setFreePlanVariant] = useState<"A" | "B">("A");
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isFreeTier) return;
@@ -52,8 +54,23 @@ export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean
 
   async function generate(event?: FormEvent) {
     event?.preventDefault();
-    if (isFreeTier && freeGenerationsUsed >= 1) {
-      setShowUpgrade(true);
+    if (isFreeTier) {
+      const nextPlan = freePlanVariant === "A" ? "B" : "A";
+      const localSnapshot: Snapshot = {
+        accountBalance: 100000,
+        equity: 100000,
+        freeMargin: 100000,
+        currency: "USD",
+        pair,
+        pairPrice: null,
+        maxDailyRisk: 500,
+        lotSize: 0.25,
+      };
+      setPlan(createOfflinePlan(freePlanVariant, localSnapshot));
+      setSnapshot(localSnapshot);
+      setFreePlanVariant(nextPlan);
+      setFreeGenerationsUsed(1);
+      window.localStorage.setItem(`${FREE_PLAN_USAGE_PREFIX}${userId}`, "1");
       return;
     }
     setLoading(true);
@@ -95,10 +112,32 @@ export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean
     {showUpgrade && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4" role="dialog" aria-modal="true" aria-labelledby="free-plan-limit-title"><div className="w-full max-w-md rounded-2xl border border-purple-500/30 bg-slate-900 p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><Lock className="h-6 w-6 text-purple-400" /><h2 id="free-plan-limit-title" className="mt-4 text-xl font-bold text-white">Free plan limit reached</h2></div><button type="button" onClick={() => setShowUpgrade(false)} aria-label="Close upgrade message" className="rounded-lg p-1 text-slate-400 hover:text-white"><X className="h-5 w-5" /></button></div><p className="mt-3 text-sm leading-relaxed text-slate-300">You&apos;ve used your 1 free AI Trade Plan. Upgrade to access unlimited plan generations.</p><Link href="/pricing" className="mt-6 inline-flex w-full justify-center rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white">Upgrade your plan</Link></div></div>}
     {snapshot && <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-semibold text-emerald-300"><span>Live Market &amp; Account Snapshot</span><span>Equity: {snapshot.equity.toLocaleString()} {snapshot.currency}</span><span>{snapshot.pair}: {snapshot.pairPrice?.toFixed(5) || "Unavailable"}</span><span>Max Safe Lot Size: {snapshot.lotSize.toFixed(2)}</span></div>}
     <form onSubmit={generate} className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6 shadow-2xl shadow-black/20 md:p-8"><div className="grid gap-6 md:grid-cols-2"><label className={labelClass}>Trading Strategy<select value={strategy} onChange={(event) => setStrategy(event.target.value)} className={inputClass}><option>Scalping</option><option>Day Trading</option><option>Swing Trading</option><option>Breakouts</option></select></label><label className={labelClass}>Pair / Asset<input value={pair} onChange={(event) => setPair(event.target.value.toUpperCase())} className={inputClass} /></label><label className={labelClass}>Risk Per Trade (%)<input value={riskPercent} onChange={(event) => setRiskPercent(event.target.value)} type="number" min="0.01" max="10" step="0.01" className={inputClass} /></label><label className={labelClass}>Stop Loss (Pips)<input value={stopLossPips} onChange={(event) => setStopLossPips(event.target.value)} type="number" min="1" step="1" className={inputClass} /></label><label className={labelClass}>Pip Value ($ / Lot)<input value={pipValue} onChange={(event) => setPipValue(event.target.value)} type="number" min="0.01" step="0.01" className={inputClass} /></label></div><label className={`mt-6 block ${labelClass}`}>Prop Firm Rules &amp; Objectives<textarea value={rules} onChange={(event) => setRules(event.target.value)} rows={4} className={inputClass} /></label><label className={`mt-6 block ${labelClass}`}>Personal Risk Tolerance &amp; Plan<textarea value={personalPlan} onChange={(event) => setPersonalPlan(event.target.value)} rows={4} className={inputClass} /></label><div className="mt-6 flex flex-wrap items-center gap-4"><ShimmerButton type="submit" disabled={loading} className="px-5 py-2.5 text-sm"><Sparkles className="mr-2 h-4 w-4" />{loading ? "Building plan..." : "Generate plan"}</ShimmerButton>{plan && <button type="button" onClick={() => generate()} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"><RefreshCw className="h-4 w-4" />Regenerate</button>}</div>{error && <p className="mt-4 text-sm text-rose-400">{error}</p>}</form>
-    {plan && <section className="rounded-2xl border border-emerald-500/30 bg-slate-950 p-6 shadow-2xl shadow-black/30 md:p-8"><div className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Your execution plan</p><h2 className="mt-1 text-2xl font-bold text-white">Trade with a clear edge</h2></div><button type="button" onClick={copyPlan} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"><Copy className="h-4 w-4" />{copied ? "Copied" : "Copy plan"}</button></div><div className="mt-6 grid gap-6 md:grid-cols-2"><PlanSection title="Daily Risk Limit" content={plan.dailyRiskLimit} /><PlanSection title="Recommended Lot Sizes" content={plan.lotSizes} /><PlanSection title="Golden Rules" content={plan.goldenRules} /><PlanSection title="Execution Schedule" content={plan.executionSchedule} /></div></section>}
+    {plan && <section className="rounded-2xl border border-emerald-500/30 bg-slate-950 p-6 shadow-2xl shadow-black/30 md:p-8"><div className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">{isFreeTier ? `Offline Plan ${freePlanVariant === "A" ? "B" : "A"}` : "Your execution plan"}</p><h2 className="mt-1 text-2xl font-bold text-white">Trade with a clear edge</h2></div><button type="button" onClick={copyPlan} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"><Copy className="h-4 w-4" />{copied ? "Copied" : "Copy plan"}</button></div><div className="mt-6 grid gap-6 md:grid-cols-2"><PlanSection title="Daily Risk Limit" content={plan.dailyRiskLimit} onCopy={async () => { await copyText(plan.dailyRiskLimit); setCopiedSection("Daily Risk Limit"); }} copied={copiedSection === "Daily Risk Limit"} /><PlanSection title="Recommended Lot Sizes" content={plan.lotSizes} onCopy={async () => { await copyText(plan.lotSizes); setCopiedSection("Recommended Lot Sizes"); }} copied={copiedSection === "Recommended Lot Sizes"} /><PlanSection title="Golden Rules" content={plan.goldenRules} /><PlanSection title="Execution Schedule" content={plan.executionSchedule} /></div></section>}
   </div>;
 }
 
-function PlanSection({ title, content }: { title: string; content: string }) {
-  return <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5"><h3 className="text-sm font-bold text-purple-300">{title}</h3><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{content}</p></div>;
+async function copyText(text: string) {
+  await navigator.clipboard.writeText(text);
+}
+
+function PlanSection({ title, content, onCopy, copied }: { title: string; content: string; onCopy?: () => void; copied?: boolean }) {
+  return <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-purple-300">{title}</h3>{onCopy && <button type="button" onClick={onCopy} className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-purple-500/30 bg-purple-500/10 px-2 py-1 text-[10px] font-bold text-purple-300 hover:bg-purple-500/20"><Copy className="h-3 w-3" />{copied ? "Copied" : "Copy"}</button>}</div><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{content}</p></div>;
+}
+
+function createOfflinePlan(variant: "A" | "B", snapshot: Snapshot): Plan {
+  if (variant === "A") {
+    return {
+      dailyRiskLimit: `Daily risk limit: ${snapshot.maxDailyRisk.toFixed(2)} ${snapshot.currency}. Risk 0.5% or less per trade. Stop after two losing trades.`,
+      lotSizes: `Suggested lot size: ${snapshot.lotSize.toFixed(2)} lots on ${snapshot.pair} with a 20-pip stop. Copy this value before you trade.`,
+      goldenRules: "Use a stop loss on every trade. Wait for your planned setup. Do not increase risk to recover a loss.",
+      executionSchedule: "Review your rules before the session. Take only your best setups. Log the trade after it closes and review your notes.",
+    };
+  }
+
+  return {
+    dailyRiskLimit: `Daily risk limit: ${snapshot.maxDailyRisk.toFixed(2)} ${snapshot.currency}. Keep total daily risk below this amount and leave room for normal market movement.`,
+    lotSizes: `Suggested lot size: ${(snapshot.lotSize * 0.8).toFixed(2)} lots on ${snapshot.pair} with a 20-pip stop. The smaller size gives your account more breathing room.`,
+    goldenRules: "Protect the account first. Never move a stop farther away. Stop trading when your daily limit is reached.",
+    executionSchedule: "Plan the session, check the market, and wait for confirmation. Take a short break after each trade. Review execution when the session ends.",
+  };
 }

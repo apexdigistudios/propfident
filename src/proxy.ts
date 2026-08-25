@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -20,26 +20,25 @@ export async function middleware(request: NextRequest) {
   }
 
   const supabase = createServerClient(url, anonKey, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value)
+        );
+        response = NextResponse.next({
+          request: {
+            headers: request.headers,
+          },
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
 
   const {
     data: { user },
@@ -58,7 +57,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
+  if (
+    user &&
+    (request.nextUrl.pathname === "/login" ||
+      request.nextUrl.pathname === "/signup")
+  ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
