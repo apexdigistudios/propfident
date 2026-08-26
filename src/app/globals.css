@@ -142,3 +142,12 @@ html {
   }
   html { scroll-behavior: auto; }
 }
+
+/* Strict horizontal scroll lock */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  position: relative;
+  width: 100%;
+}

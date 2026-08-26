@@ -34,7 +34,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="w-full min-w-0 max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">{children}</body>
+      <body className="w-full min-w-0 max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">
+        <div className="w-full max-w-full overflow-x-hidden relative">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
