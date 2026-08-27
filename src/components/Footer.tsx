@@ -1,14 +1,11 @@
 import Link from "next/link";
 import {
   ShieldCheck,
-  Download,
   Plug,
   Globe,
   MessageCircle,
   Rss,
   Mail,
-  Apple,
-  Smartphone,
 } from "lucide-react";
 const footerLinks = {
   Product: [
@@ -43,42 +40,6 @@ export default function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950">
       <div className="mx-auto w-full max-w-7xl min-w-0 overflow-hidden px-4 py-16 md:px-6 md:py-24 lg:px-8">
-        {/* PWA prompt */}
-        <div className="mb-14 flex flex-col items-start justify-between gap-6 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 dark:border-purple-500/30 dark:bg-slate-900/90 lg:flex-row lg:items-center lg:p-10">
-          <div className="max-w-xl">
-            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-              <Download className="h-4 w-4" strokeWidth={2.5} />
-              <span className="text-xs font-bold uppercase tracking-widest">
-                Install the Propfident PWA
-              </span>
-            </div>
-            <h3 className="mt-2 text-2xl font-extrabold tracking-tighter text-slate-900 dark:text-white sm:text-3xl">
-              Your drawdown shield, always in your pocket.
-            </h3>
-            <p className="mt-2 text-slate-600 dark:text-slate-400">
-              Install the Progressive Web App for instant access, native breach
-              notifications and offline journaling. Works on iOS, Android &
-              desktop — no App Store required.
-            </p>
-          </div>
-          <div className="flex w-full flex-wrap gap-3 lg:w-auto">
-            <button
-              type="button"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-purple-400 lg:flex-none dark:border-purple-500/30 dark:bg-slate-900 dark:text-white dark:hover:border-purple-500/60"
-            >
-              <Apple className="h-4 w-4" />
-              iOS / macOS
-            </button>
-            <button
-              type="button"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40 lg:flex-none"
-            >
-              <Smartphone className="h-4 w-4" />
-              Android / Desktop
-            </button>
-          </div>
-        </div>
-
         {/* Links */}
         <div className="grid min-w-0 grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2">
