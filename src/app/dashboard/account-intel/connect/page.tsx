@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShieldAlert, Sparkles, Lock } from "lucide-react";
+import { ShieldAlert, Sparkles, Lock, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ConnectAccountWizard } from "@/components/dashboard/connect-account-wizard";
 import { MagicCard } from "@/components/magicui/magic-card";
