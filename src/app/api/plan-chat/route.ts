@@ -55,11 +55,17 @@ export async function POST(request: Request) {
   const groq = new OpenAI({ apiKey: process.env.GROQ_API_KEY, baseURL: "https://api.groq.com/openai/v1" });
   try {
     const completion = await groq.chat.completions.create({ model: "llama-3.3-70b-versatile", temperature: 0.3, messages: [{ role: "system", content: `${systemPrompt}\n\n${accountContext}` }, ...messages] });
-    const content = completion.choices[0]?.message?.content?.trim();
-    if (!content) throw new Error("Empty Groq response");
-    return NextResponse.json({ message: { role: "assistant", content }, account: { balance, equity, currency, leverage, status: account.connection_status } });
-  } catch (error) {
-    console.error("[plan-chat] Groq request failed:", error);
-    return NextResponse.json({ error: "The plan service could not answer right now. Please try again." }, { status: 502 });
+    const reply = completion.choices?.[0]?.message?.content?.trim();
+    if (!reply) {
+      console.error("Groq API returned an empty completion content:", JSON.stringify(completion));
+      return NextResponse.json({ error: "Empty response from AI engine." }, { status: 500 });
+    }
+    return NextResponse.json({ role: "assistant", content: reply, account: { balance, equity, currency, leverage, status: account.connection_status } });
+  } catch (error: any) {
+    console.error("Detailed Groq API Error:", error?.message || error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to generate response from Groq." },
+      { status: 500 }
+    );
   }
 }

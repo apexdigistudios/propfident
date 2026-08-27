@@ -37,9 +37,9 @@ export function TradePlanGenerator({ isFreeTier, userId, accountId }: { isFreeTi
     setError(null);
     try {
       const response = await fetch("/api/plan-chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages, accountId }) });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unable to reach Trade Assist.");
-      setMessages((current) => [...current, result.message]);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "The plan service could not answer right now.");
+      setMessages((current) => [...current, { role: data.role, content: data.content }]);
       if (isFreeTier && content === fastTrackMessage) {
         setFreeGenerationsUsed(1);
         window.localStorage.setItem(`${FREE_USAGE_PREFIX}${userId}`, "1");
