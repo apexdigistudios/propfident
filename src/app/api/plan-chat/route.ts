@@ -13,7 +13,13 @@ export async function POST(request: Request) {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
-  if (!process.env.GROQ_API_KEY) return NextResponse.json({ error: "The conversational plan service is not configured yet." }, { status: 503 });
+  if (!process.env.GROQ_API_KEY) {
+    console.error("GROQ_API_KEY is missing from environment variables");
+    return NextResponse.json(
+      { error: "GROQ_API_KEY is missing in server environment. Please check .env.local" },
+      { status: 500 }
+    );
+  }
 
   let body: { messages?: ChatMessage[]; accountId?: string };
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }

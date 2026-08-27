@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Bot, Check, Copy, Lock, Send, Sparkles, User } from "lucide-react";
+import { Bot, Check, Copy, Lock, Send, Sparkles, User, X } from "lucide-react";
 import Link from "next/link";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -77,7 +77,7 @@ export function TradePlanGenerator({ isFreeTier, userId, accountId }: { isFreeTi
           {loading && <div className="flex items-center gap-2 text-sm text-slate-500"><Bot className="h-4 w-4 text-purple-400" />Thinking through your risk...</div>}
           <div ref={bottomRef} />
         </div>
-        {error && <p className="border-t border-rose-500/20 bg-rose-950/20 px-5 py-3 text-sm text-rose-300">{error}</p>}
+        {error && <div role="alert" className="flex items-start justify-between gap-4 border-t border-rose-500/20 bg-rose-950/20 px-5 py-3 text-sm text-rose-300"><p>{error}</p><button type="button" onClick={() => setError(null)} aria-label="Dismiss error" className="shrink-0 text-rose-300 transition hover:text-white"><X className="h-4 w-4" /></button></div>}
         {blocked ? <div className="flex flex-col gap-3 border-t border-slate-800 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-2 text-sm text-amber-300"><Lock className="h-4 w-4" />Your free plan generation is complete.</div><Link href="/pricing" className="inline-flex items-center justify-center rounded-lg bg-gradient-brand px-4 py-2 text-sm font-bold text-white">Upgrade for unlimited plans</Link></div> : <><div className="flex flex-wrap gap-2 border-t border-slate-800 px-4 pt-4"><button type="button" onClick={() => void sendMessage(fastTrackMessage)} disabled={loading} className="inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-bold text-purple-300 disabled:opacity-50"><Sparkles className="h-3.5 w-3.5" />Build Plan Now</button></div><form onSubmit={submit} className="flex gap-2 p-4"><input value={input} onChange={(event) => setInput(event.target.value)} disabled={loading} placeholder="Tell your strategist about your rules or risk style..." className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none" /><button type="submit" disabled={loading || !input.trim()} aria-label="Send message" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-4 w-4" /></button></form></>}
       </section>
     </div>
