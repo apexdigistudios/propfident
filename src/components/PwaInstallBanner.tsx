@@ -46,7 +46,7 @@ export default function PwaInstallBanner() {
           <div className="flex items-center gap-2 text-purple-400">
             <Download className="h-4 w-4" strokeWidth={2.5} />
             <span className="text-xs font-bold uppercase tracking-widest">
-              Available for Android Users
+              Designed for Android &amp; Mobile Devices
             </span>
           </div>
           <h2 className="mt-2 text-2xl font-extrabold tracking-tighter text-white sm:text-3xl">
@@ -63,7 +63,7 @@ export default function PwaInstallBanner() {
           className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40 sm:w-auto"
         >
           <Smartphone className="h-4 w-4" />
-          Install Android App
+          Install Propfident Android App
         </button>
       </div>
     </section>

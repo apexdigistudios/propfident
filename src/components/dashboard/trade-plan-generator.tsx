@@ -1,143 +1,85 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { Copy, Lock, RefreshCw, Sparkles, X } from "lucide-react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { Bot, Check, Copy, Lock, Send, Sparkles, User } from "lucide-react";
 import Link from "next/link";
-import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
-type Plan = {
-  dailyRiskLimit: string;
-  lotSizes: string;
-  goldenRules: string;
-  executionSchedule: string;
-};
+type Message = { role: "user" | "assistant"; content: string };
+const FREE_USAGE_PREFIX = "propfident:free-ai-plan-usage:";
+const fastTrackMessage = "I have provided enough details. Generate my full step-by-step prop trading plan now.";
 
-type Snapshot = {
-  accountBalance: number;
-  equity: number;
-  freeMargin: number;
-  currency: string;
-  pair: string;
-  pairPrice: number | null;
-  maxDailyRisk: number;
-  lotSize: number;
-};
-
-const inputClass = "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40";
-const labelClass = "text-xs font-semibold uppercase tracking-wider text-slate-400";
-
-const FREE_PLAN_USAGE_PREFIX = "propfident:free-ai-plan-usage:";
-
-export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean; userId: string }) {
-  const [strategy, setStrategy] = useState("Day Trading");
-  const [rules, setRules] = useState("5% Daily Loss, 10% Max Drawdown, Profit Target");
-  const [personalPlan, setPersonalPlan] = useState("Maximum 5 trades per day, EURUSD and GBPUSD, 0.5% risk per trade");
-  const [riskPercent, setRiskPercent] = useState("0.5");
-  const [stopLossPips, setStopLossPips] = useState("20");
-  const [pair, setPair] = useState("EURUSD");
-  const [pipValue, setPipValue] = useState("10");
-  const [plan, setPlan] = useState<Plan | null>(null);
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+export function TradePlanGenerator({ isFreeTier, userId, accountId }: { isFreeTier: boolean; userId: string; accountId?: string }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [freeGenerationsUsed, setFreeGenerationsUsed] = useState(0);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [freePlanVariant, setFreePlanVariant] = useState<"A" | "B">("A");
-  const [copiedSection, setCopiedSection] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isFreeTier) return;
-    const stored = window.localStorage.getItem(`${FREE_PLAN_USAGE_PREFIX}${userId}`);
-    setFreeGenerationsUsed(stored === "1" ? 1 : 0);
+    if (isFreeTier && window.localStorage.getItem(`${FREE_USAGE_PREFIX}${userId}`) === "1") setFreeGenerationsUsed(1);
   }, [isFreeTier, userId]);
 
-  async function generate(event?: FormEvent) {
-    event?.preventDefault();
-    if (isFreeTier) {
-      const nextPlan = freePlanVariant === "A" ? "B" : "A";
-      const localSnapshot: Snapshot = {
-        accountBalance: 100000,
-        equity: 100000,
-        freeMargin: 100000,
-        currency: "USD",
-        pair,
-        pairPrice: null,
-        maxDailyRisk: 500,
-        lotSize: 0.25,
-      };
-      setPlan(createOfflinePlan(freePlanVariant, localSnapshot));
-      setSnapshot(localSnapshot);
-      setFreePlanVariant(nextPlan);
-      setFreeGenerationsUsed(1);
-      window.localStorage.setItem(`${FREE_PLAN_USAGE_PREFIX}${userId}`, "1");
-      return;
-    }
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const blocked = isFreeTier && freeGenerationsUsed >= 1;
+
+  async function sendMessage(content = input) {
+    const trimmed = content.trim();
+    if (!trimmed || loading || blocked) return;
+    const nextMessages = [...messages, { role: "user", content: trimmed } satisfies Message];
+    setMessages(nextMessages);
+    setInput("");
     setLoading(true);
     setError(null);
-    setCopied(false);
     try {
-      const response = await fetch("/api/ai/trade-plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ strategy, rules, personalPlan, riskPercent: Number(riskPercent), stopLossPips: Number(stopLossPips), pair, pipValue: Number(pipValue) }),
-      });
+      const response = await fetch("/api/plan-chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages, accountId }) });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unable to generate your plan.");
-      setPlan(result.plan);
-      setSnapshot(result.snapshot);
-      if (isFreeTier) {
-        window.localStorage.setItem(`${FREE_PLAN_USAGE_PREFIX}${userId}`, "1");
+      if (!response.ok) throw new Error(result.error || "Unable to reach Trade Assist.");
+      setMessages((current) => [...current, result.message]);
+      if (isFreeTier && content === fastTrackMessage) {
         setFreeGenerationsUsed(1);
+        window.localStorage.setItem(`${FREE_USAGE_PREFIX}${userId}`, "1");
       }
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to generate your plan.");
+      setError(requestError instanceof Error ? requestError.message : "Unable to reach Trade Assist.");
     } finally {
       setLoading(false);
     }
   }
 
-  async function copyPlan() {
-    if (!plan) return;
-    await navigator.clipboard.writeText([
-      `Daily Risk Limit\n${plan.dailyRiskLimit}`,
-      `Recommended Lot Sizes\n${plan.lotSizes}`,
-      `Golden Rules\n${plan.goldenRules}`,
-      `Execution Schedule\n${plan.executionSchedule}`,
-    ].join("\n\n"));
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    void sendMessage();
+  }
+
+  async function copyPlan(content: string) {
+    await navigator.clipboard.writeText(content);
     setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
   }
 
-  return <div className="mx-auto w-full max-w-5xl space-y-8"><header><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">Trade Assist V2</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-white">AI Trading Plan Generator</h1></div><span className={`rounded-full border px-3 py-1 text-xs font-bold ${isFreeTier ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"}`}>{isFreeTier ? `Free Generation Used: ${freeGenerationsUsed} / 1` : "Unlimited Generations"}</span></div><p className="mt-2 text-sm text-slate-400">Turn your prop firm rules and personal risk plan into a clear execution guide.</p></header>
-    {showUpgrade && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4" role="dialog" aria-modal="true" aria-labelledby="free-plan-limit-title"><div className="w-full max-w-md rounded-2xl border border-purple-500/30 bg-slate-900 p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><Lock className="h-6 w-6 text-purple-400" /><h2 id="free-plan-limit-title" className="mt-4 text-xl font-bold text-white">Free plan limit reached</h2></div><button type="button" onClick={() => setShowUpgrade(false)} aria-label="Close upgrade message" className="rounded-lg p-1 text-slate-400 hover:text-white"><X className="h-5 w-5" /></button></div><p className="mt-3 text-sm leading-relaxed text-slate-300">You&apos;ve used your 1 free AI Trade Plan. Upgrade to access unlimited plan generations.</p><Link href="/pricing" className="mt-6 inline-flex w-full justify-center rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white">Upgrade your plan</Link></div></div>}
-    {snapshot && <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-semibold text-emerald-300"><span>Live Market &amp; Account Snapshot</span><span>Equity: {snapshot.equity.toLocaleString()} {snapshot.currency}</span><span>{snapshot.pair}: {snapshot.pairPrice?.toFixed(5) || "Unavailable"}</span><span>Max Safe Lot Size: {snapshot.lotSize.toFixed(2)}</span></div>}
-    <form onSubmit={generate} className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-6 shadow-2xl shadow-black/20 md:p-8"><div className="grid gap-6 md:grid-cols-2"><label className={labelClass}>Trading Strategy<select value={strategy} onChange={(event) => setStrategy(event.target.value)} className={inputClass}><option>Scalping</option><option>Day Trading</option><option>Swing Trading</option><option>Breakouts</option></select></label><label className={labelClass}>Pair / Asset<input value={pair} onChange={(event) => setPair(event.target.value.toUpperCase())} className={inputClass} /></label><label className={labelClass}>Risk Per Trade (%)<input value={riskPercent} onChange={(event) => setRiskPercent(event.target.value)} type="number" min="0.01" max="10" step="0.01" className={inputClass} /></label><label className={labelClass}>Stop Loss (Pips)<input value={stopLossPips} onChange={(event) => setStopLossPips(event.target.value)} type="number" min="1" step="1" className={inputClass} /></label><label className={labelClass}>Pip Value ($ / Lot)<input value={pipValue} onChange={(event) => setPipValue(event.target.value)} type="number" min="0.01" step="0.01" className={inputClass} /></label></div><label className={`mt-6 block ${labelClass}`}>Prop Firm Rules &amp; Objectives<textarea value={rules} onChange={(event) => setRules(event.target.value)} rows={4} className={inputClass} /></label><label className={`mt-6 block ${labelClass}`}>Personal Risk Tolerance &amp; Plan<textarea value={personalPlan} onChange={(event) => setPersonalPlan(event.target.value)} rows={4} className={inputClass} /></label><div className="mt-6 flex flex-wrap items-center gap-4"><ShimmerButton type="submit" disabled={loading} className="px-5 py-2.5 text-sm"><Sparkles className="mr-2 h-4 w-4" />{loading ? "Building plan..." : "Generate plan"}</ShimmerButton>{plan && <button type="button" onClick={() => generate()} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"><RefreshCw className="h-4 w-4" />Regenerate</button>}</div>{error && <p className="mt-4 text-sm text-rose-400">{error}</p>}</form>
-    {plan && <section className="rounded-2xl border border-emerald-500/30 bg-slate-950 p-6 shadow-2xl shadow-black/30 md:p-8"><div className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">{isFreeTier ? `Offline Plan ${freePlanVariant === "A" ? "B" : "A"}` : "Your execution plan"}</p><h2 className="mt-1 text-2xl font-bold text-white">Trade with a clear edge</h2></div><button type="button" onClick={copyPlan} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"><Copy className="h-4 w-4" />{copied ? "Copied" : "Copy plan"}</button></div><div className="mt-6 grid gap-6 md:grid-cols-2"><PlanSection title="Daily Risk Limit" content={plan.dailyRiskLimit} onCopy={async () => { await copyText(plan.dailyRiskLimit); setCopiedSection("Daily Risk Limit"); }} copied={copiedSection === "Daily Risk Limit"} /><PlanSection title="Recommended Lot Sizes" content={plan.lotSizes} onCopy={async () => { await copyText(plan.lotSizes); setCopiedSection("Recommended Lot Sizes"); }} copied={copiedSection === "Recommended Lot Sizes"} /><PlanSection title="Golden Rules" content={plan.goldenRules} /><PlanSection title="Execution Schedule" content={plan.executionSchedule} /></div></section>}
-  </div>;
-}
+  return (
+    <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6 overflow-hidden">
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">Trade Assist V2</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Prop Shield strategist</h1><p className="mt-2 max-w-2xl text-sm text-slate-400">Have a focused conversation with your risk strategist, then turn your live MT5 numbers into a practical plan.</p></div>
+        <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold ${isFreeTier ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"}`}><Sparkles className="h-3.5 w-3.5" />{isFreeTier ? `Plan Usage: ${freeGenerationsUsed}/1` : "Unlimited turns"}</span>
+      </header>
 
-async function copyText(text: string) {
-  await navigator.clipboard.writeText(text);
-}
-
-function PlanSection({ title, content, onCopy, copied }: { title: string; content: string; onCopy?: () => void; copied?: boolean }) {
-  return <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-bold text-purple-300">{title}</h3>{onCopy && <button type="button" onClick={onCopy} className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-purple-500/30 bg-purple-500/10 px-2 py-1 text-[10px] font-bold text-purple-300 hover:bg-purple-500/20"><Copy className="h-3 w-3" />{copied ? "Copied" : "Copy"}</button>}</div><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300">{content}</p></div>;
-}
-
-function createOfflinePlan(variant: "A" | "B", snapshot: Snapshot): Plan {
-  if (variant === "A") {
-    return {
-      dailyRiskLimit: `Daily risk limit: ${snapshot.maxDailyRisk.toFixed(2)} ${snapshot.currency}. Risk 0.5% or less per trade. Stop after two losing trades.`,
-      lotSizes: `Suggested lot size: ${snapshot.lotSize.toFixed(2)} lots on ${snapshot.pair} with a 20-pip stop. Copy this value before you trade.`,
-      goldenRules: "Use a stop loss on every trade. Wait for your planned setup. Do not increase risk to recover a loss.",
-      executionSchedule: "Review your rules before the session. Take only your best setups. Log the trade after it closes and review your notes.",
-    };
-  }
-
-  return {
-    dailyRiskLimit: `Daily risk limit: ${snapshot.maxDailyRisk.toFixed(2)} ${snapshot.currency}. Keep total daily risk below this amount and leave room for normal market movement.`,
-    lotSizes: `Suggested lot size: ${(snapshot.lotSize * 0.8).toFixed(2)} lots on ${snapshot.pair} with a 20-pip stop. The smaller size gives your account more breathing room.`,
-    goldenRules: "Protect the account first. Never move a stop farther away. Stop trading when your daily limit is reached.",
-    executionSchedule: "Plan the session, check the market, and wait for confirmation. Take a short break after each trade. Review execution when the session ends.",
-  };
+      <section className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-900/80 shadow-2xl shadow-black/20">
+        <div className="flex items-center gap-3 border-b border-slate-800 px-5 py-4"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/15 text-purple-300"><Bot className="h-5 w-5" /></div><div><p className="text-sm font-bold text-white">Propfident Risk Strategist</p><p className="text-xs text-emerald-400">Live account context enabled</p></div></div>
+        <div className="flex-1 space-y-4 overflow-y-auto p-4 md:p-6">
+          {!messages.length && <div className="mx-auto max-w-xl py-12 text-center"><Sparkles className="mx-auto h-8 w-8 text-purple-400" /><h2 className="mt-4 text-xl font-bold text-white">Let&apos;s protect the account first.</h2><p className="mt-2 text-sm leading-6 text-slate-400">Tell me your prop firm rules, trading style, and risk comfort. I&apos;ll ask short questions before building the plan.</p></div>}
+          {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}><div className={`flex max-w-[90%] gap-3 rounded-2xl px-4 py-3 text-sm leading-6 md:max-w-[78%] ${message.role === "user" ? "bg-purple-600/25 text-purple-50" : "border border-slate-800 bg-slate-950/80 text-slate-300"}`}>{message.role === "assistant" && <Bot className="mt-1 h-4 w-4 shrink-0 text-purple-400" />}<div className="min-w-0 whitespace-pre-wrap">{message.content}{message.role === "assistant" && /daily loss|lot size|execution rules/i.test(message.content) && <button type="button" onClick={() => void copyPlan(message.content)} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-bold text-purple-300"><Copy className="h-3.5 w-3.5" />{copied ? <><Check className="h-3.5 w-3.5" />Copied</> : "Copy Plan"}</button>}</div>{message.role === "user" && <User className="mt-1 h-4 w-4 shrink-0 text-purple-300" />}</div></div>)}
+          {loading && <div className="flex items-center gap-2 text-sm text-slate-500"><Bot className="h-4 w-4 text-purple-400" />Thinking through your risk...</div>}
+          <div ref={bottomRef} />
+        </div>
+        {error && <p className="border-t border-rose-500/20 bg-rose-950/20 px-5 py-3 text-sm text-rose-300">{error}</p>}
+        {blocked ? <div className="flex flex-col gap-3 border-t border-slate-800 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-2 text-sm text-amber-300"><Lock className="h-4 w-4" />Your free plan generation is complete.</div><Link href="/pricing" className="inline-flex items-center justify-center rounded-lg bg-gradient-brand px-4 py-2 text-sm font-bold text-white">Upgrade for unlimited plans</Link></div> : <><div className="flex flex-wrap gap-2 border-t border-slate-800 px-4 pt-4"><button type="button" onClick={() => void sendMessage(fastTrackMessage)} disabled={loading} className="inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-bold text-purple-300 disabled:opacity-50"><Sparkles className="h-3.5 w-3.5" />Build Plan Now</button></div><form onSubmit={submit} className="flex gap-2 p-4"><input value={input} onChange={(event) => setInput(event.target.value)} disabled={loading} placeholder="Tell your strategist about your rules or risk style..." className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none" /><button type="submit" disabled={loading || !input.trim()} aria-label="Send message" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-4 w-4" /></button></form></>}
+      </section>
+    </div>
+  );
 }

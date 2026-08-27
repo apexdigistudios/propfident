@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import PwaInstallBanner from "@/components/PwaInstallBanner";
 
 interface Profile {
   subscription_tier: string;
@@ -234,6 +235,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </header>
 
         <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 sm:p-5 md:p-6">
+          <PwaInstallBanner />
           {children}
         </div>
       </main>
