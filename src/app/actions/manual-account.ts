@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 export type ManualAccountInput = {
   accountName: string;
   brokerName: string;
+  accountType: "evaluation" | "funded";
   initialBalance: number;
   currentEquity: number;
   dailyLoss: number;
@@ -48,7 +49,7 @@ export async function saveManualAccount(input: ManualAccountInput) {
       platform: "MT5",
       connection_type: "manual",
       connection_status: "CONNECTED",
-      account_type: "evaluation",
+      account_type: input.accountType,
       account_currency: "USD",
       initial_balance: initialBalance,
       balance: currentEquity,

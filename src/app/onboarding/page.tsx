@@ -55,6 +55,7 @@ export default function OnboardingPage() {
     const result = await saveManualAccount({
       accountName: form.accountName,
       brokerName: form.brokerName,
+      accountType: "evaluation",
       initialBalance: Number(form.initialBalance),
       currentEquity: Number(form.currentEquity),
       dailyLoss: Number(form.dailyLoss),

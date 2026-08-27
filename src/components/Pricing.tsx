@@ -5,12 +5,7 @@ import { Check } from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import PricingComparison from "@/components/PricingComparison";
-
-const tiers = [
-  { name: "Free", description: "Start protecting one evaluation account.", monthly: 0, yearly: 0, cta: "Protect Your First Account — Free", features: ["Manual trade journal", "Dynamic lot calculator", "Static drawdown tracking", "Community support"] },
-  { name: "Pro", description: "Automated protection for funded traders.", monthly: 25, yearly: 20, cta: "Start 7-day trial", recommended: true, features: ["1 MT4/MT5 MetaApi connection", "Live trailing drawdown shield", "Automated trade journal", "Telegram & email alerts", "Advanced performance metrics"] },
-  { name: "Elite", description: "Multi-account control for scaling traders.", monthly: 50, yearly: 40, cta: "Choose Elite", features: ["Up to 10 MT4/MT5 connections", "Cross-account risk controls", "Advanced expectancy analytics", "Priority breach alerts", "24/7 priority support"] },
-];
+import { pricingTiers } from "@/lib/constants/pricing";
 
 export default function Pricing() {
   const [annual, setAnnual] = useState(true);
@@ -29,7 +24,7 @@ export default function Pricing() {
           </div>
         </div>
         <div className="mx-auto mt-12 grid max-w-md gap-6 md:mt-14 md:gap-7 lg:max-w-none lg:grid-cols-3">
-          {tiers.map((tier) => (
+          {pricingTiers.map((tier) => (
             <MagicCard
               key={tier.name}
               gradientSize={200}

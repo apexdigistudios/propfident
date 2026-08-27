@@ -1,7 +1,8 @@
 import { Check, Minus } from "lucide-react";
+import { pricingTiers } from "@/lib/constants/pricing";
 
 const rows = [
-  ["Account Connections", "1", "5", "10"],
+  ["Account Connections", pricingTiers[0].accountConnections, pricingTiers[1].accountConnections, pricingTiers[2].accountConnections],
   ["Dynamic Lot Calculator", "check", "check", "check"],
   ["Static Drawdown Tracking", "check", "check", "check"],
   ["Live Trailing Shield", "—", "check", "check"],
@@ -35,9 +36,7 @@ export default function PricingComparison() {
           <thead className="bg-slate-100 dark:bg-slate-900">
             <tr className="border-b border-slate-200 dark:border-purple-500/20">
               <th className="px-4 py-4 font-bold text-slate-900 dark:text-white">Features</th>
-              <th className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">Free ($0)</th>
-              <th className="px-4 py-4 text-center font-bold text-purple-600 dark:text-purple-300">Pro ($25/mo)</th>
-              <th className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">Elite ($50/mo)</th>
+              {pricingTiers.map((tier) => <th key={tier.name} className="px-4 py-4 text-center font-bold text-slate-900 dark:text-white">{tier.name} (${tier.monthly}/mo)</th>)}
             </tr>
           </thead>
           <tbody>

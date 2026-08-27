@@ -8,6 +8,8 @@ import { createClient } from "@/lib/supabase/client";
 import { ConnectAccountWizard } from "@/components/dashboard/connect-account-wizard";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { ManualAccountModal } from "@/components/dashboard/manual-account-modal";
+import { pricingByName } from "@/lib/constants/pricing";
 
 export default function ConnectAccountPage() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function ConnectAccountPage() {
   const [tierLoading, setTierLoading] = useState(true);
   const [subscriptionTier, setSubscriptionTier] = useState("free");
   const [accountCount, setAccountCount] = useState(0);
+  const [manualOpen, setManualOpen] = useState(false);
 
   useEffect(() => {
     async function loadGateState() {
@@ -57,7 +60,7 @@ export default function ConnectAccountPage() {
 
   // Free tier is hard-locked at 0 accounts
   if (subscriptionTier === "free") {
-    return <LockedConnectCard accountCount={accountCount} />;
+    return <LockedConnectCard accountCount={accountCount} onManual={() => setManualOpen(true)} manualOpen={manualOpen} onClose={() => setManualOpen(false)} />;
   }
 
   return (
@@ -82,7 +85,7 @@ export default function ConnectAccountPage() {
   );
 }
 
-function LockedConnectCard({ accountCount }: { accountCount: number }) {
+function LockedConnectCard({ accountCount, onManual, manualOpen, onClose }: { accountCount: number; onManual: () => void; manualOpen: boolean; onClose: () => void }) {
   return (
     <div className="mx-auto max-w-3xl">
       <MagicCard
@@ -116,14 +119,14 @@ function LockedConnectCard({ accountCount }: { accountCount: number }) {
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-5 text-left">
               <p className="text-lg font-black text-white">Pro</p>
-              <p className="mt-1 text-sm text-purple-200">$19/mo</p>
+              <p className="mt-1 text-sm text-purple-200">${pricingByName.Pro.monthly}/mo</p>
               <p className="mt-3 text-xs text-slate-400">
                 Connect up to 3 accounts with full MetaApi auto-sync.
               </p>
             </div>
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-left">
               <p className="text-lg font-black text-white">Elite Pass</p>
-              <p className="mt-1 text-sm text-amber-200">$39/mo</p>
+              <p className="mt-1 text-sm text-amber-200">${pricingByName.Elite.monthly}/mo</p>
               <p className="mt-3 text-xs text-slate-400">
                 Unlimited accounts, WebSocket sync, and advanced alerts.
               </p>
@@ -143,9 +146,14 @@ function LockedConnectCard({ accountCount }: { accountCount: number }) {
             >
               Return to Overview
             </Link>
+            <button type="button" onClick={onManual} className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-sm font-bold text-emerald-300 transition hover:bg-emerald-500/20">
+              <Plus className="h-4 w-4" />
+              Add Manual Account
+            </button>
           </div>
         </div>
       </MagicCard>
+      {manualOpen && <ManualAccountModal onClose={onClose} />}
     </div>
   );
 }
