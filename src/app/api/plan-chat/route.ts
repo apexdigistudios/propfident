@@ -9,7 +9,26 @@ const systemPrompt = `You are Propfident Trade Assist V2, a sharp and profession
 Ask only 1-2 brief clarifying questions at a time about trading style, prop firm rules, account goals, and personal risk appetite before making a final plan. Keep intermediate replies concise.
 When enough context is available, or when the user asks to build the plan, return a final structured Markdown plan in clear, simple 6th-grade English. It must include maximum daily loss limits in dollars and percent, recommended lot sizes per trade, and key execution rules. Use the supplied account balance and equity figures exactly. Never promise profits or guaranteed safety. Make reasonable assumptions explicit.`;
 
-const modelsToTry = ["llama-3.3-70b-specdec", "llama-3.1-8b-instant"] as const;
+async function getAvailableGroqModel(groqClient: any): Promise<string> {
+  try {
+    const modelsList = await groqClient.models.list();
+    const availableIds = modelsList.data
+      .map((model: any) => model.id)
+      .filter((id: unknown): id is string => typeof id === "string");
+    const preferredPatterns = ["llama", "mixtral", "gemma"];
+
+    for (const pattern of preferredPatterns) {
+      const match = availableIds.find((id: string) => id.toLowerCase().includes(pattern));
+      if (match) return match;
+    }
+
+    if (availableIds.length > 0) return availableIds[0];
+  } catch (error) {
+    console.warn("Could not dynamically fetch Groq models list:", error);
+  }
+
+  return "llama3-8b-8192";
+}
 
 export async function POST(request: Request) {
   const supabase = await createServerClient();
@@ -56,28 +75,18 @@ export async function POST(request: Request) {
   const accountContext = `Client Account Data: Balance = ${balance} ${currency}, Equity = ${equity} ${currency}, Connection Status = CONNECTED. Server = ${account.broker_server || "unavailable"}, Leverage = ${leverage}. Use these exact balance/equity figures when discussing risk percentages, dollar limits, and lot sizes.`;
   const groq = new OpenAI({ apiKey: process.env.GROQ_API_KEY, baseURL: "https://api.groq.com/openai/v1" });
   try {
-    let reply = "";
-    let lastError: unknown = null;
-
-    for (const model of modelsToTry) {
-      try {
-        const response = await groq.chat.completions.create({
-          model,
-          messages: [{ role: "system", content: `${systemPrompt}\n\n${accountContext}` }, ...messages],
-          temperature: 0.6,
-          max_tokens: 1500,
-        });
-        reply = response.choices?.[0]?.message?.content?.trim() || "";
-        if (reply) break;
-        console.error(`Groq model ${model} returned an empty completion:`, JSON.stringify(response));
-      } catch (error) {
-        console.warn(`Groq model ${model} failed, attempting fallback...`, error);
-        lastError = error;
-      }
-    }
-
+    const activeModel = await getAvailableGroqModel(groq);
+    console.log(`Using active Groq model: ${activeModel}`);
+    const response = await groq.chat.completions.create({
+      model: activeModel,
+      messages: [{ role: "system", content: `${systemPrompt}\n\n${accountContext}` }, ...messages],
+      temperature: 0.6,
+      max_tokens: 1500,
+    });
+    const reply = response.choices?.[0]?.message?.content?.trim();
     if (!reply) {
-      throw lastError || new Error("All Groq model endpoints failed.");
+      console.error("Groq API returned an empty completion content:", JSON.stringify(response));
+      return NextResponse.json({ error: "Empty response from AI engine." }, { status: 500 });
     }
     return NextResponse.json({ role: "assistant", content: reply, account: { balance, equity, currency, leverage, status: account.connection_status } });
   } catch (error: any) {
