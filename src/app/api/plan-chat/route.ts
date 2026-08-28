@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       model: activeModel,
       messages: [{ role: "system", content: `${systemPrompt}\n\n${accountContext}` }, ...messages],
       temperature: 0.6,
-      max_tokens: 1500,
+      max_completion_tokens: 512,
     });
     const reply = response.choices?.[0]?.message?.content?.trim();
     if (!reply) {
