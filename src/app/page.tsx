@@ -8,6 +8,7 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
 import Reveal from "@/components/Reveal";
+import AdSlot from "@/components/AdSlot";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -32,6 +33,13 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={0.25}>
           <Faq />
+        </Reveal>
+        <Reveal delay={0.27}>
+          <div className="w-full max-w-full overflow-hidden bg-slate-950 px-4 py-2 md:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+              <AdSlot className="max-w-3xl mx-auto" />
+            </div>
+          </div>
         </Reveal>
         <Reveal delay={0.3}>
           <section className="w-full max-w-full overflow-hidden border-b border-purple-500/20 bg-slate-950 px-4 py-12 md:px-6 md:py-20 lg:px-8">

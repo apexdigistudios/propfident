@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import "./globals.css";
 
@@ -35,6 +36,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className="w-full min-w-0 max-w-full overflow-x-hidden bg-slate-950 text-slate-100 antialiased">
+        <Script
+          id="adsense-init"
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUB_ID || "ca-pub-XXXXXXXXXXXXXXX"}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <div className="w-full max-w-full overflow-x-hidden relative">
           {children}
         </div>

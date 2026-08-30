@@ -91,9 +91,24 @@ Remember: Staying profitable means staying in the game. Never let a single trade
     setTimeout(() => setCopied(false), 1600);
   }
 
+  const stepTitles = [
+    "Account Basics",
+    "Daily Loss",
+    "Risk per Trade",
+    "Primary Asset",
+  ];
+
+  const stepIndex = step === "account" ? 0 : step === "daily" ? 1 : step === "perTrade" ? 2 : step === "asset" ? 3 : 4;
+  const canMoveForward = step !== "account" || Number(form.balance) > 0;
+
+  async function copyLotSize() {
+    await navigator.clipboard.writeText(`${suggestedLotSize.toFixed(2)} lots`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }
+
   return (
     <div className="mx-auto w-full max-w-5xl overflow-hidden">
-      {/* Teaser Banner */}
       <div className="mb-6 rounded-xl border border-blue-500/20 bg-blue-950/40 p-3 text-center text-sm text-blue-300">
         🚀 AI-Powered Live Assistant Coming Soon — Currently using Precision Formula Engine
       </div>
@@ -105,7 +120,23 @@ Remember: Staying profitable means staying in the game. Never let a single trade
       </header>
 
       <section className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-900/80 shadow-2xl shadow-black/20">
-        {/* Step Content */}
+        <div className="border-b border-slate-800 px-6 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+              {step === "complete" ? "Plan Ready" : `Step ${Math.min(stepIndex + 1, 4)} of 4`}
+            </span>
+            <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-purple-300">
+              {step === "complete" ? "Complete" : step !== "review" ? stepTitles[stepIndex] : "Review"}
+            </span>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+            <div
+              className="h-full rounded-full bg-gradient-brand transition-all duration-300"
+              style={{ width: `${step === "complete" ? 100 : (Math.min(stepIndex + 1, 4) / 4) * 100}%` }}
+            />
+          </div>
+        </div>
+
         <div className="flex-1 p-6 md:p-8">
           {step === "account" && (
             <div className="space-y-6">
@@ -247,42 +278,85 @@ Remember: Staying profitable means staying in the game. Never let a single trade
                   </div>
                 </dl>
               </div>
-              <p className="text-xs text-slate-500">Everything look good? Generate your plan!</p>
+              <p className="text-xs text-slate-500">Everything looks good? Generate your plan.</p>
             </div>
           )}
 
           {step === "complete" && (
-            <div className="space-y-6">
-              <div className="whitespace-pre-wrap rounded-lg border border-slate-700 bg-slate-950 p-6 font-mono text-sm text-slate-300">
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">Weekly Strategy Directive</p>
+                <p className="mt-3 text-sm leading-7 text-slate-200">
+                  Your goal this week is to protect your account and stay consistent. Never risk more than ${dailyMaxRisk.toFixed(2)} per day, and keep each trade capped at ${tradeMaxRisk.toFixed(2)}. Prioritize high-conviction setups on {assetData.label} and exit with a disciplined 2:1 reward plan.
+                </p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-slate-700 bg-slate-950 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Account Metrics</p>
+                  <dl className="mt-4 space-y-3 text-sm text-slate-300">
+                    <div className="flex justify-between gap-4"><dt>Balance</dt><dd className="font-bold text-white">${balance.toLocaleString()}</dd></div>
+                    <div className="flex justify-between gap-4"><dt>Daily Max Risk</dt><dd className="font-bold text-white">${dailyMaxRisk.toFixed(2)}</dd></div>
+                    <div className="flex justify-between gap-4"><dt>Max Trade Risk</dt><dd className="font-bold text-white">${tradeMaxRisk.toFixed(2)}</dd></div>
+                    <div className="flex justify-between gap-4"><dt>Suggested Base Lot</dt><dd className="font-bold text-purple-300">{suggestedLotSize.toFixed(2)} lots</dd></div>
+                  </dl>
+                </div>
+
+                <div className="rounded-xl border border-slate-700 bg-slate-950 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Quick Risk Notes</p>
+                  <ul className="mt-4 space-y-3 text-sm text-slate-300">
+                    <li>• Account type: {form.accountType.charAt(0).toUpperCase() + form.accountType.slice(1)}</li>
+                    <li>• Daily loss cap: {dailyRiskPct}%</li>
+                    <li>• Risk per trade: {tradeRiskPct}%</li>
+                    <li>• Primary asset: {assetData.label}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm leading-7 text-amber-100">
+                💡 Note: Market volatility varies. Always use our Position Size Calculator before opening a trade to calculate precise lot sizes based on your exact stop-loss pips.
+              </div>
+
+              <div className="rounded-xl border border-slate-700 bg-slate-950 p-4 font-mono text-xs leading-6 text-slate-300">
                 {planOutput}
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer Navigation */}
         <div className="flex flex-col gap-3 border-t border-slate-800 p-6">
           {step === "complete" ? (
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
               <button
+                type="button"
+                onClick={copyLotSize}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 px-5 py-3 text-sm font-bold text-purple-300 transition hover:bg-purple-500/20"
+              >
+                <Copy className="h-4 w-4" />
+                {copied ? <><Check className="h-4 w-4" /> Copied</> : "Copy Lot Size"}
+              </button>
+              <button
+                type="button"
                 onClick={copyPlan}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 px-5 py-3 text-sm font-bold text-purple-300 transition hover:bg-purple-500/20"
               >
                 <Copy className="h-4 w-4" />
-                {copied ? <><Check className="h-4 w-4" /> Copied</> : "Copy Entire Plan"}
+                Copy Entire Plan
               </button>
               <button
+                type="button"
                 onClick={reset}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white transition hover:brightness-110"
               >
                 <RotateCcw className="h-4 w-4" />
-                Re-calculate Plan
+                Start Over / Re-Calculate
               </button>
             </div>
           ) : (
             <div className="flex gap-3">
               {step !== "account" && (
                 <button
+                  type="button"
                   onClick={goBack}
                   className="rounded-xl border border-slate-700 bg-slate-800 px-5 py-3 text-sm font-bold text-slate-200 transition hover:bg-slate-700"
                 >
@@ -290,10 +364,12 @@ Remember: Staying profitable means staying in the game. Never let a single trade
                 </button>
               )}
               <button
+                type="button"
                 onClick={step === "review" ? () => setStep("complete") : goNext}
-                className="flex-1 rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white transition hover:brightness-110"
+                disabled={!canMoveForward && step === "account"}
+                className="flex-1 rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {step === "review" ? "Generate My Plan" : "Next"}
+                {step === "review" ? "Calculate Weekly Plan" : "Next"}
               </button>
             </div>
           )}
