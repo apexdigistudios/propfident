@@ -15,14 +15,5 @@ export default async function PropShieldPage() {
     .eq("id", user.id)
     .maybeSingle();
 
-  const { data: account } = await supabase
-    .from("mt5_accounts")
-    .select("id")
-    .eq("user_id", user.id)
-    .eq("platform", "MT5")
-    .eq("is_active", true)
-    .order("updated_at", { ascending: false })
-    .maybeSingle();
-
-  return <TradePlanGenerator isFreeTier={(profile?.subscription_tier || "free") === "free"} userId={user.id} accountId={account?.id} />;
+  return <TradePlanGenerator isFreeTier={(profile?.subscription_tier || "free") === "free"} userId={user.id} />;
 }

@@ -1,84 +1,303 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { Bot, Check, Copy, Lock, Send, Sparkles, User, X } from "lucide-react";
-import Link from "next/link";
+import { Copy, Check, RotateCcw } from "lucide-react";
+import { useState } from "react";
 
-type Message = { role: "user" | "assistant"; content: string };
-const FREE_USAGE_PREFIX = "propfident:free-ai-plan-usage:";
-const fastTrackMessage = "I have provided enough details. Generate my full step-by-step prop trading plan now.";
+type StepKey = "account" | "daily" | "perTrade" | "asset";
 
-export function TradePlanGenerator({ isFreeTier, userId, accountId }: { isFreeTier: boolean; userId: string; accountId?: string }) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [freeGenerationsUsed, setFreeGenerationsUsed] = useState(0);
+const ASSETS = [
+  { id: "eur-usd", label: "EUR/USD", defaultStopLoss: 15 },
+  { id: "gbp-usd", label: "GBP/USD", defaultStopLoss: 15 },
+  { id: "xau-usd", label: "XAU/USD", defaultStopLoss: 25 },
+  { id: "us30-nas100", label: "US30/NAS100", defaultStopLoss: 30 },
+];
+
+export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean; userId: string }) {
+  const [step, setStep] = useState<StepKey | "review" | "complete">("account");
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [form, setForm] = useState({
+    accountType: "evaluation",
+    balance: "10000",
+    dailyRiskPct: "3",
+    tradeRiskPct: "1",
+    asset: "eur-usd",
+  });
 
-  useEffect(() => {
-    if (isFreeTier && window.localStorage.getItem(`${FREE_USAGE_PREFIX}${userId}`) === "1") setFreeGenerationsUsed(1);
-  }, [isFreeTier, userId]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  const blocked = isFreeTier && freeGenerationsUsed >= 1;
-
-  async function sendMessage(content = input) {
-    const trimmed = content.trim();
-    if (!trimmed || loading || blocked) return;
-    const nextMessages = [...messages, { role: "user", content: trimmed } satisfies Message];
-    setMessages(nextMessages);
-    setInput("");
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/plan-chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages, accountId }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "The plan service could not answer right now.");
-      setMessages((current) => [...current, { role: data.role, content: data.content }]);
-      if (isFreeTier && content === fastTrackMessage) {
-        setFreeGenerationsUsed(1);
-        window.localStorage.setItem(`${FREE_USAGE_PREFIX}${userId}`, "1");
-      }
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to reach Trade Assist.");
-    } finally {
-      setLoading(false);
-    }
+  function updateForm(key: string, value: string) {
+    setForm((current) => ({ ...current, [key]: value }));
   }
 
-  function submit(event: FormEvent) {
-    event.preventDefault();
-    void sendMessage();
+  function goNext() {
+    const steps: (StepKey | "review" | "complete")[] = ["account", "daily", "perTrade", "asset", "review"];
+    const idx = steps.indexOf(step as StepKey | "review" | "complete");
+    if (idx < steps.length - 1) setStep(steps[idx + 1] as StepKey | "review" | "complete");
   }
 
-  async function copyPlan(content: string) {
-    await navigator.clipboard.writeText(content);
+  function goBack() {
+    const steps: (StepKey | "review" | "complete")[] = ["account", "daily", "perTrade", "asset", "review"];
+    const idx = steps.indexOf(step as StepKey | "review" | "complete");
+    if (idx > 0) setStep(steps[idx - 1] as StepKey | "review" | "complete");
+  }
+
+  function reset() {
+    setStep("account");
+    setForm({ accountType: "evaluation", balance: "10000", dailyRiskPct: "3", tradeRiskPct: "1", asset: "eur-usd" });
+  }
+
+  const balance = Number(form.balance) || 10000;
+  const dailyRiskPct = Number(form.dailyRiskPct) || 3;
+  const tradeRiskPct = Number(form.tradeRiskPct) || 1;
+  const dailyMaxRisk = (balance * dailyRiskPct) / 100;
+  const tradeMaxRisk = (balance * tradeRiskPct) / 100;
+  const assetData = ASSETS.find((a) => a.id === form.asset) || ASSETS[0];
+  const suggestedLotSize = Math.max(0.01, Math.round((tradeMaxRisk / assetData.defaultStopLoss) * 100) / 100);
+
+  const planOutput = `PROPFIDENT WEEKLY TRADING PLAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Account: ${form.accountType.charAt(0).toUpperCase() + form.accountType.slice(1)} Account
+Starting Balance: $${balance.toLocaleString()}
+
+RISK PARAMETERS
+────────────────
+Daily Risk Limit: $${dailyMaxRisk.toFixed(2)} (${dailyRiskPct}% of balance)
+Risk Per Trade: $${tradeMaxRisk.toFixed(2)} (${tradeRiskPct}% of balance)
+Primary Asset: ${assetData.label}
+Suggested Lot Size: ${suggestedLotSize} lots
+
+WEEKLY STRATEGY DIRECTIVE
+──────────────────────────
+Your goal this week is to grow your account safely and consistently. Never risk more than $${dailyMaxRisk.toFixed(2)} per day—this is your capital preservation line. On each trade, target ${tradeRiskPct}% risk ($${tradeMaxRisk.toFixed(2)}), which means if your stop loss is ${assetData.defaultStopLoss} pips away, use ${suggestedLotSize} lots.
+
+Execute only high-conviction trades on ${assetData.label}. Close winners at 2:1 reward-to-risk. If you hit your daily loss limit, stop trading—wait for tomorrow. Preserve your equity above all else.
+
+ACCOUNT PARAMETER SUMMARY
+─────────────────────────
+Starting Balance:             $${balance.toLocaleString()}
+Max Daily Loss Allowed:       $${dailyMaxRisk.toFixed(2)}
+Max Risk Per Individual Trade: $${tradeMaxRisk.toFixed(2)}
+Recommended Lot Size:         ${suggestedLotSize} lots
+Target Stop Loss Pips:        ${assetData.defaultStopLoss} pips
+
+💡 RISK ADVISORY
+─────────────────
+Market volatility varies daily. Always use our Position Size Calculator before opening a trade to calculate precise lot sizes based on your exact stop-loss pips. This plan is a framework—adapt it to real market conditions.
+
+Remember: Staying profitable means staying in the game. Never let a single trade ruin your week.`;
+
+  async function copyPlan() {
+    await navigator.clipboard.writeText(planOutput);
     setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
+    setTimeout(() => setCopied(false), 1600);
   }
 
   return (
-    <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6 overflow-hidden">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">Trade Assist V2</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Prop Shield strategist</h1><p className="mt-2 max-w-2xl text-sm text-slate-400">Have a focused conversation with your risk strategist, then turn your live MT5 numbers into a practical plan.</p></div>
-        <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold ${isFreeTier ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"}`}><Sparkles className="h-3.5 w-3.5" />{isFreeTier ? `Plan Usage: ${freeGenerationsUsed}/1` : "Unlimited turns"}</span>
+    <div className="mx-auto w-full max-w-5xl overflow-hidden">
+      {/* Teaser Banner */}
+      <div className="mb-6 rounded-xl border border-blue-500/20 bg-blue-950/40 p-3 text-center text-sm text-blue-300">
+        🚀 AI-Powered Live Assistant Coming Soon — Currently using Precision Formula Engine
+      </div>
+
+      <header className="mb-6">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">Trade Assist V2</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Prop Shield Questionnaire</h1>
+        <p className="mt-2 max-w-2xl text-sm text-slate-400">Answer a few quick questions and generate your personalized weekly trading plan instantly.</p>
       </header>
 
       <section className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-900/80 shadow-2xl shadow-black/20">
-        <div className="flex items-center gap-3 border-b border-slate-800 px-5 py-4"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/15 text-purple-300"><Bot className="h-5 w-5" /></div><div><p className="text-sm font-bold text-white">Propfident Risk Strategist</p><p className="text-xs text-emerald-400">Live account context enabled</p></div></div>
-        <div className="flex-1 space-y-4 overflow-y-auto p-4 md:p-6">
-          {!messages.length && <div className="mx-auto max-w-xl py-12 text-center"><Sparkles className="mx-auto h-8 w-8 text-purple-400" /><h2 className="mt-4 text-xl font-bold text-white">Let&apos;s protect the account first.</h2><p className="mt-2 text-sm leading-6 text-slate-400">Tell me your prop firm rules, trading style, and risk comfort. I&apos;ll ask short questions before building the plan.</p></div>}
-          {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}><div className={`flex max-w-[90%] gap-3 rounded-2xl px-4 py-3 text-sm leading-6 md:max-w-[78%] ${message.role === "user" ? "bg-purple-600/25 text-purple-50" : "border border-slate-800 bg-slate-950/80 text-slate-300"}`}>{message.role === "assistant" && <Bot className="mt-1 h-4 w-4 shrink-0 text-purple-400" />}<div className="min-w-0 whitespace-pre-wrap">{message.content}{message.role === "assistant" && /daily loss|lot size|execution rules/i.test(message.content) && <button type="button" onClick={() => void copyPlan(message.content)} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-bold text-purple-300"><Copy className="h-3.5 w-3.5" />{copied ? <><Check className="h-3.5 w-3.5" />Copied</> : "Copy Plan"}</button>}</div>{message.role === "user" && <User className="mt-1 h-4 w-4 shrink-0 text-purple-300" />}</div></div>)}
-          {loading && <div className="flex items-center gap-2 text-sm text-slate-500"><Bot className="h-4 w-4 text-purple-400" />Thinking through your risk...</div>}
-          <div ref={bottomRef} />
+        {/* Step Content */}
+        <div className="flex-1 p-6 md:p-8">
+          {step === "account" && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-white">Account Type</label>
+                <div className="mt-3 flex gap-3">
+                  {["evaluation", "funded"].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => updateForm("accountType", type)}
+                      className={`flex-1 rounded-lg border px-4 py-3 text-sm font-bold transition ${
+                        form.accountType === type
+                          ? "border-purple-500 bg-purple-500/20 text-purple-300"
+                          : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600"
+                      }`}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-white">Starting Balance ($)</label>
+                <input
+                  type="number"
+                  min="100"
+                  step="100"
+                  value={form.balance}
+                  onChange={(e) => updateForm("balance", e.target.value)}
+                  className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {step === "daily" && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-white">Max Daily Loss Limit</label>
+                <p className="mt-1 text-xs text-slate-400">Choose your daily risk tolerance as a percentage of your balance.</p>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {["3", "4", "5"].map((pct) => (
+                    <button
+                      key={pct}
+                      onClick={() => updateForm("dailyRiskPct", pct)}
+                      className={`rounded-lg border px-4 py-3 text-sm font-bold transition ${
+                        form.dailyRiskPct === pct
+                          ? "border-purple-500 bg-purple-500/20 text-purple-300"
+                          : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600"
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-slate-500">
+                  Daily Loss Limit: ${((Number(form.balance) * Number(form.dailyRiskPct)) / 100).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {step === "perTrade" && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-white">Risk Per Trade</label>
+                <p className="mt-1 text-xs text-slate-400">Choose the risk percentage per individual trade.</p>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {["0.5", "1", "1.5"].map((pct) => (
+                    <button
+                      key={pct}
+                      onClick={() => updateForm("tradeRiskPct", pct)}
+                      className={`rounded-lg border px-4 py-3 text-sm font-bold transition ${
+                        form.tradeRiskPct === pct
+                          ? "border-purple-500 bg-purple-500/20 text-purple-300"
+                          : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600"
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-slate-500">
+                  Trade Risk Amount: ${((Number(form.balance) * Number(form.tradeRiskPct)) / 100).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {step === "asset" && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-white">Primary Asset</label>
+                <p className="mt-1 text-xs text-slate-400">Choose your main trading pair or instrument.</p>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {ASSETS.map((asset) => (
+                    <button
+                      key={asset.id}
+                      onClick={() => updateForm("asset", asset.id)}
+                      className={`rounded-lg border px-4 py-3 text-sm font-bold transition ${
+                        form.asset === asset.id
+                          ? "border-purple-500 bg-purple-500/20 text-purple-300"
+                          : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600"
+                      }`}
+                    >
+                      {asset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === "review" && (
+            <div className="space-y-6">
+              <div className="rounded-lg border border-slate-700 bg-slate-950 p-6">
+                <h3 className="text-lg font-bold text-white">Review Your Answers</h3>
+                <dl className="mt-4 space-y-3">
+                  <div className="flex justify-between">
+                    <dt className="text-sm text-slate-400">Account Type</dt>
+                    <dd className="text-sm font-bold text-white">{form.accountType.charAt(0).toUpperCase() + form.accountType.slice(1)}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-sm text-slate-400">Balance</dt>
+                    <dd className="text-sm font-bold text-white">${Number(form.balance).toLocaleString()}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-sm text-slate-400">Daily Risk Limit</dt>
+                    <dd className="text-sm font-bold text-white">{form.dailyRiskPct}%</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-sm text-slate-400">Risk Per Trade</dt>
+                    <dd className="text-sm font-bold text-white">{form.tradeRiskPct}%</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-sm text-slate-400">Primary Asset</dt>
+                    <dd className="text-sm font-bold text-white">{ASSETS.find((a) => a.id === form.asset)?.label}</dd>
+                  </div>
+                </dl>
+              </div>
+              <p className="text-xs text-slate-500">Everything look good? Generate your plan!</p>
+            </div>
+          )}
+
+          {step === "complete" && (
+            <div className="space-y-6">
+              <div className="whitespace-pre-wrap rounded-lg border border-slate-700 bg-slate-950 p-6 font-mono text-sm text-slate-300">
+                {planOutput}
+              </div>
+            </div>
+          )}
         </div>
-        {error && <div role="alert" className="flex items-start justify-between gap-4 border-t border-rose-500/20 bg-rose-950/20 px-5 py-3 text-sm text-rose-300"><p>{error}</p><button type="button" onClick={() => setError(null)} aria-label="Dismiss error" className="shrink-0 text-rose-300 transition hover:text-white"><X className="h-4 w-4" /></button></div>}
-        {blocked ? <div className="flex flex-col gap-3 border-t border-slate-800 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-2 text-sm text-amber-300"><Lock className="h-4 w-4" />Your free plan generation is complete.</div><Link href="/pricing" className="inline-flex items-center justify-center rounded-lg bg-gradient-brand px-4 py-2 text-sm font-bold text-white">Upgrade for unlimited plans</Link></div> : <><div className="flex flex-wrap gap-2 border-t border-slate-800 px-4 pt-4"><button type="button" onClick={() => void sendMessage(fastTrackMessage)} disabled={loading} className="inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-bold text-purple-300 disabled:opacity-50"><Sparkles className="h-3.5 w-3.5" />Build Plan Now</button></div><form onSubmit={submit} className="flex gap-2 p-4"><input value={input} onChange={(event) => setInput(event.target.value)} disabled={loading} placeholder="Tell your strategist about your rules or risk style..." className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none" /><button type="submit" disabled={loading || !input.trim()} aria-label="Send message" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-4 w-4" /></button></form></>}
+
+        {/* Footer Navigation */}
+        <div className="flex flex-col gap-3 border-t border-slate-800 p-6">
+          {step === "complete" ? (
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <button
+                onClick={copyPlan}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 px-5 py-3 text-sm font-bold text-purple-300 transition hover:bg-purple-500/20"
+              >
+                <Copy className="h-4 w-4" />
+                {copied ? <><Check className="h-4 w-4" /> Copied</> : "Copy Entire Plan"}
+              </button>
+              <button
+                onClick={reset}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white transition hover:brightness-110"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Re-calculate Plan
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              {step !== "account" && (
+                <button
+                  onClick={goBack}
+                  className="rounded-xl border border-slate-700 bg-slate-800 px-5 py-3 text-sm font-bold text-slate-200 transition hover:bg-slate-700"
+                >
+                  Back
+                </button>
+              )}
+              <button
+                onClick={step === "review" ? () => setStep("complete") : goNext}
+                className="flex-1 rounded-xl bg-gradient-brand px-5 py-3 text-sm font-bold text-white transition hover:brightness-110"
+              >
+                {step === "review" ? "Generate My Plan" : "Next"}
+              </button>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
