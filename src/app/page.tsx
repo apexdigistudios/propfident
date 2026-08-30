@@ -38,7 +38,7 @@ export default function HomePage() {
             <div className="mx-auto grid w-full max-w-7xl items-center gap-8 overflow-hidden rounded-2xl border border-purple-500/30 bg-slate-900/90 p-5 shadow-[0_0_55px_rgba(124,58,237,0.14)] md:grid-cols-2 md:gap-12 md:p-8 lg:p-10">
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-purple-500/20 bg-slate-950">
                 <Image
-                  src="/images/pdf.png"
+                  src="/images/bookpdf.png"
                   alt="Preview of the Propfident trading risk management guide"
                   fill
                   sizes="(max-width: 767px) 100vw, 50vw"
@@ -57,7 +57,7 @@ export default function HomePage() {
                 </p>
                 <a
                   href="/images/bookpdf.png"
-                  download="propfident-risk-management-guide.png"
+                  download="The Seven Figure Funded Trader.png"
                   className="mt-6 inline-flex items-center justify-center rounded-lg bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
                 >
                   Get Premium Access

@@ -29,7 +29,7 @@ export default function Pricing() {
             </ul>
             <div className="mt-8">
               <ShimmerButton href="/dashboard" className="w-full justify-center">
-                Launch Dashboard
+                Get Free Access
               </ShimmerButton>
             </div>
           </MagicCard>
