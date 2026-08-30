@@ -34,11 +34,6 @@ const questions = [
     answer:
       "Propfident supports all major prop firm drawdown models across MT4 and MT5 platforms, including FTMO, Topstep, FundedNext, Apex, The5ers, and retail brokers.",
   },
-  {
-    question: "Can I cancel my subscription at any time?",
-    answer:
-      "Yes. You can manage or cancel your subscription at any time directly from your account settings with no hidden fees.",
-  },
 ] as const;
 
 export default function Faq() {

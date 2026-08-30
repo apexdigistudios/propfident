@@ -47,22 +47,20 @@ export default function HomePage() {
               </div>
               <div>
                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
-                  FREE TRADING GUIDE
+                   ADVANCED PLAYBOOK
                 </span>
                 <h2 className="mt-3 text-3xl font-extrabold tracking-tighter text-white sm:text-4xl">
-                  Master Prop Firm Risk Management
+                  The Seven Figure Funded Trader
                 </h2>
                 <p className="mt-4 text-base leading-relaxed text-slate-400 md:text-lg">
-                  Download our comprehensive PDF guide on account sizing,
-                  drawdown prevention, and rule discipline. Designed for traders
-                  aiming for consistent payouts.
+                  Master the step by step blueprint millionaire traders use to secure over $4,500,000 in prop firm payouts.
                 </p>
                 <a
-                  href="/images/pdf.png"
+                  href="/images/bookpdf.png"
                   download="propfident-risk-management-guide.png"
                   className="mt-6 inline-flex items-center justify-center rounded-lg bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
                 >
-                  Download PDF Guide
+                  Get Premium Access
                 </a>
               </div>
             </div>
