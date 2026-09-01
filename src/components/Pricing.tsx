@@ -1,11 +1,15 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { useState } from "react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { pricingTiers } from "@/lib/constants/pricing";
+import EmailCaptureModal from "@/components/EmailCaptureModal";
 
 export default function Pricing() {
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+
   return (
     <section id="pricing" className="scroll-mt-20 border-b border-slate-200 bg-white py-16 md:py-24 dark:border-purple-500/20 dark:bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -45,12 +49,17 @@ export default function Pricing() {
                 <li className="flex gap-2 text-sm text-slate-600 dark:text-slate-400"><span className="text-purple-400">✓</span> Priority support</li>
               </ul>
             </div>
-            <button type="button" disabled className="mt-8 w-full rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 text-sm font-bold text-slate-500 transition dark:border-purple-500/20 dark:bg-slate-800 dark:text-slate-400" title="Coming soon">
-              Stay Tuned
+            <button
+              type="button"
+              onClick={() => setEmailModalOpen(true)}
+              className="mt-8 w-full rounded-xl border border-purple-500/30 bg-purple-500/10 px-5 py-3 text-sm font-bold text-purple-300 transition hover:bg-purple-500/20"
+            >
+              Get Notified
             </button>
           </div>
         </div>
       </div>
+      <EmailCaptureModal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} source="pricing_waitlist" />
     </section>
   );
 }
