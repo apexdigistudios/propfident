@@ -22,7 +22,7 @@ export default function AdSlot({
       const script = document.createElement('script');
       script.src = scriptSrc;
       script.async = true;
-      script.onError = () => {
+      script.onerror = () => {
         console.error(`Failed to load script from ${scriptSrc}`);
       };
       containerRef.current.appendChild(script);
