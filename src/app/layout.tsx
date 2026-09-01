@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import AdSlot from "@/components/AdSlot";
 import "./globals.css";
 
 export const viewport = {
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           strategy="afterInteractive"
         />
         <div className="relative w-full">{children}</div>
+        <AdSlot />
       </body>
     </html>
   );

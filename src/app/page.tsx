@@ -8,7 +8,6 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
 import Reveal from "@/components/Reveal";
-import AdSlot from "@/components/AdSlot";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -50,44 +49,33 @@ export default function HomePage() {
           <Faq />
         </Reveal>
         <Reveal delay={0.27}>
-          <div className="w-full max-w-full overflow-hidden bg-slate-950 px-4 py-2 md:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-              <AdSlot className="max-w-3xl mx-auto" />
-            </div>
-          </div>
-        </Reveal>
-        <Reveal delay={0.3}>
-          <section className="w-full max-w-full border-b border-purple-500/20 bg-slate-950 px-4 py-12 md:px-6 md:py-20 lg:px-8">
-            <div className="mx-auto grid w-full max-w-3xl items-center gap-6 overflow-hidden rounded-2xl border border-purple-500/30 bg-slate-900/90 p-4 shadow-[0_0_55px_rgba(124,58,237,0.14)] md:grid-cols-[minmax(0,0.95fr)_1.05fr] md:gap-8 md:p-6 lg:max-w-4xl lg:p-8">
-              <div className="relative mx-auto flex max-h-64 w-full max-w-md items-center justify-center overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 shadow-xl shadow-purple-950/30">
-                <div className="relative aspect-[4/5] w-full max-w-[320px] overflow-hidden rounded-xl">
-                  <Image
-                    src="/images/bookpdf.png"
-                    alt="Preview of the Propfident trading risk management guide"
-                    fill
-                    sizes="(max-width: 767px) 100vw, 32vw"
-                    className="object-cover"
-                  />
-                </div>
+          <section className="w-full border-t border-b border-purple-500/20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 py-14 md:px-6 md:py-20 lg:px-8">
+            <div className="mx-auto max-w-5xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-purple-300">
+                Free Guide
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                📥 Download The Ultimate Prop Firm Risk Management Playbook (PDF)
+              </h2>
+
+              <div className="mt-8 flex justify-center">
+                <Image
+                  src="/images/bookpdf.png"
+                  alt="Propfident risk management playbook"
+                  width={760}
+                  height={980}
+                  priority
+                  className="mx-auto w-full max-w-md rounded-[1.5rem] object-contain drop-shadow-[0_30px_60px_rgba(76,29,149,0.65)]"
+                />
               </div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
-                  ADVANCED PLAYBOOK
-                </span>
-                <h2 className="mt-3 text-3xl font-extrabold tracking-tighter text-white sm:text-4xl">
-                  The Seven Figure Funded Trader
-                </h2>
-                <p className="mt-4 text-base leading-relaxed text-slate-400 md:text-lg">
-                  Master the step-by-step blueprint millionaire traders use to secure over $4,500,000 in prop firm payouts.
-                </p>
-                <a
-                  href="/images/bookpdf.png"
-                  download="The_Seven_Figure_Funded_Trader.pdf"
-                  className="mt-6 inline-flex items-center justify-center rounded-lg bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
-                >
-                  Download Free PDF
-                </a>
-              </div>
+
+              <a
+                href="/images/bookpdf.png"
+                download="Prop_Firm_Risk_Management_Playbook.pdf"
+                className="mt-8 inline-flex items-center justify-center rounded-xl bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
+              >
+                Download Free Guide
+              </a>
             </div>
           </section>
         </Reveal>
