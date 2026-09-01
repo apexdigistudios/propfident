@@ -49,30 +49,30 @@ export default function HomePage() {
           <Faq />
         </Reveal>
         <Reveal delay={0.27}>
-          <section className="w-full border-t border-b border-purple-500/20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 py-14 md:px-6 md:py-20 lg:px-8">
+          <section className="w-full border-t border-b border-purple-500/20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 py-8 md:px-6 md:py-12 lg:px-8">
             <div className="mx-auto max-w-5xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-purple-300">
                 Free Guide
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl">
                 📥 Download The Ultimate Prop Firm Risk Management Playbook (PDF)
               </h2>
 
-              <div className="mt-8 flex justify-center">
+              <div className="mt-5 flex justify-center">
                 <Image
                   src="/images/bookpdf.png"
                   alt="Propfident risk management playbook"
                   width={760}
                   height={980}
                   priority
-                  className="mx-auto w-full max-w-md rounded-[1.5rem] object-contain drop-shadow-[0_30px_60px_rgba(76,29,149,0.65)]"
+                  className="mx-auto w-full max-w-[16rem] rounded-[1.25rem] object-contain drop-shadow-[0_25px_50px_rgba(76,29,149,0.6)] sm:max-w-xs"
                 />
               </div>
 
               <a
                 href="/images/bookpdf.png"
                 download="Prop_Firm_Risk_Management_Playbook.pdf"
-                className="mt-8 inline-flex items-center justify-center rounded-xl bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
+                className="mt-5 inline-flex items-center justify-center rounded-xl bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40"
               >
                 Download Free Guide
               </a>
