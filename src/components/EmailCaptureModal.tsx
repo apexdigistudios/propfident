@@ -29,7 +29,7 @@ export default function EmailCaptureModal({
 
     if (result.success) {
       setStatus("success");
-      setMessage(result.message);
+      setMessage(result.message || "Thank you! You have been added to the waitlist.");
       setEmail("");
       setTimeout(() => {
         onClose();
@@ -37,7 +37,7 @@ export default function EmailCaptureModal({
       }, 2000);
     } else {
       setStatus("error");
-      setMessage(result.error || "Failed to subscribe");
+      setMessage(result.error || "An unexpected error occurred. Please try again.");
     }
 
     setIsLoading(false);
