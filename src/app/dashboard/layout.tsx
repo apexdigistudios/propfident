@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
+  AlertTriangle,
   Calculator,
   LayoutDashboard,
   LogOut,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
+import { metricsFromAccountRow } from "@/lib/utils/drawdown";
 
 interface Profile {
   subscription_tier: string;
@@ -29,6 +31,15 @@ interface PropAccount {
   id: string;
   account_name: string;
   platform: string;
+  initial_balance?: string | number | null;
+  current_balance?: string | number | null;
+  current_equity?: string | number | null;
+  high_water_mark?: string | number | null;
+  max_total_drawdown_pct?: string | number | null;
+  max_daily_drawdown_pct?: string | number | null;
+  drawdown_type?: string | null;
+  daily_starting_balance?: string | number | null;
+  account_number?: string | null;
 }
 
 const navItems = [
@@ -50,6 +61,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [accounts, setAccounts] = useState<PropAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [loading, setLoading] = useState(true);
+  const [riskAlertOpen, setRiskAlertOpen] = useState(false);
+  const [riskAlert, setRiskAlert] = useState<{
+    currentDrawdownPct: number;
+    remainingDailyBufferUsd: number;
+    dailyLossLimitUsd: number;
+  } | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -71,12 +88,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       const { data: accounts } = await supabase
         .from("mt5_accounts")
-        .select("id, account_name, platform")
+        .select(
+          "id, account_name, platform, account_number, initial_balance, current_balance, current_equity, high_water_mark, max_total_drawdown_pct, max_daily_drawdown_pct, drawdown_type, daily_starting_balance"
+        )
         .eq("user_id", user.id)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
 
-      setAccounts(accounts || []);
+      setAccounts((accounts || []) as PropAccount[]);
       setSelectedAccount(accounts?.[0]?.id || "");
       setLoading(false);
     }
@@ -93,6 +112,52 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     if (item.href === "/dashboard") return pathname === item.href;
     return pathname.startsWith(item.href);
   })?.label || "Dashboard";
+
+  const selectedAccountData =
+    accounts.find((account) => account.id === selectedAccount) || accounts[0] || null;
+
+  useEffect(() => {
+    if (!selectedAccountData) {
+      setRiskAlertOpen(false);
+      setRiskAlert(null);
+      return;
+    }
+
+    const initialBalance = Number(selectedAccountData.initial_balance ?? 0);
+    const currentBalance = Number(selectedAccountData.current_balance ?? 0);
+    const currentEquity = Number(selectedAccountData.current_equity ?? 0);
+    const maxDailyDrawdownPct = Number(selectedAccountData.max_daily_drawdown_pct ?? 5);
+    const dailyStartingBalance = Number(
+      selectedAccountData.daily_starting_balance ?? initialBalance
+    );
+
+    const metrics = metricsFromAccountRow({
+      initial_balance: initialBalance,
+      current_balance: currentBalance,
+      current_equity: currentEquity,
+      high_water_mark: Number(selectedAccountData.high_water_mark ?? currentEquity),
+      max_total_drawdown_pct: Number(selectedAccountData.max_total_drawdown_pct ?? 10),
+      max_daily_drawdown_pct: maxDailyDrawdownPct,
+      drawdown_type: (selectedAccountData.drawdown_type as "static" | "trailing" | "balance-based") || "trailing",
+      daily_starting_balance: dailyStartingBalance,
+    });
+
+    const dailyLossLimitUsd = dailyStartingBalance * (maxDailyDrawdownPct / 100);
+    const currentDrawdownPct =
+      initialBalance > 0 ? ((initialBalance - currentEquity) / initialBalance) * 100 : 0;
+    const remainingDailyBufferUsd = Math.max(0, currentEquity - dailyLossLimitUsd);
+    const shouldAlert =
+      currentDrawdownPct >= 50 ||
+      metrics.dailyBufferUsd <= dailyLossLimitUsd * 0.8 ||
+      metrics.remainingBufferPct <= 50;
+
+    setRiskAlertOpen(shouldAlert);
+    setRiskAlert({
+      currentDrawdownPct,
+      remainingDailyBufferUsd,
+      dailyLossLimitUsd,
+    });
+  }, [selectedAccountData]);
 
   if (loading) {
     return (
@@ -233,6 +298,61 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
         </header>
+
+        {riskAlertOpen && riskAlert && (
+          <div className="fixed inset-x-4 top-20 z-40 mx-auto max-w-lg rounded-2xl border border-amber-500/40 bg-slate-900/95 p-5 shadow-2xl shadow-amber-950/30 backdrop-blur-md">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
+                <AlertTriangle className="h-5 w-5 text-amber-300" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-300">
+                  Equity Protection Alert
+                </p>
+                <h2 className="mt-2 text-xl font-bold text-white">Daily guardrails are tightening</h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Current Drawdown %</p>
+                    <p className="mt-2 text-lg font-bold text-white">
+                      {riskAlert.currentDrawdownPct.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Daily Buffer</p>
+                    <p className="mt-2 text-lg font-bold text-emerald-400">
+                      ${riskAlert.remainingDailyBufferUsd.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Daily Loss Limit</p>
+                    <p className="mt-2 text-lg font-bold text-amber-300">
+                      ${riskAlert.dailyLossLimitUsd.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-relaxed text-slate-300">
+                  Your account is approaching a risk threshold. Reduce exposure, avoid adding correlated trades, and reset your daily plan before the buffer closes.
+                </p>
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setRiskAlertOpen(false)}
+                    className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+                  >
+                    Dismiss
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRiskAlertOpen(false)}
+                    className="rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:brightness-110"
+                  >
+                    Acknowledge &amp; Set Guardrails
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 sm:p-5 md:p-6">
           <PwaInstallBanner />
