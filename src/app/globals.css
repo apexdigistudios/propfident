@@ -23,6 +23,11 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+  min-height: 100vh;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
 }
 
 body {
@@ -31,10 +36,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #020617;
   color: #f1f5f9;
-}
-
-html {
-  color-scheme: dark;
+  min-height: 100vh;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
 }
 
 /* Light mode uses lighter purple/indigo, dark mode uses deeper tones */

@@ -15,7 +15,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="w-full min-w-0 max-w-full overflow-x-hidden">
+      <main className="w-full min-h-screen min-w-0 max-w-full">
         <Reveal delay={0}>
           <Hero />
         </Reveal>
