@@ -62,10 +62,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [selectedAccount, setSelectedAccount] = useState("");
   const [loading, setLoading] = useState(true);
   const [riskAlertOpen, setRiskAlertOpen] = useState(false);
+  const [riskAlertDismissed, setRiskAlertDismissed] = useState(false);
+  const [accountLocked, setAccountLocked] = useState(false);
   const [riskAlert, setRiskAlert] = useState<{
-    currentDrawdownPct: number;
+    currentDailyDrawdownPct: number;
+    currentOverallDrawdownPct: number;
     remainingDailyBufferUsd: number;
     dailyLossLimitUsd: number;
+    totalDrawdownLimitUsd: number;
+    accountBalance: number;
+    accountEquity: number;
+    activeViolations: string[];
+    riskLevel: "Safe" | "Warning (Yellow)" | "Critical breach imminent (Red)";
   } | null>(null);
 
   useEffect(() => {
@@ -127,6 +135,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const currentBalance = Number(selectedAccountData.current_balance ?? 0);
     const currentEquity = Number(selectedAccountData.current_equity ?? 0);
     const maxDailyDrawdownPct = Number(selectedAccountData.max_daily_drawdown_pct ?? 5);
+    const maxTotalDrawdownPct = Number(selectedAccountData.max_total_drawdown_pct ?? 10);
     const dailyStartingBalance = Number(
       selectedAccountData.daily_starting_balance ?? initialBalance
     );
@@ -136,28 +145,54 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       current_balance: currentBalance,
       current_equity: currentEquity,
       high_water_mark: Number(selectedAccountData.high_water_mark ?? currentEquity),
-      max_total_drawdown_pct: Number(selectedAccountData.max_total_drawdown_pct ?? 10),
+      max_total_drawdown_pct: maxTotalDrawdownPct,
       max_daily_drawdown_pct: maxDailyDrawdownPct,
       drawdown_type: (selectedAccountData.drawdown_type as "static" | "trailing" | "balance-based") || "trailing",
       daily_starting_balance: dailyStartingBalance,
     });
 
     const dailyLossLimitUsd = dailyStartingBalance * (maxDailyDrawdownPct / 100);
-    const currentDrawdownPct =
-      initialBalance > 0 ? ((initialBalance - currentEquity) / initialBalance) * 100 : 0;
-    const remainingDailyBufferUsd = Math.max(0, currentEquity - dailyLossLimitUsd);
-    const shouldAlert =
-      currentDrawdownPct >= 50 ||
-      metrics.dailyBufferUsd <= dailyLossLimitUsd * 0.8 ||
-      metrics.remainingBufferPct <= 50;
+    const totalDrawdownLimitUsd = initialBalance * (maxTotalDrawdownPct / 100);
+    const dailyLossUsd = Math.max(0, dailyStartingBalance - currentEquity);
+    const overallLossUsd = Math.max(0, initialBalance - currentEquity);
+
+    const currentDailyDrawdownPct =
+      dailyLossLimitUsd > 0 ? (dailyLossUsd / dailyLossLimitUsd) * 100 : 0;
+    const currentOverallDrawdownPct =
+      initialBalance > 0 ? (overallLossUsd / initialBalance) * 100 : 0;
+
+    const remainingDailyBufferUsd = Math.max(0, dailyLossLimitUsd - dailyLossUsd);
+    const activeViolations: string[] = [];
+
+    if (currentDailyDrawdownPct >= 80) {
+      activeViolations.push("Daily loss >= 80% of daily max loss");
+    }
+    if (currentOverallDrawdownPct >= maxTotalDrawdownPct * 0.85) {
+      activeViolations.push("Overall loss >= 85% of max total drawdown");
+    }
+
+    const riskLevel: "Safe" | "Warning (Yellow)" | "Critical breach imminent (Red)" =
+      activeViolations.length === 0
+        ? "Safe"
+        : currentDailyDrawdownPct >= 100 || currentOverallDrawdownPct >= maxTotalDrawdownPct
+          ? "Critical breach imminent (Red)"
+          : "Warning (Yellow)";
+
+    const shouldAlert = !riskAlertDismissed && (currentDailyDrawdownPct >= 80 || currentOverallDrawdownPct >= maxTotalDrawdownPct * 0.85);
 
     setRiskAlertOpen(shouldAlert);
     setRiskAlert({
-      currentDrawdownPct,
+      currentDailyDrawdownPct,
+      currentOverallDrawdownPct,
       remainingDailyBufferUsd,
       dailyLossLimitUsd,
+      totalDrawdownLimitUsd,
+      accountBalance: currentBalance,
+      accountEquity: currentEquity,
+      activeViolations,
+      riskLevel,
     });
-  }, [selectedAccountData]);
+  }, [riskAlertDismissed, selectedAccountData]);
 
   if (loading) {
     return (
@@ -300,57 +335,101 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </header>
 
         {riskAlertOpen && riskAlert && (
-          <div className="fixed inset-x-4 top-20 z-40 mx-auto max-w-lg rounded-2xl border border-amber-500/40 bg-slate-900/95 p-5 shadow-2xl shadow-amber-950/30 backdrop-blur-md">
+          <div className="fixed inset-x-4 top-20 z-40 mx-auto max-w-2xl rounded-2xl border border-red-500/50 bg-gradient-to-r from-rose-950/90 via-amber-950/80 to-slate-900/95 p-5 shadow-[0_0_0_1px_rgba(251,146,60,0.25),0_25px_80px_rgba(127,29,29,0.45)] backdrop-blur-md">
             <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
-                <AlertTriangle className="h-5 w-5 text-amber-300" />
+              <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-full border border-red-400/50 bg-red-500/15 shadow-[0_0_18px_rgba(248,113,113,0.5)] animate-pulse">
+                <AlertTriangle className="h-5 w-5 text-red-200" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-300">
-                  Equity Protection Alert
-                </p>
-                <h2 className="mt-2 text-xl font-bold text-white">Daily guardrails are tightening</h2>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-200">
+                    Active risk monitor
+                  </p>
+                  <span className="rounded-full border border-red-400/40 bg-red-500/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-red-200 animate-pulse">
+                    Alert
+                  </span>
+                </div>
+                <h2 className="mt-2 text-xl font-bold text-white">Drawdown threshold reached</h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Current Drawdown %</p>
-                    <p className="mt-2 text-lg font-bold text-white">
-                      {riskAlert.currentDrawdownPct.toFixed(1)}%
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Balance</p>
+                    <p className="mt-2 text-base font-bold text-white">
+                      ${riskAlert.accountBalance.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Equity</p>
+                    <p className="mt-2 text-base font-bold text-amber-300">
+                      ${riskAlert.accountEquity.toFixed(2)}
                     </p>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Daily Buffer</p>
-                    <p className="mt-2 text-lg font-bold text-emerald-400">
+                    <p className="mt-2 text-base font-bold text-emerald-400">
                       ${riskAlert.remainingDailyBufferUsd.toFixed(2)}
                     </p>
                   </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Daily Loss Limit</p>
-                    <p className="mt-2 text-lg font-bold text-amber-300">
-                      ${riskAlert.dailyLossLimitUsd.toFixed(2)}
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Current Daily Drawdown %</p>
+                    <p className="mt-2 text-lg font-bold text-white">
+                      {riskAlert.currentDailyDrawdownPct.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Current Overall Drawdown %</p>
+                    <p className="mt-2 text-lg font-bold text-white">
+                      {riskAlert.currentOverallDrawdownPct.toFixed(1)}%
                     </p>
                   </div>
                 </div>
+
+                <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/80 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Active Violations / Risk Level</p>
+                    <span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${riskAlert.riskLevel === "Safe" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : riskAlert.riskLevel === "Warning (Yellow)" ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-red-500/30 bg-red-500/10 text-red-300"}`}>
+                      {riskAlert.riskLevel}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300">
+                    {riskAlert.activeViolations.length > 0
+                      ? riskAlert.activeViolations.join(" • ")
+                      : "No active drawdown violations"}
+                  </p>
+                </div>
+
                 <p className="mt-4 text-sm leading-relaxed text-slate-300">
-                  Your account is approaching a risk threshold. Reduce exposure, avoid adding correlated trades, and reset your daily plan before the buffer closes.
+                  Daily loss is at {riskAlert.currentDailyDrawdownPct.toFixed(1)}% of the daily cap and overall drawdown is at {riskAlert.currentOverallDrawdownPct.toFixed(1)}% of the total cap. Reduce size immediately and pause additional exposure.
                 </p>
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
                   <button
                     type="button"
-                    onClick={() => setRiskAlertOpen(false)}
+                    onClick={() => {
+                      setRiskAlertDismissed(true);
+                      setRiskAlertOpen(false);
+                    }}
                     className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
                   >
-                    Dismiss
+                    Acknowledge Risk
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRiskAlertOpen(false)}
-                    className="rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:brightness-110"
+                    onClick={() => setAccountLocked(true)}
+                    className="rounded-lg bg-gradient-to-r from-red-600 to-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-red-900/40 transition hover:brightness-110"
                   >
-                    Acknowledge &amp; Set Guardrails
+                    Lock Account / Pause Trading
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {accountLocked && (
+          <div className="mx-4 mt-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200 shadow-lg shadow-red-950/20 md:mx-6">
+            Trading lock is active: new trade entries are paused and lot-size copy actions will warn before continuing until risk returns to a safe range.
           </div>
         )}
 
