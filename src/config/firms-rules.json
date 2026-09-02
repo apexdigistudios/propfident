@@ -1,0 +1,107 @@
+[
+  {
+    "id": "ftmo",
+    "name": "FTMO",
+    "logoUrl": "/images/firms/ftmo.svg",
+    "affiliateUrl": "https://ftmo.com/",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 10,
+    "rules": {
+      "maxDailyDrawdown": 5,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 10,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 2,
+      "allowWeekendHolding": false,
+      "minTradingDays": 4,
+      "consistencyRule": "single_trade_profit",
+      "consistencyThreshold": 50,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "funding-pips",
+    "name": "FundingPips",
+    "logoUrl": "/images/firms/funding-pips.svg",
+    "affiliateUrl": "https://fundingpips.com/",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 10,
+    "rules": {
+      "maxDailyDrawdown": 5,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 10,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 2,
+      "allowWeekendHolding": false,
+      "minTradingDays": 5,
+      "consistencyRule": "single_trade_profit",
+      "consistencyThreshold": 50,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "topstep",
+    "name": "Topstep",
+    "logoUrl": "/images/firms/topstep.svg",
+    "affiliateUrl": "https://www.topstep.com/",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 10,
+    "rules": {
+      "maxDailyDrawdown": 4,
+      "dailyDrawdownType": "end_of_day",
+      "maxTotalDrawdown": 6,
+      "totalDrawdownType": "trailing_unrealized",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 0,
+      "allowWeekendHolding": false,
+      "minTradingDays": 5,
+      "consistencyRule": "single_trade_profit",
+      "consistencyThreshold": 50,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "the5ers",
+    "name": "The5ers",
+    "logoUrl": "/images/firms/the5ers.svg",
+    "affiliateUrl": "https://the5ers.com/",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 5,
+    "rules": {
+      "maxDailyDrawdown": 5,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 10,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 2,
+      "allowWeekendHolding": true,
+      "minTradingDays": 3,
+      "consistencyRule": "single_trade_profit",
+      "consistencyThreshold": 50,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "goat-funded-trader",
+    "name": "Goat Funded Trader",
+    "logoUrl": "/images/firms/goat-funded-trader.svg",
+    "affiliateUrl": "https://goatfundedtrader.com/",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 10,
+    "rules": {
+      "maxDailyDrawdown": 5,
+      "dailyDrawdownType": "static",
+      "maxTotalDrawdown": 10,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 2,
+      "allowWeekendHolding": false,
+      "minTradingDays": 5,
+      "consistencyRule": "single_trade_profit",
+      "consistencyThreshold": 50,
+      "lotSizeCap": null
+    }
+  }
+]
