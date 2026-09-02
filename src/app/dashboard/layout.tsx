@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -18,6 +18,7 @@ import {
   User as UserIcon,
   X,
 } from "lucide-react";
+import { Toaster, toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
 import { metricsFromAccountRow } from "@/lib/utils/drawdown";
@@ -44,12 +45,50 @@ interface PropAccount {
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Profile", href: "/dashboard/profile", icon: UserIcon },
   { label: "Account Intel", href: "/dashboard/account-intel", icon: Server },
   { label: "Prop Shield", href: "/dashboard/prop-shield", icon: ShieldAlert },
   { label: "Trade Assist", href: "/dashboard/trade-assist", icon: Calculator },
   { label: "Journal", href: "/dashboard/journal", icon: NotebookPen },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
+
+function playWarningChime() {
+  if (typeof window === "undefined") return;
+
+  try {
+    const AudioCtx = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = "sawtooth";
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    gain1.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 0.3);
+
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sawtooth";
+    osc2.frequency.setValueAtTime(1174.66, ctx.currentTime + 0.15);
+    gain2.gain.setValueAtTime(0.2, ctx.currentTime + 0.15);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(ctx.currentTime + 0.15);
+    osc2.stop(ctx.currentTime + 0.5);
+  } catch (err) {
+    console.warn("Audio Context playback failed:", err);
+  }
+}
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -64,6 +103,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [riskAlertOpen, setRiskAlertOpen] = useState(false);
   const [riskAlertDismissed, setRiskAlertDismissed] = useState(false);
   const [accountLocked, setAccountLocked] = useState(false);
+  const notificationFiredRef = useRef(false);
   const [riskAlert, setRiskAlert] = useState<{
     currentDailyDrawdownPct: number;
     currentOverallDrawdownPct: number;
@@ -135,9 +175,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     accounts.find((account) => account.id === selectedAccount) || accounts[0] || null;
 
   useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (!selectedAccountData) {
       setRiskAlertOpen(false);
       setRiskAlert(null);
+      notificationFiredRef.current = false;
       return;
     }
 
@@ -188,7 +237,38 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           ? "Critical breach imminent (Red)"
           : "Warning (Yellow)";
 
-    const shouldAlert = !riskAlertDismissed && (currentDailyDrawdownPct >= 80 || currentOverallDrawdownPct >= maxTotalDrawdownPct * 0.85);
+    const thresholdReached = currentDailyDrawdownPct >= 80 || currentOverallDrawdownPct >= maxTotalDrawdownPct * 0.85;
+    const shouldAlert = !riskAlertDismissed && thresholdReached;
+
+    if (!thresholdReached) {
+      notificationFiredRef.current = false;
+    } else if (!notificationFiredRef.current) {
+      notificationFiredRef.current = true;
+      if (currentDailyDrawdownPct >= 80) {
+        toast.error("⚠️ CRITICAL RISK WARNING: 80% Daily Loss Limit Reached!", {
+          description: "Pause trading immediately to protect your account equity.",
+          duration: 8000,
+          important: true,
+        });
+      } else {
+        toast.error("⚠️ CRITICAL RISK WARNING: Total Drawdown Threshold Reached!", {
+          description: "Reduce exposure immediately to avoid breaching your account limit.",
+          duration: 8000,
+          important: true,
+        });
+      }
+
+      if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+        new Notification("🚨 Propfident Equity Shield Alert", {
+          body: currentDailyDrawdownPct >= 80
+            ? `Warning: You have reached ${currentDailyDrawdownPct.toFixed(1)}% of your daily max loss limit!`
+            : `Warning: You have reached ${currentOverallDrawdownPct.toFixed(1)}% of your max total drawdown limit!`,
+          icon: "/favicon.ico",
+        });
+      }
+
+      playWarningChime();
+    }
 
     setRiskAlertOpen(shouldAlert);
     setRiskAlert({
@@ -217,6 +297,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-slate-950 text-white">
+      <Toaster richColors closeButton theme="dark" position="top-right" />
       <button
         type="button"
         onClick={() => setSidebarOpen((open) => !open)}
@@ -337,9 +418,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               {title}
             </h1>
             <div className="flex items-center gap-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-brand">
+              <Link
+                href="/dashboard/profile"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-brand transition hover:scale-105"
+                aria-label="Open your profile"
+              >
                 <UserIcon className="h-4 w-4 text-white" />
-              </div>
+              </Link>
             </div>
           </div>
         </header>

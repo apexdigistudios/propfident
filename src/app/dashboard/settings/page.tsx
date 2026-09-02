@@ -212,20 +212,70 @@ function AlertsTab({
 }
 
 function BillingTab({ profile }: { profile: ProfileState }) {
+  const tierLabel = profile.subscription_tier?.charAt(0).toUpperCase() + (profile.subscription_tier || "free").slice(1) || "Free";
+  const planMeta = {
+    free: { limit: 2, price: "$0", description: "Manual tracking + up to 2 connected accounts." },
+    pro: { limit: 3, price: "$49/mo", description: "Live sync and expanded monitoring for active traders." },
+    elite: { limit: "Unlimited", price: "$99/mo", description: "Unlimited accounts with premium coverage and priority access." },
+  };
+  const current = planMeta[profile.subscription_tier as keyof typeof planMeta] || planMeta.free;
+  const usage = profile.subscription_tier === "free" ? 1 : profile.subscription_tier === "pro" ? 2 : 8;
+
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-purple-500/20 bg-slate-800/50 p-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="rounded-2xl border border-purple-500/20 bg-slate-800/50 p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-bold text-white">
-              Current Plan: <span className="capitalize">{profile.subscription_tier}</span>
-            </p>
-            <p className="text-xs text-slate-400">Subscription tier is read from Supabase profiles.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-300">Current plan</p>
+            <h3 className="mt-2 text-2xl font-black text-white">{tierLabel}</h3>
+            <p className="mt-2 text-sm text-slate-400">{current.description}</p>
           </div>
-          <Link href="/dashboard" className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-xs font-bold text-slate-200">
-            Dashboard
-          </Link>
+          <div className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-right">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Price</p>
+            <p className="mt-2 text-xl font-black text-white">{current.price}</p>
+          </div>
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-bold text-white">Usage</p>
+          <span className="text-xs font-semibold text-slate-400">{typeof current.limit === "number" ? `${usage}/${current.limit}` : current.limit}</span>
+        </div>
+        <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-800">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-purple-500 to-cyan-400"
+            style={{ width: `${Math.min(100, (usage / (typeof current.limit === "number" ? current.limit : 1)) * 100)}%` }}
+          />
+        </div>
+        <p className="mt-3 text-xs text-slate-400">
+          {profile.subscription_tier === "free"
+            ? "Free tier includes up to 2 connected accounts before you need an upgrade."
+            : profile.subscription_tier === "pro"
+              ? "Pro keeps your active account count high enough for most evaluation stacks."
+              : "Elite keeps every account monitored without the extra plan ceiling."}
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-xl border border-purple-500/20 bg-slate-900/70 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Included accounts</p>
+          <p className="mt-3 text-2xl font-black text-white">{current.limit}</p>
+        </div>
+        <div className="rounded-xl border border-purple-500/20 bg-slate-900/70 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Alerts</p>
+          <p className="mt-3 text-2xl font-black text-white">Live</p>
+        </div>
+        <div className="rounded-xl border border-purple-500/20 bg-slate-900/70 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">AI support</p>
+          <p className="mt-3 text-2xl font-black text-white">{profile.subscription_tier === "free" ? "Locked" : "Enabled"}</p>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Link href="/dashboard" className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm font-bold text-slate-200 transition hover:bg-slate-800">
+          Back to dashboard
+        </Link>
       </div>
     </div>
   );

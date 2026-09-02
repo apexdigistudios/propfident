@@ -37,7 +37,7 @@ export default function NewTradePage() {
     stop_loss: "",
     take_profit: "",
     pnl: "",
-    status: "OPEN",
+    status: "WIN",
     setup_tag: "",
     notes: "",
   });
@@ -82,6 +82,9 @@ export default function NewTradePage() {
     setIsSubmitting(true);
     setToast(null);
 
+    const pnlValue = Number(formData.pnl || 0);
+    const normalizedPnl = formData.status === "LOSS" && pnlValue > 0 ? pnlValue * -1 : pnlValue;
+
     const result = await saveJournalTrade({
       account_id: formData.account_id || null,
       symbol: formData.symbol,
@@ -91,7 +94,7 @@ export default function NewTradePage() {
       stop_loss: formData.stop_loss ? Number(formData.stop_loss) : null,
       take_profit: formData.take_profit ? Number(formData.take_profit) : null,
       volume: Number(formData.volume),
-      pnl: formData.pnl ? Number(formData.pnl) : 0,
+      pnl: normalizedPnl,
       status: formData.status,
       notes: formData.notes,
       tags: formData.setup_tag ? [formData.setup_tag] : [],
@@ -159,8 +162,7 @@ export default function NewTradePage() {
       <div className="min-w-0">
         <h2 className="text-2xl font-bold text-white">Manual Trade Entry</h2>
         <p className="text-sm text-slate-400">
-          Persisted directly to the <code className="font-mono text-purple-300">trades</code>{" "}
-          table in Supabase.
+          Record your result and let Propfident handle the P&L sign correctly.
         </p>
       </div>
 
@@ -247,7 +249,7 @@ export default function NewTradePage() {
           />
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Status
+              Result
             </label>
             <select
               value={formData.status}
@@ -256,7 +258,7 @@ export default function NewTradePage() {
               }
               className="mt-1.5 w-full min-w-0 rounded-xl border border-purple-500/30 bg-slate-950 px-4 py-3 text-sm text-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
             >
-              {["OPEN", "WIN", "LOSS", "BE", "CLOSED"].map((status) => (
+              {["WIN", "LOSS"].map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>

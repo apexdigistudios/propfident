@@ -59,7 +59,14 @@ export default function ConnectAccountPage() {
 
   // Free tier is hard-locked at 0 accounts
   if (subscriptionTier === "free") {
-    return <LockedConnectCard accountCount={accountCount} onManual={() => setManualOpen(true)} manualOpen={manualOpen} onClose={() => setManualOpen(false)} />;
+    return (
+      <LockedConnectCard
+        accountCount={accountCount}
+        onManual={() => setManualOpen(true)}
+        manualOpen={manualOpen}
+        onClose={() => setManualOpen(false)}
+      />
+    );
   }
 
   return (

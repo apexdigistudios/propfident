@@ -37,6 +37,16 @@ export async function saveManualAccount(input: ManualAccountInput) {
     return { success: false, error: "Enter valid daily loss and overall drawdown limits." };
   }
 
+  const { data: existingAccounts } = await supabase
+    .from("mt5_accounts")
+    .select("id", { count: "exact" })
+    .eq("user_id", user.id)
+    .eq("is_active", true);
+
+  if ((existingAccounts || []).length >= 2) {
+    return { success: false, error: "Free tier allows up to 2 active manual accounts. Upgrade to add more." };
+  }
+
   const { data: account, error } = await supabase
     .from("mt5_accounts")
     .insert({
