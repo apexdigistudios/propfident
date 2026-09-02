@@ -102,6 +102,16 @@ export default function JournalPage() {
     }
 
     loadJournal();
+
+    const handleMetricsRefresh = () => {
+      setLoading(true);
+      void loadJournal();
+    };
+
+    window.addEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    return () => {
+      window.removeEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    };
   }, []);
 
   const showToast = (type: "success" | "error", message: string) => {

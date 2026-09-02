@@ -85,6 +85,25 @@ export default async function DashboardOverviewPage({
   }
 
   const totalPnl = tradesData.reduce((sum, trade) => sum + toNumber(trade.pnl), 0);
+  const initialBalance = toNumber(activeAccount?.initial_balance ?? 0);
+  const closedTradePnl = tradesData.reduce((sum, trade) => {
+    const tradePnl = toNumber(trade.pnl);
+    const isClosedTrade =
+      (trade as { status?: string | null }).status === "CLOSED" ||
+      (trade as { status?: string | null }).status === "WIN" ||
+      (trade as { status?: string | null }).status === "LOSS" ||
+      Boolean((trade as { close_time?: string | null }).close_time);
+    return isClosedTrade ? sum + tradePnl : sum;
+  }, 0);
+  const openTradePnl = tradesData.reduce((sum, trade) => {
+    const tradePnl = toNumber(trade.pnl);
+    const isOpenTrade =
+      (trade as { status?: string | null }).status === "OPEN" ||
+      (!((trade as { close_time?: string | null }).close_time) && !((trade as { status?: string | null }).status));
+    return isOpenTrade ? sum + tradePnl : sum;
+  }, 0);
+  const calculatedBalance = initialBalance + closedTradePnl;
+  const calculatedEquity = calculatedBalance + openTradePnl;
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-[1600px] space-y-8 text-slate-100">
@@ -123,7 +142,12 @@ export default async function DashboardOverviewPage({
         <UpgradeBanner message="No active prop account is connected yet. Connect an MT4/MT5 account to unlock live equity analytics and drawdown monitoring." />
       )}
 
-      <MetricsGrid account={activeAccount} totalPnl={totalPnl} />
+      <MetricsGrid
+        account={activeAccount}
+        totalPnl={totalPnl}
+        derivedBalance={calculatedBalance}
+        derivedEquity={calculatedEquity}
+      />
 
       {activeAccount ? <div className="rounded-2xl border border-purple-500/20 bg-slate-900/80 p-4 sm:p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">

@@ -7,8 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 /**
  * Subscribes to Supabase Realtime changes on `mt5_accounts` and `trades`
  * for the authenticated user. Any insert/update/delete triggers
- * `router.refresh()`, which re-runs server components so every derived
- * risk metric recalculates and propagates without a browser reload.
+ * `router.refresh()` and a custom dashboard refresh event so the live
+ * balance/equity widgets stay in sync without a page reload.
  */
 export function RealtimeSync({ userId }: { userId: string }) {
   const router = useRouter();
@@ -19,7 +19,7 @@ export function RealtimeSync({ userId }: { userId: string }) {
     const supabase = createClient();
 
     const channel = supabase
-      .channel(`propfident-sync-${userId}`)
+      .channel("schema-db-changes")
       .on(
         "postgres_changes",
         {
@@ -28,7 +28,10 @@ export function RealtimeSync({ userId }: { userId: string }) {
           table: "mt5_accounts",
           filter: `user_id=eq.${userId}`,
         },
-        () => router.refresh()
+        () => {
+          router.refresh();
+          window.dispatchEvent(new Event("dashboard-metrics-refresh"));
+        }
       )
       .on(
         "postgres_changes",
@@ -38,12 +41,17 @@ export function RealtimeSync({ userId }: { userId: string }) {
           table: "trades",
           filter: `user_id=eq.${userId}`,
         },
-        () => router.refresh()
+        () => {
+          router.refresh();
+          window.dispatchEvent(new Event("dashboard-metrics-refresh"));
+        }
       )
       .subscribe();
 
-    // Refresh when the tab regains focus so stale views re-sync too
-    const onFocus = () => router.refresh();
+    const onFocus = () => {
+      router.refresh();
+      window.dispatchEvent(new Event("dashboard-metrics-refresh"));
+    };
     window.addEventListener("focus", onFocus);
 
     return () => {

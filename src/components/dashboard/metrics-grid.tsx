@@ -16,12 +16,16 @@ type AccountMetrics = {
 export function MetricsGrid({
   account,
   totalPnl,
+  derivedBalance,
+  derivedEquity,
 }: {
   account: AccountMetrics;
   totalPnl: number;
+  derivedBalance?: number;
+  derivedEquity?: number;
 }) {
-  const currentBalance = toNumber(account?.current_balance);
-  const currentEquity = toNumber(account?.current_equity);
+  const currentBalance = derivedBalance ?? toNumber(account?.current_balance);
+  const currentEquity = derivedEquity ?? toNumber(account?.current_equity);
 
   // All derived risk values come from the centralized engine so every
   // surface stays in sync when balance/equity changes.

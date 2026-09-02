@@ -65,6 +65,16 @@ export default function AccountsPage() {
       setLoading(false);
     }
     loadAccounts();
+
+    const handleMetricsRefresh = () => {
+      setLoading(true);
+      void loadAccounts();
+    };
+
+    window.addEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    return () => {
+      window.removeEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    };
   }, []);
 
   const subscriptionTier = profile?.subscription_tier || "free";

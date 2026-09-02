@@ -104,11 +104,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         .order("created_at", { ascending: false });
 
       setAccounts((accounts || []) as PropAccount[]);
-      setSelectedAccount(accounts?.[0]?.id || "");
+      setSelectedAccount((current) => current || accounts?.[0]?.id || "");
       setLoading(false);
     }
 
     loadData();
+
+    const handleMetricsRefresh = () => {
+      setLoading(true);
+      void loadData();
+    };
+
+    window.addEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    return () => {
+      window.removeEventListener("dashboard-metrics-refresh", handleMetricsRefresh);
+    };
   }, [router, supabase]);
 
   const handleLogout = async () => {
