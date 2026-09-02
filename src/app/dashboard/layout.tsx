@@ -248,13 +248,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         toast.error("⚠️ CRITICAL RISK WARNING: 80% Daily Loss Limit Reached!", {
           description: "Pause trading immediately to protect your account equity.",
           duration: 8000,
-          important: true,
         });
       } else {
         toast.error("⚠️ CRITICAL RISK WARNING: Total Drawdown Threshold Reached!", {
           description: "Reduce exposure immediately to avoid breaching your account limit.",
           duration: 8000,
-          important: true,
         });
       }
 
