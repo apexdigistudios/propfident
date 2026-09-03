@@ -154,11 +154,11 @@ export function evaluateFirm(firm: FirmDefinition, trades: NormalizedTrade[], op
     consistencyWeight = WEIGHTS.consistency;
   }
 
-  const lotSizeCapBreaches = firm.rules.lotSizeCap === null
+    const lotSizeCapBreaches = !firm.rules.lotSizeCap
     ? []
-    : trades.filter((trade) => trade.lots > firm.rules.lotSizeCap!).length;
+      : trades.filter((trade) => trade.lots > firm.rules.lotSizeCap!);
   if (lotSizeCapBreaches.length > 0) {
-    breaches.push(`${lotSizeCapBreaches.length} trade(s) exceeded the ${firm.rules.lotSizeCap} lot size cap.`);
+      breaches.push(`${lotSizeCapBreaches.length} trade(s) exceeded the ${firm.rules.lotSizeCap} lot cap.`);
     ddWeight += WEIGHTS.drawdown / 4;
   }
 
