@@ -14,6 +14,7 @@ import {
   Server,
   Settings,
   ShieldAlert,
+  Target,
   TrendingUp,
   User as UserIcon,
   X,
@@ -49,6 +50,7 @@ const navItems = [
   { label: "Account Intel", href: "/dashboard/account-intel", icon: Server },
   { label: "Prop Shield", href: "/dashboard/prop-shield", icon: ShieldAlert },
   { label: "Trade Assist", href: "/dashboard/trade-assist", icon: Calculator },
+  { label: "Firm-Fit Matrix", href: "/tools/firm-fit", icon: Target, badge: "Tool" },
   { label: "Journal", href: "/dashboard/journal", icon: NotebookPen },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
@@ -381,7 +383,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 }`}
               >
                 <Icon className="h-4 w-4" />
-                {item.label}
+                <span className="min-w-0 flex-1">{item.label}</span>
+                {"badge" in item && item.badge && (
+                  <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-cyan-300">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}

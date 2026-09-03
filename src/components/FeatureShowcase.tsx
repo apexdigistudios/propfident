@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { Sparkles, Check } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Check, Target, UploadCloud } from "lucide-react";
 import Reveal from "./Reveal";
 import DrawdownShieldVisual from "./features/DrawdownShieldVisual";
 import LotCalculatorVisual from "./features/LotCalculatorVisual";
@@ -15,9 +16,65 @@ type Feature = {
   description: string;
   bullets: string[];
   Visual: () => ReactElement;
+  badge?: string;
+  href?: string;
 };
 
+function FirmFitVisual() {
+  return (
+    <div className="relative h-full w-full overflow-hidden rounded-3xl border border-cyan-400/20 bg-slate-950 p-5 shadow-2xl shadow-indigo-950/30 sm:p-8">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_85%_80%,rgba(99,102,241,0.2),transparent_40%)]" />
+      <div className="relative flex h-full flex-col justify-between gap-8">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-300/30 bg-cyan-300/10 text-cyan-200">
+              <Target className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">Firm-Fit Matrix</p>
+              <p className="mt-1 text-xs text-slate-400">Pass-probability scan</p>
+            </div>
+          </div>
+          <span className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-200">New</span>
+        </div>
+        <div className="grid grid-cols-[auto_1fr] items-center gap-5">
+          <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full border-8 border-cyan-400/80 bg-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.2)]">
+            <span className="text-3xl font-black text-white">92%</span>
+            <span className="text-[10px] uppercase tracking-wider text-slate-400">best match</span>
+          </div>
+          <div className="space-y-3">
+            {["FTMO", "FundingPips", "Topstep"].map((firm, index) => (
+              <div key={firm}>
+                <div className="mb-1 flex justify-between text-[11px] font-semibold text-slate-300"><span>{firm}</span><span>{92 - index * 11}%</span></div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-800"><div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-indigo-400" style={{ width: `${92 - index * 11}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-3 text-xs text-slate-300">
+          <UploadCloud className="h-4 w-4 shrink-0 text-cyan-300" /> Upload your history. Compare the rules.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const features: Feature[] = [
+  {
+    id: "firm-fit-matrix",
+    eyebrow: "Prop Firm Pass-Probability Engine",
+    title: "Firm-Fit Matrix™",
+    description:
+      "Upload your MT4/MT5 trading history to stress-test your strategy against top prop firm rules. Find your highest pass-probability match before buying a challenge.",
+    bullets: [
+      "Compare your drawdown and trading habits against firm rules",
+      "See exact breaches before they cost you a challenge",
+      "Get a clear match score in minutes",
+    ],
+    Visual: FirmFitVisual,
+    badge: "Free Tool",
+    href: "/tools/firm-fit",
+  },
   {
     id: "drawdown-shield",
     eyebrow: "Real-time Trailing Drawdown Shield",
@@ -113,9 +170,10 @@ export default function FeatureShowcase() {
 
                   {/* Text */}
                   <div className={`w-full ${reversed ? "lg:order-1" : ""}`}>
-                    <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
                       <span className="inline-block h-px w-8 bg-gradient-brand" />
                       {feature.eyebrow}
+                      {feature.badge && <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[10px] tracking-[0.14em] text-cyan-600 dark:text-cyan-300">{feature.badge}</span>}
                     </div>
                     <h3 className="mt-4 text-2xl font-extrabold leading-tight tracking-tighter text-slate-900 dark:text-white sm:text-3xl lg:text-4xl">
                       {feature.title}
@@ -133,6 +191,11 @@ export default function FeatureShowcase() {
                         </li>
                       ))}
                     </ul>
+                    {feature.href && (
+                      <Link href={feature.href} className="mt-7 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:brightness-110">
+                        Run Free Matrix Check
+                      </Link>
+                    )}
                   </div>
                 </div>
               </Reveal>
