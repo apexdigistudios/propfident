@@ -19,6 +19,7 @@ import {
   User as UserIcon,
   X,
 } from "lucide-react";
+import Logo from "@/components/Logo";
 import { Toaster, toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
@@ -313,10 +314,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         }`}
       >
         <div className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 px-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">
-            <TrendingUp className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-lg font-extrabold tracking-tight">Propfident</span>
+          <Logo width={36} height={36} />
         </div>
 
         <div className="border-b border-slate-800 p-4">
@@ -423,12 +421,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               {title}
             </h1>
             <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard/profile"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-brand transition hover:scale-105"
-                aria-label="Open your profile"
-              >
-                <UserIcon className="h-4 w-4 text-white" />
+              <Link href="/dashboard/profile" aria-label="Open your profile" className="transition hover:scale-105">
+                <Logo width={32} height={32} showName={false} />
               </Link>
             </div>
           </div>

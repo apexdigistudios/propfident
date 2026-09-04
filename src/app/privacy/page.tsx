@@ -37,7 +37,7 @@ const sections = [
   {
     heading: "7. Your Rights",
     content:
-      "You may request access to or correction of the personal data we hold, and you may request account or email data removal where legally permitted. If you have questions about your data, please contact hello@propfident.io.",
+      "You may request access to or correction of the personal data we hold, and you may request account or email data removal where legally permitted. If you have questions about your data, please contact propfidentceos@gmail.com.",
   },
 ] as const;
 
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
         </div>
 
         <p className="mt-10 text-sm leading-relaxed text-slate-400">
-          This policy may be updated to reflect product changes or legal requirements. The latest version will remain effective on the website. For privacy requests, contact <Link href="mailto:hello@propfident.io" className="text-purple-300 underline">hello@propfident.io</Link>.
+          This policy may be updated to reflect product changes or legal requirements. The latest version will remain effective on the website. For privacy requests, contact <Link href="mailto:propfidentceos@gmail.com" className="text-purple-300 underline">propfidentceos@gmail.com</Link>.
         </p>
       </article>
     </main>

@@ -7,6 +7,7 @@ import {
   Rss,
   Mail,
 } from "lucide-react";
+import Logo from "./Logo";
 const footerLinks = {
   Product: [
     { label: "Drawdown Shield", href: "#drawdown-shield" },
@@ -17,8 +18,8 @@ const footerLinks = {
   Company: [
     { label: "How It Works", href: "#how-it-works" },
     { label: "Blog", href: "#faq" },
-    { label: "Careers", href: "mailto:careers@propfident.io" },
-    { label: "Contact", href: "mailto:hello@propfident.io" },
+    { label: "Careers", href: "mailto:propfidentceos@gmail.com" },
+    { label: "Contact", href: "mailto:propfidentceos@gmail.com" },
   ],
   Resources: [
     { label: "Documentation", href: "#features" },
@@ -44,12 +45,7 @@ export default function Footer() {
         <div className="grid min-w-0 grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">
-                <ShieldCheck className="h-5 w-5 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">
-                Propfident
-              </span>
+              <Logo width={36} height={36} />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600 dark:text-slate-400">
               Real-time drawdown protection, dynamic lot sizing and hands-free
@@ -78,7 +74,7 @@ export default function Footer() {
               ].map(({ Icon, label }) => (
                 <a
                   key={label}
-                  href={label === "Website" ? "/" : label === "Blog" ? "#faq" : "mailto:hello@propfident.io"}
+                  href={label === "Website" ? "/" : label === "Blog" ? "#faq" : "mailto:propfidentceos@gmail.com"}
                   aria-label={label}
                   className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-purple-400 hover:text-purple-600 dark:border-purple-500/30 dark:text-slate-400 dark:hover:border-purple-500/60 dark:hover:text-purple-400"
                 >

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
@@ -42,12 +43,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md rounded-2xl border border-purple-500/30 bg-slate-900/90 p-8 shadow-2xl backdrop-blur-md">
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand shadow-lg shadow-purple-600/30">
-              <ShieldCheck className="h-6 w-6 text-white" strokeWidth={2.5} />
-            </div>
-            <span className="text-2xl font-extrabold tracking-tighter text-white">
-              Propfident
-            </span>
+            <Logo width={40} height={40} />
           </Link>
           <h1 className="mt-6 text-xl font-bold tracking-tight text-white">
             Welcome back to your command center

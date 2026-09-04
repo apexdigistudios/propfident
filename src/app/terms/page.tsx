@@ -62,7 +62,7 @@ export default function TermsPage() {
         </div>
 
         <p className="mt-10 text-sm leading-relaxed text-slate-400">
-          These terms may be updated over time. For questions, contact <Link href="mailto:hello@propfident.io" className="text-purple-300 underline">hello@propfident.io</Link>.
+          These terms may be updated over time. For questions, contact <Link href="mailto:propfidentceos@gmail.com" className="text-purple-300 underline">propfidentceos@gmail.com</Link>.
         </p>
       </article>
     </main>

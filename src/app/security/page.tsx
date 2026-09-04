@@ -123,7 +123,7 @@ export default function SecurityPage() {
             </div>
 
             <p className="mt-8 text-center text-xs leading-relaxed text-slate-500">
-              For account-specific privacy requests: <Link href="mailto:hello@propfident.io" className="text-purple-300 hover:underline">hello@propfident.io</Link>
+              For account-specific privacy requests: <Link href="mailto:propfidentceos@gmail.com" className="text-purple-300 hover:underline">propfidentceos@gmail.com</Link>
             </p>
           </div>
         </section>

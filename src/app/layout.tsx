@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
 import AdSlot from "@/components/AdSlot";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
 
 export const viewport = {
@@ -14,6 +15,18 @@ export const metadata: Metadata = {
   title: "Propfident — Never Breach a Prop Firm Account Again",
   description:
     "Real-time drawdown protection, dynamic lot sizing, automated trading journals, and hands-free MT4/MT5 syncing through MetaApi.",
+  icons: {
+    icon: "/propfidentlogo.png",
+    apple: "/propfidentlogo.png",
+    shortcut: "/propfidentlogo.png",
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Propfident",
+    statusBarStyle: "black-translucent",
+  },
+  themeColor: "#020617",
   keywords: [
     "Propfident",
     "prop firm",
@@ -45,6 +58,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           strategy="afterInteractive"
         />
         <div className="relative w-full">{children}</div>
+        <PWAInstallPrompt />
         <AdSlot />
       </body>
     </html>

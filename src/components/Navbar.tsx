@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import Logo from "./Logo";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,10 +20,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link className="flex items-center gap-2 text-xl font-bold text-white" href="/">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
-            <Shield className="h-5 w-5 text-white" />
-          </div>
-          <span>Propfident</span>
+          <Logo width={32} height={32} />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
