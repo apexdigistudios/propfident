@@ -15,7 +15,7 @@ export interface FirmRules {
   allowWeekendHolding: boolean;
   minTradingDays: number;
   consistencyRule: string | boolean;
-  consistencyThreshold: number;
+  consistencyThreshold?: number;
   lotSizeCap: number | null;
 }
 
@@ -124,18 +124,18 @@ export function evaluateFirm(firm: FirmDefinition, trades: NormalizedTrade[], op
   let consistencyWeight = 0;
 
   if (metrics.userMaxDailyDD > firm.rules.maxDailyDrawdown) {
-    breaches.push(`Maximum daily drawdown was ${metrics.userMaxDailyDD.toFixed(2)}%, above the ${firm.rules.maxDailyDrawdown}% limit.`);
+    breaches.push(`Daily Drawdown Breach: Firm Limit = ${(firm.rules.maxDailyDrawdown * 100).toFixed(1)}% | Your Max = ${metrics.userMaxDailyDD.toFixed(1)}% (Exceeded by ${(metrics.userMaxDailyDD - firm.rules.maxDailyDrawdown * 100).toFixed(1)}%).`);
     ddWeight += WEIGHTS.drawdown / 2;
-  } else if (metrics.userMaxDailyDD > firm.rules.maxDailyDrawdown * 0.8) {
-    breaches.push(`Daily drawdown reached ${metrics.userMaxDailyDD.toFixed(2)}%, near the ${firm.rules.maxDailyDrawdown}% limit.`);
+  } else if (metrics.userMaxDailyDD > firm.rules.maxDailyDrawdown * 100 * 0.8) {
+    breaches.push(`Daily drawdown reached ${metrics.userMaxDailyDD.toFixed(1)}%, near the ${(firm.rules.maxDailyDrawdown * 100).toFixed(1)}% limit.`);
     ddWeight += WEIGHTS.drawdown / 4;
   }
 
-  if (metrics.userMaxTotalDD > firm.rules.maxTotalDrawdown) {
-    breaches.push(`Maximum total drawdown was ${metrics.userMaxTotalDD.toFixed(2)}%, above the ${firm.rules.maxTotalDrawdown}% limit.`);
+  if (metrics.userMaxTotalDD > firm.rules.maxTotalDrawdown * 100) {
+    breaches.push(`Total Drawdown Breach: Firm Limit = ${(firm.rules.maxTotalDrawdown * 100).toFixed(1)}% | Your Max = ${metrics.userMaxTotalDD.toFixed(1)}% (Exceeded by ${(metrics.userMaxTotalDD - firm.rules.maxTotalDrawdown * 100).toFixed(1)}%).`);
     ddWeight += WEIGHTS.drawdown / 2;
-  } else if (metrics.userMaxTotalDD > firm.rules.maxTotalDrawdown * 0.8) {
-    breaches.push(`Total drawdown reached ${metrics.userMaxTotalDD.toFixed(2)}%, near the ${firm.rules.maxTotalDrawdown}% limit.`);
+  } else if (metrics.userMaxTotalDD > firm.rules.maxTotalDrawdown * 100 * 0.8) {
+    breaches.push(`Total drawdown reached ${metrics.userMaxTotalDD.toFixed(1)}%, near the ${(firm.rules.maxTotalDrawdown * 100).toFixed(1)}% limit.`);
     ddWeight += WEIGHTS.drawdown / 4;
   }
 
@@ -149,8 +149,8 @@ export function evaluateFirm(firm: FirmDefinition, trades: NormalizedTrade[], op
     newsWeight = WEIGHTS.news;
   }
 
-  if (firm.rules.consistencyRule && metrics.maxTradeProfitRatio > firm.rules.consistencyThreshold / 100) {
-    breaches.push(`One trade produced ${(metrics.maxTradeProfitRatio * 100).toFixed(1)}% of total profit, above the ${firm.rules.consistencyThreshold}% consistency threshold.`);
+  if (firm.rules.consistencyRule && firm.rules.consistencyThreshold !== undefined && metrics.maxTradeProfitRatio > firm.rules.consistencyThreshold) {
+    breaches.push(`Consistency Rule Warning: Single trade profit was ${(metrics.maxTradeProfitRatio * 100).toFixed(1)}% of total gain (Firm Max = ${(firm.rules.consistencyThreshold * 100).toFixed(1)}%).`);
     consistencyWeight = WEIGHTS.consistency;
   }
 
