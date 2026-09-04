@@ -1,11 +1,11 @@
 export default function LoadingSpinner() {
   return (
-    <div className="flex min-h-[200px] flex-col items-center justify-center gap-4">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md">
       <div className="relative flex items-center justify-center">
-        <div className="absolute inset-0 animate-pulse rounded-full bg-purple-500/20 blur-xl" />
-        <img src="/propfidentlogo.png" alt="Loading..." className="h-16 w-16 animate-bounce object-contain transition-all duration-700" />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-purple-600/30 blur-2xl" />
+        <img src="/propfidentlogo.png" alt="Loading Propfident..." className="relative z-10 h-20 w-20 animate-bounce object-contain transition-all duration-700" />
       </div>
-      <p className="animate-pulse font-mono text-xs uppercase tracking-widest text-purple-400">Securing Equity...</p>
+      <p className="mt-4 animate-pulse font-mono text-xs uppercase tracking-widest text-purple-300">Securing Equity...</p>
     </div>
   );
 }
