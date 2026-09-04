@@ -22,7 +22,7 @@ type Feature = {
 
 function FirmFitVisual() {
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-3xl border border-cyan-400/20 bg-slate-950 p-5 shadow-2xl shadow-indigo-950/30 sm:p-8">
+    <div className="relative h-full w-full overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-900/60 p-5 shadow-2xl shadow-cyan-950/30 backdrop-blur-xl transition-all duration-300 sm:p-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_85%_80%,rgba(99,102,241,0.2),transparent_40%)]" />
       <div className="relative flex h-full flex-col justify-between gap-8">
         <div className="flex items-center justify-between gap-3">
@@ -38,7 +38,7 @@ function FirmFitVisual() {
           <span className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-200">New</span>
         </div>
         <div className="grid grid-cols-[auto_1fr] items-center gap-5">
-          <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full border-8 border-cyan-400/80 bg-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.2)]">
+            <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full border-8 border-cyan-400/80 bg-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.35),0_0_0_4px_rgba(99,102,241,0.25)]">
             <span className="text-3xl font-black text-white">92%</span>
             <span className="text-[10px] uppercase tracking-wider text-slate-400">best match</span>
           </div>

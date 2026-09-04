@@ -41,7 +41,7 @@ export function Dropzone({ onFile }: DropzoneProps) {
       onDragOver={(event) => event.preventDefault()}
       onDragLeave={() => setDragging(false)}
       onDrop={(event) => { event.preventDefault(); setDragging(false); void handleFile(event.dataTransfer.files[0]); }}
-      className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition sm:p-12 ${dragging ? "border-cyan-400 bg-cyan-400/10" : "border-indigo-500/40 bg-slate-900/70 hover:border-cyan-400/70 hover:bg-slate-900"}`}
+      className={`cursor-pointer rounded-2xl border-2 border-dashed bg-slate-900/60 p-8 text-center backdrop-blur-xl transition-all duration-300 sm:p-12 ${dragging ? "border-cyan-400 bg-cyan-400/10" : "border-slate-800/80 hover:border-cyan-500/30"}`}
     >
       <input ref={inputRef} type="file" accept=".csv,.htm,.html,.txt" className="hidden" onChange={(event) => void handleFile(event.target.files?.[0])} />
       {loading ? <Loader2 className="mx-auto h-10 w-10 animate-spin text-cyan-300" /> : <FileUp className="mx-auto h-10 w-10 text-cyan-300" />}
