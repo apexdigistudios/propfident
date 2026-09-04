@@ -14,9 +14,9 @@ export function DiagnosticsModal({ result, trades, onClose }: DiagnosticsModalPr
   if (!result) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`${result.firm.name} breach details`}>
-      <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-cyan-400/30 bg-slate-950 p-5 shadow-2xl shadow-cyan-950/30 sm:p-7">
+      <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-purple-500/30 bg-slate-950 p-5 shadow-2xl shadow-purple-950/30 sm:p-7">
         <div className="flex items-start justify-between gap-4">
-          <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Diagnostics</p><h2 className="mt-2 text-2xl font-bold text-white">{result.firm.name} breach details</h2></div>
+          <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-300">Diagnostics</p><h2 className="mt-2 text-2xl font-bold text-white">{result.firm.name} breach details</h2></div>
           <button type="button" onClick={onClose} aria-label="Close diagnostics" className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"><X className="h-5 w-5" /></button>
         </div>
         <div className="mt-6 space-y-3">

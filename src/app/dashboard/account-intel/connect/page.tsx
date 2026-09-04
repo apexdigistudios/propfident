@@ -101,7 +101,7 @@ function LockedConnectCard({ accountCount, onManual, manualOpen, onClose }: { ac
       >
         <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
         <div className="relative text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-300">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-300">
             <Sparkles className="h-8 w-8" />
           </div>
           <h2 className="mt-6 text-2xl font-black tracking-tight text-white">
@@ -111,7 +111,7 @@ function LockedConnectCard({ accountCount, onManual, manualOpen, onClose }: { ac
             We are actively building Pro and Elite tiers with real-time MetaApi account sync, live drawdown tracking, and automated trade journaling. Get started with manual account tracking for free today.
           </p>
 
-          <div className="mt-6 rounded-xl border border-blue-500/20 bg-slate-950/70 p-4 text-left">
+          <div className="mt-6 rounded-xl border border-purple-500/20 bg-slate-950/70 p-4 text-left">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
               Current Free Plan Status
             </p>
@@ -121,16 +121,16 @@ function LockedConnectCard({ accountCount, onManual, manualOpen, onClose }: { ac
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5 text-left">
+            <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-5 text-left">
               <p className="text-lg font-black text-white">Pro (Coming Soon)</p>
-              <p className="mt-1 text-sm text-blue-200">Starting at ${pricingByName.Pro.monthly}/mo</p>
+              <p className="mt-1 text-sm text-purple-200">Starting at ${pricingByName.Pro.monthly}/mo</p>
               <p className="mt-3 text-xs text-slate-400">
                 Connect up to 5 accounts with full MetaApi auto-sync.
               </p>
             </div>
-            <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5 text-left">
+            <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-5 text-left">
               <p className="text-lg font-black text-white">Elite (Coming Soon)</p>
-              <p className="mt-1 text-sm text-blue-200">Starting at ${pricingByName.Elite.monthly}/mo</p>
+              <p className="mt-1 text-sm text-purple-200">Starting at ${pricingByName.Elite.monthly}/mo</p>
               <p className="mt-3 text-xs text-slate-400">
                 Unlimited accounts, cross-account risk controls, and priority support.
               </p>

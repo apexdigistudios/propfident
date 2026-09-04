@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   AlertTriangle,
   Calculator,
+  Download,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -22,11 +23,12 @@ import {
 import Logo from "@/components/Logo";
 import { Toaster, toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import PwaInstallBanner from "@/components/PwaInstallBanner";
 import { metricsFromAccountRow } from "@/lib/utils/drawdown";
 
 interface Profile {
   subscription_tier: string;
+  full_name?: string | null;
+  email?: string | null;
   telegram_chat_id?: string | null;
 }
 
@@ -51,7 +53,7 @@ const navItems = [
   { label: "Account Intel", href: "/dashboard/account-intel", icon: Server },
   { label: "Prop Shield", href: "/dashboard/prop-shield", icon: ShieldAlert },
   { label: "Trade Assist", href: "/dashboard/trade-assist", icon: Calculator },
-  { label: "Firm-Fit Matrix", href: "/tools/firm-fit", icon: Target, badge: "Tool" },
+  { label: "Prop Match", href: "/tools/firm-fit", icon: Target, badge: "New" },
   { label: "Journal", href: "/dashboard/journal", icon: NotebookPen },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
@@ -132,7 +134,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("subscription_tier, telegram_chat_id")
+        .select("subscription_tier, full_name, email, telegram_chat_id")
         .eq("id", user.id)
         .maybeSingle();
       setProfile(profile);
@@ -383,7 +385,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <Icon className="h-4 w-4" />
                 <span className="min-w-0 flex-1">{item.label}</span>
                 {"badge" in item && item.badge && (
-                  <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-cyan-300">
+                  <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-purple-300">
                     {item.badge}
                   </span>
                 )}
@@ -421,9 +423,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               {title}
             </h1>
             <div className="flex items-center gap-4">
-              <Link href="/dashboard/profile" aria-label="Open your profile" className="transition hover:scale-105">
-                <Logo width={32} height={32} showName={false} />
-              </Link>
+              <div className="flex items-center gap-3">
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-3 py-1.5 text-xs text-purple-200 transition-all hover:bg-purple-900/50" onClick={() => window.dispatchEvent(new Event("pwa-install-request"))}>
+                  <Download className="h-4 w-4 text-purple-400" />
+                  Install App
+                </button>
+                <Link href="/dashboard/profile" aria-label="Open your profile" className="flex h-9 w-9 items-center justify-center rounded-full border border-purple-500/40 bg-purple-600/30 font-semibold text-purple-200 transition hover:bg-purple-600/50">
+                  {profile?.full_name || profile?.email ? (profile.full_name || profile.email || "?").trim().charAt(0).toUpperCase() : <UserIcon className="h-5 w-5 text-purple-300" />}
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -528,7 +536,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         )}
 
         <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 sm:p-5 md:p-6">
-          <PwaInstallBanner />
           {children}
         </div>
       </main>

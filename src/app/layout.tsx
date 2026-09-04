@@ -9,6 +9,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#020617",
 };
 
 export const metadata: Metadata = {
@@ -26,7 +27,6 @@ export const metadata: Metadata = {
     title: "Propfident",
     statusBarStyle: "black-translucent",
   },
-  themeColor: "#020617",
   keywords: [
     "Propfident",
     "prop firm",

@@ -192,14 +192,14 @@ export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean
                     </button>
                   ))}
                 </div>
-                <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-300 mb-2">
+                  <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-300 mb-2">
                     Daily Loss Limit
                   </p>
-                  <p className="text-2xl font-bold text-blue-200">
+                    <p className="text-2xl font-bold text-purple-200">
                     {formatCurrency(risks.dailyMaxLossUSD)}
                   </p>
-                  <p className="text-xs text-blue-300/60 mt-1">
+                    <p className="text-xs text-purple-300/60 mt-1">
                     Maximum you can lose per trading day
                   </p>
                 </div>
@@ -362,21 +362,21 @@ export function TradePlanGenerator({ isFreeTier, userId }: { isFreeTier: boolean
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-blue-500/30 bg-blue-500/5 p-5">
+                <div className="rounded-xl border border-purple-500/30 bg-purple-500/5 p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-300">
                         Daily Max Loss
                       </p>
                       <p className="mt-2 text-2xl font-bold text-white">
                         {formatCurrency(risks.dailyMaxLossUSD)}
                       </p>
                     </div>
-                    <div className="rounded-lg bg-blue-500/20 p-2.5">
-                      <TrendingUp className="h-5 w-5 text-blue-300" />
+                    <div className="rounded-lg bg-purple-500/20 p-2.5">
+                      <TrendingUp className="h-5 w-5 text-purple-300" />
                     </div>
                   </div>
-                  <p className="text-xs text-blue-300/60">{dailyRiskPct}% of balance</p>
+                  <p className="text-xs text-purple-300/60">{dailyRiskPct}% of balance</p>
                 </div>
 
                 <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-5">

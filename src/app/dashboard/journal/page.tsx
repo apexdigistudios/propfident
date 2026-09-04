@@ -31,7 +31,7 @@ const emotionStyles: Record<"All" | Emotion, string> = {
   FOMO: "border-orange-500/40 bg-orange-500/10 text-orange-300",
   Anxious: "border-amber-500/40 bg-amber-500/10 text-amber-300",
   "Revenge Trade": "border-rose-700/50 bg-rose-950/40 text-rose-300",
-  Confident: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
+  Confident: "border-purple-500/40 bg-purple-500/10 text-purple-300",
   Hesitant: "border-purple-500/40 bg-purple-500/10 text-purple-300",
   "Executed Strategy": "border-slate-500/40 bg-slate-500/10 text-slate-300",
 };
@@ -47,7 +47,7 @@ function detectEmotion(note: string): Emotion {
 }
 
 const statusStyles: Record<string, string> = {
-  OPEN: "border-sky-500/30 bg-sky-500/10 text-sky-400",
+  OPEN: "border-purple-500/30 bg-purple-500/10 text-purple-400",
   WIN: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
   LOSS: "border-rose-500/30 bg-rose-500/10 text-rose-400",
   BE: "border-slate-500/30 bg-slate-500/10 text-slate-400",

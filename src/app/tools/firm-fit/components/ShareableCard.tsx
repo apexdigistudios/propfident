@@ -33,7 +33,7 @@ export function ShareableCard({ result, tradeCount = 0 }: { result: FirmEvaluati
     try {
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, canvasWidth: 1200, canvasHeight: 630 });
       const link = document.createElement("a");
-      link.download = `${result.firm.id}-firm-fit.png`;
+      link.download = `${result.firm.id}-prop-match.png`;
       link.href = dataUrl;
       link.click();
     } finally { setBusy(false); }
@@ -47,18 +47,18 @@ export function ShareableCard({ result, tradeCount = 0 }: { result: FirmEvaluati
   return (
     <section className="mt-6">
       <label className="block text-sm font-semibold text-slate-200" htmlFor="trader-name">Trader name or handle</label>
-      <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-cyan-500" />
-      <div ref={cardRef} className="mt-4 aspect-[1200/630] w-full overflow-hidden rounded-2xl border border-cyan-500/20 bg-[radial-gradient(circle_at_85%_15%,rgba(34,211,238,0.2),transparent_30%),radial-gradient(circle_at_15%_90%,rgba(79,70,229,0.22),transparent_35%)] bg-slate-950 p-5 text-white shadow-2xl shadow-cyan-950/30 sm:p-8">
+      <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-purple-500" />
+      <div ref={cardRef} className="mt-4 aspect-[1200/630] w-full overflow-hidden rounded-2xl border border-purple-500/30 bg-[radial-gradient(circle_at_85%_15%,rgba(168,85,247,0.2),transparent_30%),radial-gradient(circle_at_15%_90%,rgba(79,70,229,0.22),transparent_35%)] bg-slate-950 p-5 text-white shadow-2xl shadow-purple-950/30 sm:p-8">
         <div className="flex h-full flex-col justify-between">
           <div className="flex items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
             <div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500"><ShieldCheck className="h-5 w-5 text-slate-950" /></span><span className="text-sm font-black tracking-[0.16em] text-cyan-300">PROPFIDENT</span></div>
-            <p className="text-xs font-bold tracking-[0.18em] text-slate-300 sm:text-sm">FIRM-FIT™ MATCH SCORECARD</p>
+            <p className="text-xs font-bold tracking-[0.18em] text-slate-300 sm:text-sm">PROP MATCH™ SCORECARD</p>
           </div>
           <div className="grid min-h-0 flex-1 grid-cols-[1.05fr_1fr] items-center gap-5 py-4 sm:gap-10 sm:py-6">
             <div><p className="text-xs uppercase tracking-[0.16em] text-slate-500">Trader</p><p className="mt-1 truncate text-xl font-bold sm:text-3xl">{displayName}</p><p className="mt-2 text-[10px] text-slate-500 sm:text-xs">Verified {verifiedAt}</p><span className="mt-5 inline-flex rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-200 sm:text-xs">{strategyFingerprint}</span></div>
             <div className="flex items-center gap-4 sm:gap-7"><div className="flex h-28 w-28 shrink-0 flex-col items-center justify-center rounded-full border-8 border-cyan-400 bg-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.3)] sm:h-40 sm:w-40"><span className="text-4xl font-black text-cyan-300 sm:text-6xl">{result.matchPercentage}%</span><span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">Pass Probability</span></div><div className="min-w-0 space-y-2 text-[10px] sm:text-xs"><p className="truncate font-bold text-white">Best match: {result.firm.name}</p><p className="text-slate-400">Max Daily DD: <b className="text-slate-200">{result.userMaxDailyDD.toFixed(1)}% / {dailyLimit.toFixed(1)}% Limit</b></p><p className="text-slate-400">Max Overall DD: <b className="text-slate-200">{result.userMaxTotalDD.toFixed(1)}% / {totalLimit.toFixed(1)}% Limit</b></p><p className="text-slate-400">Profit Consistency: <b className="text-slate-200">{consistency.toFixed(0)}% Max Single Trade</b></p><p className="text-slate-400">Weekend Trades: <b className="text-slate-200">{result.weekendTradesCount} {result.weekendTradesCount === 0 ? "(Clean)" : "Detected"}</b></p></div></div>
           </div>
-          <div className="flex items-center justify-between border-t border-slate-800/80 pt-3 text-[9px] text-slate-500 sm:text-xs"><span>Validated at propfident.online/tools/firm-fit</span><span className="font-black tracking-[0.18em] text-cyan-400/70">RULES FIRST</span></div>
+          <div className="flex items-center justify-between border-t border-slate-800/80 pt-3 text-[9px] text-slate-500 sm:text-xs"><span>Validated at propfident.online/tools/firm-fit</span><span className="font-black tracking-[0.18em] text-purple-400/70">RULES FIRST</span></div>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-3"><button type="button" disabled={busy} onClick={() => void downloadCard()} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition-all hover:from-cyan-400 hover:to-indigo-500 disabled:opacity-50"><Download className="h-4 w-4" /> Download High-Res Scorecard (PNG)</button><button type="button" onClick={shareToX} className="inline-flex items-center gap-2 rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-2.5 text-sm font-semibold text-slate-200 transition-all hover:bg-slate-800"><ExternalLink className="h-4 w-4" /> Share to Twitter/X</button></div>

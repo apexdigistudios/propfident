@@ -244,7 +244,7 @@ function BillingTab({ profile }: { profile: ProfileState }) {
         </div>
         <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-800">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-purple-500 to-cyan-400"
+            className="h-full rounded-full bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600"
             style={{ width: `${Math.min(100, (usage / (typeof current.limit === "number" ? current.limit : 1)) * 100)}%` }}
           />
         </div>
