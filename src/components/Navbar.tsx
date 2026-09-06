@@ -17,8 +17,8 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="relative z-50 w-full px-4 pt-4">
-      <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between rounded-full border border-white/10 bg-slate-900/60 px-6 py-3 shadow-2xl shadow-purple-950/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl">
+    <header className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex justify-center px-4 pt-4">
+      <div className="relative pointer-events-auto flex w-full max-w-6xl items-center justify-between rounded-full border border-white/10 bg-slate-900/60 px-6 py-3 shadow-2xl shadow-purple-950/30 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl">
         <Link className="flex items-center gap-2 text-xl font-bold text-white" href="/">
           <Logo width={32} height={32} />
         </Link>

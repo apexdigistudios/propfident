@@ -14,7 +14,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="w-full min-h-screen min-w-0 max-w-full">
+      <main className="w-full min-h-screen min-w-0 max-w-full pt-28 sm:pt-32">
         <Reveal delay={0}>
           <Hero />
         </Reveal>
