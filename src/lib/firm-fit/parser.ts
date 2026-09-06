@@ -10,6 +10,8 @@ export interface NormalizedTrade {
   openPrice: number;
   closePrice: number;
   pnl: number;
+  stopLoss?: number | null;
+  accountType?: string;
 }
 
 type RawRow = Record<string, unknown>;
@@ -24,6 +26,8 @@ const FIELD_ALIASES = {
   openPrice: ["openprice", "open price", "entryprice", "entry price"],
   closePrice: ["closeprice", "close price", "exitprice", "exit price"],
   pnl: ["profit", "p/l", "pnl", "p&l", "net profit", "net pnl", "result"],
+  stopLoss: ["stoploss", "stop loss", "sl", "s/l"],
+  accountType: ["account type", "accounttype", "program", "model"],
 } as const;
 
 function cleanKey(value: string): string {
@@ -69,9 +73,12 @@ function normalizeRow(row: RawRow): NormalizedTrade | null {
   const openPrice = parseNumber(valueFor(row, FIELD_ALIASES.openPrice));
   const closePrice = parseNumber(valueFor(row, FIELD_ALIASES.closePrice));
   const pnl = parseNumber(valueFor(row, FIELD_ALIASES.pnl));
+  const rawStopLoss = valueFor(row, FIELD_ALIASES.stopLoss);
+  const parsedStopLoss = rawStopLoss === undefined || rawStopLoss === "" ? null : parseNumber(rawStopLoss);
+  const accountType = String(valueFor(row, FIELD_ALIASES.accountType) ?? "").trim() || undefined;
 
   if (!ticket || !symbol || !action || !openTime || !closeTime || ![lots, openPrice, closePrice, pnl].every(Number.isFinite)) return null;
-  return { ticket, symbol, action, lots, openTime, closeTime, openPrice, closePrice, pnl };
+  return { ticket, symbol, action, lots, openTime, closeTime, openPrice, closePrice, pnl, stopLoss: parsedStopLoss, accountType };
 }
 
 export function parseTradeCsv(csv: string): NormalizedTrade[] {

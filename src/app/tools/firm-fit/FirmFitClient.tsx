@@ -14,6 +14,7 @@ export default function FirmFitClient() {
   const [results, setResults] = useState<FirmEvaluation[]>([]);
   const [selected, setSelected] = useState<FirmEvaluation | null>(null);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const matchedFirms = results.filter((result) => result.matchPercentage >= 80);
 
   async function handleFile(file: File) {
     const nextTrades = parseTradeExport(await file.text());
@@ -30,6 +31,7 @@ export default function FirmFitClient() {
           <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Find the prop firm that fits your trading.</h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
         </section>
+        {matchedFirms.length >= 2 && <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-purple-500/40 bg-purple-500/10 px-5 py-4 text-center text-sm font-semibold text-purple-100 shadow-lg shadow-purple-900/20">🎉 Matched with {matchedFirms.length} Prop Firms! Your strategy is eligible for {matchedFirms.slice(0, 3).map((firm) => firm.firm.name).join(", ")}, and more.</div>}
         <div className="mx-auto mt-10 max-w-3xl"><Dropzone onFile={handleFile} /></div>
         {results.length > 0 ? (
           <section className="mt-12 rounded-3xl border border-purple-900/30 bg-slate-900/70 p-4 backdrop-blur-xl sm:p-6">
