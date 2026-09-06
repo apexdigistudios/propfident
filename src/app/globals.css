@@ -25,9 +25,9 @@ html {
   scroll-behavior: smooth;
   color-scheme: dark;
   min-height: 100vh;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  height: auto !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -37,9 +37,9 @@ body {
   background-color: #020617;
   color: #f1f5f9;
   min-height: 100vh;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  height: auto !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Light mode uses lighter purple/indigo, dark mode uses deeper tones */

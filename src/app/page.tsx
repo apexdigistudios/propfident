@@ -13,21 +13,6 @@ import Image from "next/image";
 export default function HomePage() {
   return (
     <>
-      <div className="sticky top-0 z-[60] border-b border-purple-500/20 bg-slate-950/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-2 px-4 py-2 text-center sm:flex-row sm:justify-between sm:text-left">
-          <p className="text-xs font-medium text-slate-200 sm:text-sm">
-            <span className="mr-2">🔥</span>
-            FREE GUIDE: Download the Prop Firm Risk Management Playbook (PDF) — Learn how to pass funded challenges cleanly.
-          </p>
-          <a
-            href="/images/bookpdf.png"
-            download="Prop_Firm_Risk_Management_Playbook.pdf"
-            className="inline-flex items-center justify-center rounded-full border border-purple-500/40 bg-purple-500/10 px-3 py-1.5 text-xs font-semibold text-purple-200 transition hover:bg-purple-500/20"
-          >
-            Download Free PDF
-          </a>
-        </div>
-      </div>
       <Navbar />
       <main className="w-full min-h-screen min-w-0 max-w-full">
         <Reveal delay={0}>
@@ -70,11 +55,12 @@ export default function HomePage() {
               </div>
 
               <a
-                href="/images/bookpdf.png"
-                download="Prop_Firm_Risk_Management_Playbook.pdf"
+                href="/playbook"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center justify-center rounded-xl bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:shadow-purple-600/40 sm:mt-5"
               >
-                Download Free Guide
+                Open Propfident Playbook ↗
               </a>
             </div>
           </section>

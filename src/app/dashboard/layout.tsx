@@ -289,7 +289,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center overflow-hidden bg-slate-950">
+      <div className="flex min-h-screen items-center justify-center bg-slate-950">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-purple-500/30 border-t-purple-500" />
           <p className="mt-4 text-sm text-slate-400">Loading dashboard...</p>
@@ -299,7 +299,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-full max-w-full overflow-hidden bg-slate-950 text-white">
+    <div className="flex min-h-screen w-full max-w-full bg-slate-950 text-white">
       <Toaster richColors closeButton theme="dark" position="top-right" />
       <button
         type="button"
@@ -363,7 +363,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
+        <nav className="space-y-1 p-4">
           {navItems.map((item) => {
             const isActive =
               item.href === "/dashboard"
@@ -416,9 +416,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         />
       )}
 
-      <main className="flex min-w-0 max-w-full flex-1 flex-col overflow-hidden">
-        <header className="z-20 shrink-0 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
-          <div className="flex min-w-0 h-16 items-center justify-between gap-3 px-4 pr-16 sm:px-6">
+      <main className="flex min-w-0 max-w-full flex-1 flex-col">
+        <header className="relative z-20 mx-4 mt-4 shrink-0 rounded-full border border-white/10 bg-slate-900/60 px-6 py-3 shadow-2xl shadow-purple-950/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:mx-6">
+          <div className="flex min-w-0 items-center justify-between gap-3">
             <h1 className="min-w-0 truncate text-lg font-bold capitalize text-slate-100">
               {title}
             </h1>
@@ -535,7 +535,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         )}
 
-        <div className="flex min-w-0 flex-1 flex-col space-y-6 overflow-y-auto p-4 sm:p-5 md:p-6">
+        <div className="flex min-w-0 flex-1 flex-col space-y-6 p-4 sm:p-5 md:p-6">
           {children}
         </div>
       </main>

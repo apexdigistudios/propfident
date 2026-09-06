@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = { title: "Terms of Service | Propfident" };
 
@@ -43,7 +45,7 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-16 text-slate-100 md:px-8 md:py-24">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 md:px-8 md:py-12"><Navbar />
       <article className="mx-auto max-w-4xl rounded-2xl border border-purple-500/30 bg-slate-900/90 p-6 shadow-2xl sm:p-10">
         <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
           Terms of Service
@@ -65,6 +67,7 @@ export default function TermsPage() {
           These terms may be updated over time. For questions, contact <Link href="mailto:propfidentceos@gmail.com" className="text-purple-300 underline">propfidentceos@gmail.com</Link>.
         </p>
       </article>
+      <Footer />
     </main>
   );
 }

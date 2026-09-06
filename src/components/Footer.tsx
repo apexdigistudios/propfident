@@ -90,14 +90,13 @@ export default function Footer() {
                 {group}
               </h4>
               <ul className="mt-4 space-y-2.5">
-                {links.map((l) => (
+                  {links.map((l) => (
                   <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-slate-600 transition hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400"
-                    >
-                      {l.label}
-                    </Link>
+                    {group === "Resources" || (group === "Company" && l.label === "Careers") ? (
+                      <span className="pointer-events-none cursor-default text-sm text-slate-400 hover:text-slate-400">{l.label}</span>
+                    ) : (
+                      <Link href={l.href} className="text-sm text-slate-600 transition hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400">{l.label}</Link>
+                    )}
                   </li>
                 ))}
               </ul>

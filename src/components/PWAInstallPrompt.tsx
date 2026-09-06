@@ -49,9 +49,10 @@ export default function PWAInstallPrompt() {
 
   if (!showPrompt) return null;
   return (
-    <div className="fixed inset-x-4 bottom-4 z-[70] mx-auto max-w-md rounded-2xl border border-purple-500/30 bg-slate-900/95 p-5 text-white shadow-2xl shadow-purple-950/40 backdrop-blur-xl">
+    <div className="fixed inset-x-4 bottom-4 z-[70] mx-auto flex w-full max-w-sm animate-in slide-in-from-top-4 flex-col rounded-2xl border border-white/15 bg-slate-900/80 p-4 text-white shadow-2xl shadow-purple-950/60 backdrop-blur-2xl">
       <button type="button" onClick={() => setShowPrompt(false)} aria-label="Close install prompt" className="absolute right-3 top-3 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"><X className="h-4 w-4" /></button>
-      <div className="flex items-start gap-3"><Download className="mt-1 h-5 w-5 shrink-0 text-purple-300" /><div><h2 className="font-bold">Install Propfident</h2>{ios ? <p className="mt-2 text-sm leading-6 text-slate-300">Tap the <Share className="inline h-4 w-4 text-purple-300" /> Share icon, then choose <strong>Add to Home Screen</strong>.</p> : <p className="mt-2 text-sm text-slate-300">Keep your equity shield one tap away.</p>}{!ios && <button type="button" onClick={() => void install()} className="mt-4 rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/20">Install App</button>}</div></div>
+      <div className="flex items-center gap-2"><img src="/propfidentlogo.png" alt="" className="h-5 w-5 rounded-md" /><span className="text-[10px] font-semibold tracking-wider text-slate-300">PROPFIDENT</span><span className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-slate-400">NOW</span></div>
+      <div className="mt-3 flex items-start gap-3"><Download className="mt-1 h-5 w-5 shrink-0 text-purple-300" /><div><h2 className="text-sm font-semibold text-white">Install Propfident</h2>{ios ? <p className="mt-1 text-xs text-slate-300">Tap the <Share className="inline h-4 w-4 text-purple-300" /> Share icon, then choose <strong>Add to Home Screen</strong>.</p> : <p className="mt-1 text-xs text-slate-300">Keep your equity shield one tap away.</p>}{!ios && <button type="button" onClick={() => void install()} className="mt-3 rounded-xl border border-purple-500/40 bg-purple-600/30 px-3 py-1.5 text-xs font-medium text-purple-200 hover:bg-purple-600/50">Install App</button>}</div></div>
     </div>
   );
 }
