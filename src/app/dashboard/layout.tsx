@@ -108,6 +108,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [riskAlertOpen, setRiskAlertOpen] = useState(false);
   const [riskAlertDismissed, setRiskAlertDismissed] = useState(false);
   const [accountLocked, setAccountLocked] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
   const notificationFiredRef = useRef(false);
   const [riskAlert, setRiskAlert] = useState<{
     currentDailyDrawdownPct: number;
@@ -120,6 +121,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     activeViolations: string[];
     riskLevel: "Safe" | "Warning (Yellow)" | "Critical breach imminent (Red)";
   } | null>(null);
+
+  useEffect(() => {
+    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -249,17 +254,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       notificationFiredRef.current = false;
     } else if (!notificationFiredRef.current) {
       notificationFiredRef.current = true;
-      if (currentDailyDrawdownPct >= 80) {
-        toast.error("⚠️ CRITICAL RISK WARNING: 80% Daily Loss Limit Reached!", {
-          description: "Pause trading immediately to protect your account equity.",
-          duration: 8000,
-        });
-      } else {
-        toast.error("⚠️ CRITICAL RISK WARNING: Total Drawdown Threshold Reached!", {
-          description: "Reduce exposure immediately to avoid breaching your account limit.",
-          duration: 8000,
-        });
-      }
+      const breachName = currentDailyDrawdownPct >= 100 || currentOverallDrawdownPct >= maxTotalDrawdownPct
+        ? "Max Drawdown"
+        : currentDailyDrawdownPct >= 80
+          ? "Daily Drawdown"
+          : "Overall Drawdown";
+      const exceededBy = currentDailyDrawdownPct >= 100
+        ? currentDailyDrawdownPct - 100
+        : Math.max(0, currentOverallDrawdownPct - maxTotalDrawdownPct * 0.85);
+      toast.error(`🚨 Account Breach Detected: ${breachName} exceeded by ${exceededBy.toFixed(1)}%`, {
+        description: "Pause trading immediately to protect your account equity.",
+        duration: 10000,
+        action: { label: "View Diagnostic Breakdown", onClick: () => setRiskAlertOpen(true) },
+      });
 
       if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
         new Notification("🚨 Propfident Equity Shield Alert", {
@@ -301,15 +308,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full max-w-full bg-slate-950 text-white">
       <Toaster richColors closeButton theme="dark" position="top-right" />
-      <button
-        type="button"
-        onClick={() => setSidebarOpen((open) => !open)}
-        className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-slate-300 transition hover:text-white md:hidden"
-        aria-label="Toggle dashboard navigation"
-      >
-        {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </button>
-
       <aside
         className={`fixed inset-y-0 left-0 z-30 w-64 shrink-0 transform border-r border-slate-800 bg-slate-900/95 backdrop-blur-md transition-transform duration-300 md:static md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -419,15 +417,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <main className="flex min-w-0 max-w-full flex-1 flex-col">
         <header className="relative z-20 mx-4 mt-4 shrink-0 rounded-full border border-white/10 bg-slate-900/60 px-6 py-3 shadow-2xl shadow-purple-950/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:mx-6">
           <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <button type="button" onClick={() => setSidebarOpen((open) => !open)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-purple-500/30 bg-purple-950/40 text-purple-200 transition hover:bg-purple-900/50 md:hidden" aria-label="Toggle dashboard navigation">
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+              <Logo width={30} height={30} showName={false} />
             <h1 className="min-w-0 truncate text-lg font-bold capitalize text-slate-100">
               {title}
             </h1>
+            </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-3 py-1.5 text-xs text-purple-200 transition-all hover:bg-purple-900/50" onClick={() => window.dispatchEvent(new Event("pwa-install-request"))}>
+                {!isStandalone && <button type="button" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-3 py-1.5 text-xs text-purple-200 transition-all hover:bg-purple-900/50" onClick={() => window.dispatchEvent(new Event("pwa-install-request"))}>
                   <Download className="h-4 w-4 text-purple-400" />
                   Install App
-                </button>
+                </button>}
                 <Link href="/dashboard/profile" aria-label="Open your profile" className="flex h-9 w-9 items-center justify-center rounded-full border border-purple-500/40 bg-purple-600/30 font-semibold text-purple-200 transition hover:bg-purple-600/50">
                   {profile?.full_name || profile?.email ? (profile.full_name || profile.email || "?").trim().charAt(0).toUpperCase() : <UserIcon className="h-5 w-5 text-purple-300" />}
                 </Link>

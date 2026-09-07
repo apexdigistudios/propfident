@@ -26,7 +26,7 @@ export default function PWAInstallPrompt() {
     if (isIos && pathname === "/") setShowPrompt(true);
     window.addEventListener("beforeinstallprompt", handleInstall);
     const handleInstallRequest = () => {
-      if (pathname === "/") {
+      if (pathname === "/" || ios) {
         setShowPrompt(true);
       } else if (installEvent) {
         void installEvent.prompt();
