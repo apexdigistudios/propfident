@@ -21,7 +21,7 @@ import {
   X,
 } from "lucide-react";
 import Logo from "@/components/Logo";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { metricsFromAccountRow } from "@/lib/utils/drawdown";
 
@@ -307,7 +307,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full max-w-full bg-slate-950 text-white">
-      <Toaster richColors closeButton theme="dark" position="top-right" />
       <aside
         className={`fixed inset-y-0 left-0 z-30 w-64 shrink-0 transform border-r border-slate-800 bg-slate-900/95 backdrop-blur-md transition-transform duration-300 md:static md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"

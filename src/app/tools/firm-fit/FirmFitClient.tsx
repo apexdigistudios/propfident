@@ -19,8 +19,10 @@ export default function FirmFitClient() {
   async function handleFile(file: File) {
     const nextTrades = parseTradeExport(await file.text());
     if (!nextTrades.length) throw new Error("No trades found");
+    const nextResults = evaluateAllFirms(nextTrades);
+
     setTrades(nextTrades);
-    setResults(evaluateAllFirms(nextTrades));
+    setResults(nextResults);
   }
 
   return (

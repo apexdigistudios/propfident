@@ -3,6 +3,8 @@ import Script from "next/script";
 import type { ReactNode } from "react";
 import AdSlot from "@/components/AdSlot";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import BreachNotificationListener from "@/components/BreachNotificationListener";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 export const viewport = {
@@ -59,6 +61,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <div className="relative w-full">{children}</div>
         <PWAInstallPrompt />
+        <BreachNotificationListener />
+        <Toaster richColors closeButton theme="dark" position="top-right" />
         <AdSlot />
       </body>
     </html>
