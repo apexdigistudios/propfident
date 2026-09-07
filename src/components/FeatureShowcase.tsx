@@ -73,7 +73,7 @@ const features: Feature[] = [
     ],
     Visual: FirmFitVisual,
     badge: "New Feature",
-    href: "/tools/firm-fit",
+    href: "/tools/prop-match",
   },
   {
     id: "drawdown-shield",
