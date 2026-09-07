@@ -54,7 +54,7 @@ const navItems = [
   { label: "Prop Shield", href: "/dashboard/prop-shield", icon: ShieldAlert },
   { label: "Trade Assist", href: "/dashboard/trade-assist", icon: Calculator },
   { label: "Prop Match", href: "/dashboard/tools/prop-match", icon: Target, badge: "New" },
-  { label: "Journal", href: "/dashboard/journal", icon: NotebookPen },
+  { label: "Journal", href: "/dashboard/journal", icon: NotebookPen, badge: "Coming Soon", badgeColor: "purple" },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -414,24 +414,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       )}
 
       <main className="flex min-w-0 max-w-full flex-1 flex-col">
-        <header className="relative z-20 mx-4 mt-4 shrink-0 rounded-full border border-white/10 bg-slate-900/60 px-6 py-3 shadow-2xl shadow-purple-950/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:mx-6">
+        <header className="relative z-20 mx-3 mt-2 shrink-0 rounded-full border border-purple-500/20 bg-slate-950/70 px-3 py-1.5 shadow-2xl shadow-purple-950/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:mx-6 sm:mt-4 sm:px-6 sm:py-3">
           <div className="flex min-w-0 items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button type="button" onClick={() => setSidebarOpen((open) => !open)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-purple-500/30 bg-purple-950/40 text-purple-200 transition hover:bg-purple-900/50 md:hidden" aria-label="Toggle dashboard navigation">
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
-              <Logo width={30} height={30} showName={false} />
+              <Logo width={28} height={28} showName={false} className="sm:[&>img]:h-9 sm:[&>img]:w-9" />
             <h1 className="min-w-0 truncate text-lg font-bold capitalize text-slate-100">
               {title}
             </h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                {!isStandalone && <button type="button" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-3 py-1.5 text-xs text-purple-200 transition-all hover:bg-purple-900/50" onClick={() => window.dispatchEvent(new Event("pwa-install-request"))}>
+                {!isStandalone && <button type="button" className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 px-2.5 py-1 text-xs text-purple-200 transition-all hover:bg-purple-900/50 sm:min-h-[44px] sm:px-3 sm:py-1.5" onClick={() => window.dispatchEvent(new Event("pwa-install-request"))}>
                   <Download className="h-4 w-4 text-purple-400" />
                   Install App
                 </button>}
-                <Link href="/dashboard/profile" aria-label="Open your profile" className="flex h-9 w-9 items-center justify-center rounded-full border border-purple-500/40 bg-purple-600/30 font-semibold text-purple-200 transition hover:bg-purple-600/50">
+                <Link href="/dashboard/profile" aria-label="Open your profile" className="flex h-8 w-8 items-center justify-center rounded-full border border-purple-500/40 bg-purple-600/30 text-xs font-semibold text-purple-200 transition hover:bg-purple-600/50 sm:h-9 sm:w-9 sm:text-sm">
                   {profile?.full_name || profile?.email ? (profile.full_name || profile.email || "?").trim().charAt(0).toUpperCase() : <UserIcon className="h-5 w-5 text-purple-300" />}
                 </Link>
               </div>

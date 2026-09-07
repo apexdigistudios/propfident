@@ -15,7 +15,11 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Propfident — Never Breach a Prop Firm Account Again",
+  metadataBase: new URL("https://propfident.online"),
+  title: {
+    default: "Propfident | Prop Trading Risk Shield & Prop Match™",
+    template: "%s | Propfident",
+  },
   description:
     "Real-time drawdown protection, dynamic lot sizing, automated trading journals, and hands-free MT4/MT5 syncing through MetaApi.",
   icons: {
@@ -41,10 +45,13 @@ export const metadata: Metadata = {
     "funded trading",
   ],
   openGraph: {
-    title: "Propfident — Trade Funded Accounts With Confidence",
+    title: "Propfident | Prop Trading Risk Shield",
     description:
       "Protect every funded account with live drawdown tracking, exact risk sizing, and automated MT4/MT5 journaling.",
     type: "website",
+    url: "https://propfident.online",
+    siteName: "Propfident",
+    images: [{ url: "/propfidentlogo.png", width: 512, height: 512, alt: "Propfident Logo" }],
   },
 };
 
@@ -52,6 +59,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-background antialiased overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Propfident",
+              url: "https://propfident.online",
+              logo: "https://propfident.online/propfidentlogo.png",
+              sameAs: [],
+            }),
+          }}
+        />
         <Script
           id="adsense-init"
           async
