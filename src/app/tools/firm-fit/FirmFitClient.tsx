@@ -1,20 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmailCaptureModal from "@/components/EmailCaptureModal";
+import { createClient } from "@/lib/supabase/client";
+import DashboardLayout from "@/app/dashboard/layout";
 import { evaluateAllFirms, type FirmEvaluation } from "@/lib/firm-fit/evaluator";
 import { parseTradeExport, type NormalizedTrade } from "@/lib/firm-fit/parser";
 import { Dropzone } from "./components/Dropzone";
 import { DiagnosticsModal } from "./components/DiagnosticsModal";
 import { MatrixGrid } from "./components/MatrixGrid";
 import { ShareableCard } from "./components/ShareableCard";
+import Navbar from "@/components/Navbar";
 
 export default function FirmFitClient() {
   const [trades, setTrades] = useState<NormalizedTrade[]>([]);
   const [results, setResults] = useState<FirmEvaluation[]>([]);
   const [selected, setSelected] = useState<FirmEvaluation | null>(null);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
   const matchedFirms = results.filter((result) => result.matchPercentage >= 80);
+
+  useEffect(() => {
+    const supabase = createClient();
+    void supabase.auth.getUser().then(({ data }) => setAuthenticated(Boolean(data.user)));
+  }, []);
 
   async function handleFile(file: File) {
     const nextTrades = parseTradeExport(await file.text());
@@ -25,8 +34,8 @@ export default function FirmFitClient() {
     setResults(nextResults);
   }
 
-  return (
-    <main className="min-h-screen max-w-full overflow-x-hidden bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-slate-950 to-slate-950 px-4 py-12 text-white sm:px-6 lg:px-8">
+  const toolContent = (
+    <main className={`${authenticated ? "" : "pt-24"} min-h-screen max-w-full overflow-x-hidden bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-slate-950 to-slate-950 px-4 py-12 text-white sm:px-6 lg:px-8`}>
       <div className="mx-auto max-w-7xl">
         <section className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-300">Prop Match™</p>
@@ -42,7 +51,7 @@ export default function FirmFitClient() {
               <button type="button" onClick={() => setWaitlistOpen(true)} className="min-h-[42px] rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 shadow-lg shadow-purple-500/20 transition-all hover:bg-purple-500/20 sm:px-4 sm:text-sm">Get daily breach alerts</button>
             </div>
             <div className="mt-5"><MatrixGrid results={results} onDetails={setSelected} /></div>
-            <ShareableCard result={results[0]} tradeCount={trades.length} />
+            <ShareableCard results={results} />
           </section>
         ) : (
           <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-purple-900/30 bg-slate-900/70 p-6 text-center text-sm text-slate-400 backdrop-blur-xl">Your comparison will appear here after you upload a trade export.</div>
@@ -52,4 +61,6 @@ export default function FirmFitClient() {
       </div>
     </main>
   );
+
+  return authenticated ? <DashboardLayout>{toolContent}</DashboardLayout> : <><Navbar />{toolContent}</>;
 }
