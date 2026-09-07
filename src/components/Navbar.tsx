@@ -18,7 +18,7 @@ export default function Navbar() {
 
   return (
     <header className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex justify-center px-3 pt-2 sm:px-4 sm:pt-4">
-      <div className="relative pointer-events-auto flex w-full max-w-6xl items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/70 px-3 py-1.5 shadow-2xl shadow-purple-950/30 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:px-6 sm:py-3">
+      <div className="relative pointer-events-auto flex h-12 w-full max-w-6xl items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/70 px-3 shadow-2xl shadow-purple-950/30 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:h-14 sm:px-6">
         <Link className="flex items-center gap-2 text-xl font-bold text-white" href="/">
           <Logo width={28} height={28} className="sm:[&>img]:h-9 sm:[&>img]:w-9" />
         </Link>
@@ -58,7 +58,7 @@ export default function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="border-b border-white/10 bg-slate-950 px-4 pb-6 pt-2 md:hidden">
+        <div className="pointer-events-auto absolute left-3 right-3 top-full z-50 mt-3 rounded-2xl border border-white/10 bg-slate-900/95 p-5 shadow-2xl shadow-purple-950/50 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 md:hidden sm:left-4 sm:right-4">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link
