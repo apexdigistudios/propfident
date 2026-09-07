@@ -192,7 +192,7 @@ export default function FeatureShowcase() {
                       ))}
                     </ul>
                     {feature.href && (
-                      <Link href={feature.href} className="mt-7 inline-flex items-center justify-center rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all duration-300 hover:from-purple-500 hover:to-indigo-500 hover:shadow-purple-500/40">
+                      <Link href={feature.href} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex items-center justify-center rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all duration-300 hover:from-purple-500 hover:to-indigo-500 hover:shadow-purple-500/40">
                         Run Free Strategy Match →
                       </Link>
                     )}

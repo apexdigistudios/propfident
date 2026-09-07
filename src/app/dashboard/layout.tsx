@@ -53,7 +53,7 @@ const navItems = [
   { label: "Account Intel", href: "/dashboard/account-intel", icon: Server },
   { label: "Prop Shield", href: "/dashboard/prop-shield", icon: ShieldAlert },
   { label: "Trade Assist", href: "/dashboard/trade-assist", icon: Calculator },
-  { label: "Prop Match", href: "/tools/firm-fit", icon: Target, badge: "New" },
+  { label: "Prop Match", href: "/dashboard/tools/prop-match", icon: Target, badge: "New" },
   { label: "Journal", href: "/dashboard/journal", icon: NotebookPen },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
