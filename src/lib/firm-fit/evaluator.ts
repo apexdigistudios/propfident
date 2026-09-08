@@ -11,7 +11,17 @@ export interface UserMetrics { userMaxDailyDD: number; userMaxTotalDD: number; w
 export interface FirmEvaluation extends UserMetrics { firm: FirmDefinition; matchPercentage: number; status: EvaluationStatus; breaches: string[]; }
 export interface EvaluateOptions { startingBalance?: number; newsEvents?: NewsEvent[]; }
 
-const affiliateById: Record<string, string> = { ftmo: "https://ftmo.com/?ref=PROPFIDENT", fundingpips: "https://fundingpips.com/ref/PROPFIDENT", topstep: "https://topstep.com/ref/PROPFIDENT", the5ers: "https://the5ers.com/ref/PROPFIDENT", goatfunded: "https://goatfundedtrader.com/ref/PROPFIDENT" };
+const affiliateById: Record<string, string> = {
+  ftmo: "https://ftmo.com/?ref=PROPFIDENT",
+  fundingpips: "https://fundingpips.com/ref/PROPFIDENT",
+  topstep: "https://topstep.com/ref/PROPFIDENT",
+  the5ers: "https://the5ers.com/ref/PROPFIDENT",
+  alphacapital: "https://alphacapitalgroup.uk/?ref=PROPFIDENT",
+  fundednext: "https://fundednext.com/?ref=PROPFIDENT",
+  aquafunded: "https://aquafunded.com/?ref=PROPFIDENT",
+  myfundedfx: "https://myfundedfx.com/?ref=PROPFIDENT",
+  goatfunded: "https://goatfundedtrader.com/ref/PROPFIDENT",
+};
 function toFirmDefinition(profile: PropFirmProfile): FirmDefinition {
   return { ...profile, logoUrl: profile.logo, affiliateUrl: affiliateById[profile.id], discountCode: profile.id === "topstep" ? "PROPFIDENT20" : "PROPFIDENT", discountPercentage: profile.id === "topstep" ? 20 : profile.id === "the5ers" || profile.id === "goatfunded" ? 10 : 5, rules: { maxDailyDrawdown: profile.dailyDrawdown, dailyDrawdownType: profile.id === "topstep" ? "end_of_day" : "equity_balance_higher", maxTotalDrawdown: profile.maxDrawdown, totalDrawdownType: profile.id === "topstep" ? "trailing_unrealized" : "static", allowNewsTrading: profile.id !== "ftmo", newsWindowMinutes: profile.id === "ftmo" ? 2 : 0, allowWeekendHolding: profile.weekendHolding, minTradingDays: profile.id === "ftmo" ? 4 : profile.id === "topstep" ? 5 : 0, consistencyRule: Boolean(profile.consistencyLimit), consistencyThreshold: profile.consistencyLimit, lotSizeCap: profile.lotSizeCap ?? null } };
 }

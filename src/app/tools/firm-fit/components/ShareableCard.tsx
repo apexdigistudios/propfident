@@ -12,7 +12,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const [userEmail, setUserEmail] = useState("");
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const displayName = traderName.trim() || "Propfident Trader";
-  const topResults = results.slice(0, 3);
+  const topResults = results.slice(0, 4);
   const result = topResults[0];
   const verifiedAt = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
   const consistency = result.maxTradeProfitRatio * 100;
@@ -77,10 +77,10 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
           </div>
           <div className="flex flex-1 flex-col justify-center gap-3 py-4 sm:py-6">
             {topResults.map((match) => (
-              <div key={match.firm.id} className="grid grid-cols-[auto_7rem_1fr_auto] items-center gap-2 text-xs sm:grid-cols-[auto_9rem_1fr_auto] sm:gap-3">
-                <img src={match.firm.logo} alt="" className="h-7 w-7 rounded object-contain" />
+              <div key={match.firm.id} className="grid grid-cols-[auto_7rem_1fr_auto] items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:grid-cols-[auto_9rem_1fr_auto] sm:text-sm">
+                <img src={match.firm.logo} alt="" className="h-6 w-6 rounded object-contain sm:h-7 sm:w-7" />
                 <span className="truncate text-slate-200">{match.firm.name}</span>
-                <div className="h-3 overflow-hidden rounded-full bg-slate-800">
+                <div className="h-2 overflow-hidden rounded-full bg-slate-800">
                   <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500" style={{ width: `${match.matchPercentage}%` }} />
                 </div>
                 <span className="font-bold text-purple-300">{match.matchPercentage}% Match</span>
