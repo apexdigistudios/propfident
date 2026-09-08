@@ -78,7 +78,14 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
           <div className="flex flex-1 flex-col justify-center gap-3 py-4 sm:py-6">
             {topResults.map((match) => (
               <div key={match.firm.id} className="grid grid-cols-[auto_7rem_1fr_auto] items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:grid-cols-[auto_9rem_1fr_auto] sm:text-sm">
-                <img src={match.firm.logo} alt="" className="h-6 w-6 rounded object-contain sm:h-7 sm:w-7" />
+                <img
+                  src={match.firm.logo}
+                  alt={`${match.firm.name} logo`}
+                  className="h-6 w-6 rounded object-contain sm:h-7 sm:w-7"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                  }}
+                />
                 <span className="truncate text-slate-200">{match.firm.name}</span>
                 <div className="h-2 overflow-hidden rounded-full bg-slate-800">
                   <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500" style={{ width: `${match.matchPercentage}%` }} />

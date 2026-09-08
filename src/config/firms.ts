@@ -11,12 +11,11 @@ export interface PropFirmProfile {
 }
 
 export const PROP_FIRMS: PropFirmProfile[] = [
-  { id: "ftmo", name: "FTMO", logo: "/logos/ftmo.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: false },
-  { id: "fundingpips", name: "FundingPips", logo: "/logos/fundingpips.svg", dailyDrawdown: 0.05, maxDrawdown: 0.08, consistencyLimit: 0.35, weekendHolding: true },
-  { id: "topstep", name: "Topstep", logo: "/logos/topstep.svg", dailyDrawdown: 0.04, maxDrawdown: 0.04, lotSizeCap: 5, weekendHolding: false },
-  { id: "the5ers", name: "The5ers", logo: "/logos/the5ers.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: true, requiresStopLoss: true },
-  { id: "alphacapital", name: "Alpha Capital Group", logo: "/logos/alpha-capital-group.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, consistencyLimit: 0.4, weekendHolding: true },
-  { id: "fundednext", name: "FundedNext", logo: "/logos/fundednext.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, consistencyLimit: 0.4, weekendHolding: true },
-  { id: "aquafunded", name: "AquaFunded", logo: "/logos/aquafunded.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: true },
-  { id: "myfundedfx", name: "MyFundedFX", logo: "/logos/myfundedfx.svg", dailyDrawdown: 0.05, maxDrawdown: 0.1, consistencyLimit: 0.4, weekendHolding: true },
+  { id: "ftmo", name: "FTMO", logo: "/logos/ftmo-logo.png", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: false },
+  { id: "topstep", name: "Topstep", logo: "/logos/topstep-logo.png", dailyDrawdown: 0.04, maxDrawdown: 0.04, lotSizeCap: 5, weekendHolding: false },
+  { id: "the5ers", name: "The5ers", logo: "/logos/5ers-Logo.png", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: true, requiresStopLoss: true },
+  { id: "alphacapital", name: "Alpha Capital Group", logo: "/logos/Alpha-Capital-prop-firm-logo.webp", dailyDrawdown: 0.05, maxDrawdown: 0.1, consistencyLimit: 0.4, weekendHolding: true },
+  { id: "fundednext", name: "FundedNext", logo: "/logos/fundednext-logo.webp", dailyDrawdown: 0.05, maxDrawdown: 0.1, consistencyLimit: 0.4, weekendHolding: true },
+  { id: "aquafunded", name: "AquaFunded", logo: "/logos/aqua-funded-logo.webp", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: true },
+  { id: "goatfunded", name: "Goat Funded", logo: "/logos/Goat-Funded-Trader-logo.jpg", dailyDrawdown: 0.05, maxDrawdown: 0.1, weekendHolding: true },
 ];

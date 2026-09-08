@@ -13,13 +13,11 @@ export interface EvaluateOptions { startingBalance?: number; newsEvents?: NewsEv
 
 const affiliateById: Record<string, string> = {
   ftmo: "https://ftmo.com/?ref=PROPFIDENT",
-  fundingpips: "https://fundingpips.com/ref/PROPFIDENT",
   topstep: "https://topstep.com/ref/PROPFIDENT",
   the5ers: "https://the5ers.com/ref/PROPFIDENT",
   alphacapital: "https://alphacapitalgroup.uk/?ref=PROPFIDENT",
   fundednext: "https://fundednext.com/?ref=PROPFIDENT",
   aquafunded: "https://aquafunded.com/?ref=PROPFIDENT",
-  myfundedfx: "https://myfundedfx.com/?ref=PROPFIDENT",
   goatfunded: "https://goatfundedtrader.com/ref/PROPFIDENT",
 };
 function toFirmDefinition(profile: PropFirmProfile): FirmDefinition {
@@ -40,7 +38,6 @@ export function evaluateFirm(firm: FirmDefinition, trades: NormalizedTrade[], op
   if (metrics.userMaxTotalDD > totalLimit) { breaches.push(`Max DD breach: ${metrics.userMaxTotalDD.toFixed(1)}% vs ${totalLimit.toFixed(1)}% limit.`); penalty += 30; } else if (metrics.userMaxTotalDD > totalLimit * 0.8) { breaches.push(`Max DD warning: ${metrics.userMaxTotalDD.toFixed(1)}% of ${totalLimit.toFixed(1)}% limit.`); penalty += 10; }
   if (!firm.rules.allowWeekendHolding && metrics.weekendTradesCount > 0) { breaches.push(`Weekend holding: ${metrics.weekendTradesCount} trade(s) crossed Saturday or Sunday UTC.`); penalty += 15; }
   if (firm.id === "ftmo" && metrics.newsWindowOverlaps > 0) { breaches.push(`FTMO Standard news risk: ${metrics.newsWindowOverlaps} trade(s) overlapped the high-impact news window.`); penalty += 15; }
-  if (firm.id === "fundingpips" && metrics.maxTradeProfitRatio > 0.35) { breaches.push(`Consistency breach: one trade contributed ${(metrics.maxTradeProfitRatio * 100).toFixed(1)}% of profits; limit is 35%.`); penalty += 20; }
   if (firm.id === "topstep" && metrics.overnightTradesCount > 0) { breaches.push(`Topstep overnight hold: ${metrics.overnightTradesCount} trade(s) crossed a session boundary.`); penalty += 15; }
   if (firm.id === "the5ers" && metrics.missingStopLossCount > 0) { breaches.push(`Stop-loss breach: ${metrics.missingStopLossCount} trade(s) have no explicit stop-loss.`); penalty += 25; }
   if (firm.id === "goatfunded" && metrics.lotStressCount > 0) { breaches.push(`Lot-size stress: ${metrics.lotStressCount} trade(s) used 5 or more lots.`); penalty += 15; }
