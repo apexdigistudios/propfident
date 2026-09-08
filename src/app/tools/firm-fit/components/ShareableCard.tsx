@@ -19,7 +19,14 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
     if (!cardRef.current) return;
     setBusy(true);
     try {
-      const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, canvasWidth: 1200, canvasHeight: 630 });
+      const dataUrl = await toPng(cardRef.current, {
+        quality: 0.95,
+        pixelRatio: 2,
+        canvasWidth: 1200,
+        canvasHeight: 630,
+        cacheBust: true,
+        includeQueryParams: true,
+      });
       const link = document.createElement("a");
       link.download = `${result.firm.id}-prop-match.png`;
       link.href = dataUrl;
@@ -33,8 +40,16 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
     <section className="mt-6">
       <label className="block text-sm font-semibold text-slate-200" htmlFor="trader-name">Trader name or handle</label>
       <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-purple-500" />
-      <div ref={cardRef} className="mx-auto mt-4 aspect-[1200/630] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-900/30 via-slate-950 to-slate-950 p-5 text-white shadow-2xl shadow-purple-950/30 sm:p-8">
-        <div className="flex h-full flex-col justify-between">
+      <div ref={cardRef} className="relative mx-auto mt-4 aspect-[1200/630] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-5 text-white shadow-2xl shadow-purple-950/30 sm:p-8">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cdefs%3E%3Cpattern id='grid' width='32' height='32' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 32 0 L 0 0 0 32' fill='none' stroke='%23a855f7' stroke-opacity='.28' stroke-width='1'/%3E%3Ccircle cx='0' cy='0' r='1.5' fill='%23c084fc' fill-opacity='.42'/%3E%3C/pattern%3E%3ClinearGradient id='mesh' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237e22ce' stop-opacity='.5'/%3E%3Cstop offset='.5' stop-color='%231e1b4b' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%234c1d95' stop-opacity='.55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='%230f0725'/%3E%3Crect width='160' height='160' fill='url(%23mesh)'/%3E%3Crect width='160' height='160' fill='url(%23grid)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-purple-950/40 via-slate-950/80 to-slate-950/95" />
+        <div className="relative z-10 flex h-full flex-col justify-between">
           <div className="flex items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
             <div className="flex min-w-0 items-center gap-3">
               <img src="/propfidentlogo.png" alt="Propfident" className="h-8 w-8 object-contain" />
