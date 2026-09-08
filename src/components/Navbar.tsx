@@ -44,6 +44,9 @@ export default function Navbar() {
           <Link className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white" href="/#playbook-banner" onClick={handlePlaybookClick}>
             Playbook
           </Link>
+          <Link className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white" href="/prop-firms">
+            Prop Firms Directory
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
@@ -83,6 +86,9 @@ export default function Navbar() {
             ))}
             <Link href="/#playbook-banner" onClick={handlePlaybookClick} className="text-base font-medium text-slate-200 hover:text-white">
               Playbook
+            </Link>
+            <Link href="/prop-firms" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-slate-200 hover:text-white">
+              Prop Firms Directory
             </Link>
             <hr className="my-2 border-white/10" />
             <Link

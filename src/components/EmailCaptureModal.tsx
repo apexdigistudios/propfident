@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, X, Mail } from "lucide-react";
 import { subscribeToWaitlist } from "@/app/actions/waitlist";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 interface EmailCaptureModalProps {
   isOpen: boolean;
@@ -104,13 +105,14 @@ export default function EmailCaptureModal({
                   />
                 </div>
 
-                <button
+                <ShimmerButton
                   type="submit"
                   disabled={isLoading || !email.trim()}
-                  className="w-full rounded-lg bg-gradient-brand px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                  background="rgba(124, 58, 237, 0.8)"
+                  className="w-full px-4 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? "Subscribing..." : "Notify Me"}
-                </button>
+                </ShimmerButton>
               </form>
 
               <p className="mt-4 text-xs text-slate-500 text-center">

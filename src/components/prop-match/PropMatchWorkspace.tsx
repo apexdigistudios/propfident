@@ -8,6 +8,7 @@ import { Dropzone } from "@/app/tools/firm-fit/components/Dropzone";
 import { DiagnosticsModal } from "@/app/tools/firm-fit/components/DiagnosticsModal";
 import { MatrixGrid } from "@/app/tools/firm-fit/components/MatrixGrid";
 import { ShareableCard } from "@/app/tools/firm-fit/components/ShareableCard";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 export default function PropMatchWorkspace() {
   const [trades, setTrades] = useState<NormalizedTrade[]>([]);
@@ -18,6 +19,8 @@ export default function PropMatchWorkspace() {
   const [analysisStep, setAnalysisStep] = useState<0 | 1 | 2>(0);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const matchedFirms = bestModelPerFirm(results);
+  const maxDailyDD = results[0]?.userMaxDailyDD ?? 0;
+  const maxTotalDD = results[0]?.userMaxTotalDD ?? 0;
 
   useEffect(() => {
     if (!isAnalyzing) return;
@@ -58,6 +61,9 @@ export default function PropMatchWorkspace() {
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-300">Prop Match™</p>
           <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Find the prop firm that fits your trading.</h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
+          <ShimmerButton href="/prop-firms" background="rgba(124, 58, 237, 0.8)" className="mt-6 px-4 py-3 text-xs sm:text-sm">
+            Prop Firms Directory →
+          </ShimmerButton>
         </section>
         {matchedFirms.length >= 2 && <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-purple-500/40 bg-purple-500/10 px-5 py-4 text-center text-sm font-semibold text-purple-100 shadow-lg shadow-purple-900/20">🎉 Matched with {matchedFirms.length} Prop Firms! Your strategy is eligible for {matchedFirms.slice(0, 3).map((firm) => firm.firm.name).join(", ")}, and more.</div>}
         <div className="mx-auto mt-10 max-w-3xl">
@@ -93,7 +99,22 @@ export default function PropMatchWorkspace() {
             <div className="mt-5"><MatrixGrid results={matchedFirms} onDetails={setSelected} /></div>
             <ShareableCard results={matchedFirms} />
           </section>
-        ) : <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-purple-900/30 bg-slate-900/70 p-6 text-center text-sm text-slate-400 backdrop-blur-xl">Your comparison will appear here after you upload a trade export.</div>}
+        ) : !isAnalyzing && results.length > 0 ? (
+          <section className="mx-auto mt-10 w-full max-w-2xl rounded-2xl border border-amber-500/30 bg-slate-900/80 p-5 text-center shadow-2xl shadow-amber-950/20 backdrop-blur-2xl sm:p-8">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-300">⚠️ STRATEGY BREACH DETECTED</p>
+            <h2 className="mt-3 text-xl font-black text-white sm:text-2xl">No supported firm model passed this strategy.</h2>
+            <div className="mt-5 space-y-2 text-sm leading-6 text-slate-300">
+              <p>Your strategy exceeded daily loss caps (Max Daily DD: <strong className="text-amber-200">{maxDailyDD.toFixed(1)}%</strong>).</p>
+              <p>Your overall drawdown (Max DD: <strong className="text-amber-200">{maxTotalDD.toFixed(1)}%</strong>) exceeds maximum allowance across all 7 supported firms.</p>
+            </div>
+            <div className="mt-5 rounded-xl border border-purple-500/20 bg-purple-500/10 p-4 text-left text-sm leading-6 text-purple-100">
+              Reduce your lot sizes by 30% or set tighter stop losses to qualify for FTMO, Topstep, or FundedNext.
+            </div>
+            <ShimmerButton type="button" onClick={replaceFile} background="rgba(124, 58, 237, 0.8)" className="mt-6 w-full max-w-xs px-4 py-3 text-xs sm:text-sm">
+              Re-Upload Modified CSV
+            </ShimmerButton>
+          </section>
+        ) : <div className="mx-auto mt-10 w-full max-w-3xl rounded-2xl border border-purple-900/30 bg-slate-900/70 p-4 text-center text-xs text-slate-400 backdrop-blur-xl sm:p-6 sm:text-sm">Your comparison will appear here after you upload a trade export.</div>}
         <EmailCaptureModal isOpen={waitlistOpen} onClose={() => setWaitlistOpen(false)} source="prop_match_daily_alerts" />
         <DiagnosticsModal result={selected} trades={trades} onClose={() => setSelected(null)} />
       </div>

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import Link from "next/link";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { toPng } from "html-to-image";
 import type { FirmEvaluation } from "@/lib/firm-fit/evaluator";
 
@@ -13,8 +14,8 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const [userEmail, setUserEmail] = useState("");
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const displayName = traderName.trim() || "Propfident Trader";
-  const topResults = results.slice(0, 4);
-  const result = topResults[0];
+  const topThreeFirms = results.filter((firm) => firm.matchPercentage >= 70).sort((a, b) => b.matchPercentage - a.matchPercentage).slice(0, 3);
+  const result = topThreeFirms[0] || results[0];
   const verifiedAt = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
   const consistency = result.maxTradeProfitRatio * 100;
 
@@ -77,8 +78,8 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
             </div>
           </div>
           <div className="flex flex-1 flex-col justify-center gap-3 py-4 sm:py-6">
-            {topResults.map((match) => (
-              <div key={match.firm.id} className="grid grid-cols-[auto_7rem_1fr_auto] items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:grid-cols-[auto_9rem_1fr_auto] sm:text-sm">
+            {topThreeFirms.map((match) => (
+              <div key={match.firm.id} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_minmax(3rem,0.8fr)_auto] items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:text-sm">
                 <Link href={`/prop-firms#${match.firm.id}`} className="contents">
                   <img
                     src={match.firm.logo}
@@ -103,9 +104,9 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-3">
-        <button type="button" disabled={busy} onClick={() => { if (userEmail.trim()) void handleDownloadCard(); else setIsEmailModalOpen(true); }} className="inline-flex min-h-[42px] items-center gap-2 rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50">
+        <ShimmerButton type="button" disabled={busy} onClick={() => { if (userEmail.trim()) void handleDownloadCard(); else setIsEmailModalOpen(true); }} background="rgba(124, 58, 237, 0.8)" className="w-full px-4 py-3 text-xs sm:w-auto sm:text-sm">
           <Download className="h-4 w-4" /> Download Scorecard (PNG)
-        </button>
+        </ShimmerButton>
       </div>
       {isEmailModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
@@ -114,7 +115,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
             <p className="mt-2 text-sm leading-6 text-slate-400">Enter your email to download your official Prop Match strategy breakdown and receive weekly prop firm rule updates.</p>
             <form className="mt-5 space-y-3" onSubmit={(event) => { event.preventDefault(); if (!event.currentTarget.reportValidity()) return; try { window.localStorage.setItem("propfident-scorecard-email", userEmail.trim()); } catch { /* Storage may be unavailable in private browsing. */ } setIsEmailModalOpen(false); void handleDownloadCard(); }}>
               <input type="email" required value={userEmail} onChange={(event) => setUserEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-purple-500/20 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:border-purple-500 focus:outline-none" autoFocus />
-              <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all hover:from-purple-500 hover:to-indigo-500">Confirm &amp; Download PNG 🚀</button>
+              <ShimmerButton type="submit" background="rgba(124, 58, 237, 0.8)" className="w-full px-4 py-3.5 text-sm">Confirm &amp; Download PNG 🚀</ShimmerButton>
             </form>
             <button type="button" onClick={() => setIsEmailModalOpen(false)} className="mt-3 w-full py-2 text-sm text-slate-400 transition hover:text-white">Cancel</button>
           </div>

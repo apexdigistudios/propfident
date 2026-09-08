@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 export const metadata: Metadata = {
   title: "The Seven Figure Funded Trader",
@@ -28,7 +29,7 @@ export default function PlaybookPage() {
             <div className="mt-6 aspect-[3/4] overflow-hidden rounded-2xl border border-purple-400/20 bg-slate-950 shadow-xl">
               <img src="/images/bookpdf.png" alt="Propfident risk management playbook cover" className="h-full w-full object-contain" />
             </div>
-            <a href={checkoutUrl} className="mt-6 inline-flex min-h-[42px] w-full items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:from-purple-500 hover:to-indigo-500">Get The Playbook</a>
+            <ShimmerButton href={checkoutUrl} background="rgba(124, 58, 237, 0.8)" className="mt-6 w-full px-5 py-3 text-sm">Get The Playbook</ShimmerButton>
           </div>
           <div>
             <span className="inline-flex rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-purple-300">Read the guide</span>
