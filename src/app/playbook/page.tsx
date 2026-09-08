@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Propfident Playbook | Prop Trading Risk Management",
+  title: "The Seven Figure Funded Trader",
   description: "Read the Propfident risk management playbook for practical drawdown, sizing, and challenge protection strategies.",
 };
 
@@ -14,6 +14,8 @@ const chapters = [
   ["03", "Respect the drawdown floor", "Track the true breach floor as your account changes. A winning day can move the line, especially with trailing rules."],
   ["04", "Build a repeatable week", "Keep a short journal, review your best setups, and use fewer high-quality trades when conditions are unclear."],
 ];
+
+const checkoutUrl = process.env.NEXT_PUBLIC_WHOP_CHECKOUT_URL || "https://whop.com/checkout/plan_4VBu6Mxzk15hN";
 
 export default function PlaybookPage() {
   return (
@@ -26,7 +28,7 @@ export default function PlaybookPage() {
             <div className="mt-6 aspect-[3/4] overflow-hidden rounded-2xl border border-purple-400/20 bg-slate-950 shadow-xl">
               <img src="/images/bookpdf.png" alt="Propfident risk management playbook cover" className="h-full w-full object-contain" />
             </div>
-            <a href="/images/bookpdf.png" download="Prop_Firm_Risk_Management_Playbook.pdf" className="mt-6 inline-flex min-h-[42px] w-full items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25">Download the PDF</a>
+            <a href={checkoutUrl} className="mt-6 inline-flex min-h-[42px] w-full items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-600/25 transition hover:from-purple-500 hover:to-indigo-500">Get The Playbook</a>
           </div>
           <div>
             <span className="inline-flex rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-purple-300">Read the guide</span>
