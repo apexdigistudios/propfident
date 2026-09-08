@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@google/genai": "^2.18.0",
+    "@napi-rs/canvas": "^1.0.8",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "dotenv": "17.3.1",
     "drizzle-orm": "0.45.2",
     "framer-motion": "^13.1.0",
-    "html-to-image": "^1.11.13",
     "lucide-react": "^1.32.0",
     "metaapi.cloud-sdk": "^29.3.3",
     "motion": "^13.1.0",

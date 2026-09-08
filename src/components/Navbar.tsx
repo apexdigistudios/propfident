@@ -25,36 +25,36 @@ export default function Navbar() {
   }
 
   return (
-    <header className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex justify-center px-3 pt-2 sm:px-4 sm:pt-4">
-      <div className="relative pointer-events-auto flex h-12 w-full max-w-6xl items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/70 px-3 shadow-2xl shadow-purple-950/30 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:h-14 sm:px-6">
+    <header className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex justify-center px-4 pt-3 sm:px-8 sm:pt-4">
+      <div className="relative pointer-events-auto flex w-full max-w-6xl items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/80 px-4 py-3 shadow-2xl shadow-purple-950/30 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-purple-600/10 before:blur-xl sm:px-8 sm:py-4">
         <Link className="flex items-center gap-2 text-xl font-bold text-white" href="/">
-          <Logo width={28} height={28} className="sm:[&>img]:h-9 sm:[&>img]:w-9" />
+          <Logo width={32} height={32} className="sm:[&>img]:h-10 sm:[&>img]:w-10" />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.name}
-              className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-base"
               href={link.href}
             >
               {link.name}
             </Link>
           ))}
-          <Link className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white" href="/#playbook-banner" onClick={handlePlaybookClick}>
+          <Link className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-base" href="/#playbook-banner" onClick={handlePlaybookClick}>
             Playbook
           </Link>
-          <Link className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white" href="/prop-firms">
-            Prop Firms Directory
+          <Link className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-base" href="/prop-firms">
+            Prop Rules
           </Link>
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <Link className="rounded-full px-2.5 py-1 text-xs font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white sm:px-3 sm:py-1.5 sm:text-sm" href="/login">
+          <Link className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-base" href="/login">
             Login
           </Link>
           <Link
-            className="rounded-full bg-purple-600 px-2.5 py-1 text-xs font-semibold text-white shadow-lg shadow-purple-500/20 hover:bg-purple-500 sm:px-4 sm:py-2 sm:text-sm"
+            className="rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 hover:bg-purple-500 sm:px-5 sm:py-2.5 sm:text-base"
             href="/dashboard"
           >
             Get Started
@@ -64,7 +64,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-slate-300 hover:bg-white/5 md:hidden sm:h-10 sm:w-10"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-slate-300 hover:bg-white/5 md:hidden"
           aria-label="Toggle navigation menu"
         >
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -88,7 +88,7 @@ export default function Navbar() {
               Playbook
             </Link>
             <Link href="/prop-firms" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-slate-200 hover:text-white">
-              Prop Firms Directory
+              Prop Rules
             </Link>
             <hr className="my-2 border-white/10" />
             <Link

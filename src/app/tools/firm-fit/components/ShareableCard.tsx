@@ -1,14 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Download } from "lucide-react";
 import Link from "next/link";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
-import { toPng } from "html-to-image";
 import type { FirmEvaluation } from "@/lib/firm-fit/evaluator";
 
 export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [traderName, setTraderName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -20,31 +18,33 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const consistency = result.maxTradeProfitRatio * 100;
 
   async function handleDownloadCard() {
-    if (!cardRef.current) return;
     setBusy(true);
     try {
-      await document.fonts.ready;
-      const exportWidth = 1200;
-      const exportHeight = 675;
-      const dataUrl = await toPng(cardRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        width: exportWidth,
-        height: exportHeight,
-        style: {
-          transform: "none",
-          width: `${exportWidth}px`,
-          height: `${exportHeight}px`,
-          borderRadius: "0px",
-          overflow: "visible",
-        },
-        cacheBust: true,
-        filter: (node) => !(node as HTMLElement).classList?.contains("no-export"),
+      const response = await fetch("/api/scorecard/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountSize: result.model.account_size,
+          maxDrawdown: result.userMaxTotalDD,
+          dailyDrawdown: result.userMaxDailyDD,
+          passRate: Math.round(topThreeFirms.reduce((sum, firm) => sum + firm.matchPercentage, 0) / Math.max(topThreeFirms.length, 1)),
+          topFirms: topThreeFirms.map((firm) => ({
+            firm_name: firm.firm.name,
+            account_model: firm.model.account_model,
+            matchPercentage: firm.matchPercentage,
+          })),
+        }),
       });
+      if (!response.ok) throw new Error("Scorecard download failed");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
+      link.href = url;
       link.download = `Propfident_Scorecard_${Date.now()}.png`;
-      link.href = dataUrl;
+      document.body.appendChild(link);
       link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Failed to export scorecard PNG:", error);
     } finally {
@@ -56,7 +56,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
     <section className="mt-6">
       <label className="block text-sm font-semibold text-slate-200" htmlFor="trader-name">Trader name or handle</label>
       <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-purple-500" />
-      <div ref={cardRef} className="relative mx-auto mt-4 aspect-[1200/675] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-8 text-white shadow-2xl shadow-purple-950/30">
+      <div className="relative mx-auto mt-4 aspect-[1200/675] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-8 text-white shadow-2xl shadow-purple-950/30">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 rounded-2xl bg-cover bg-center"

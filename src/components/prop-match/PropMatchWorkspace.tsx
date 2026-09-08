@@ -62,7 +62,7 @@ export default function PropMatchWorkspace() {
           <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Find the prop firm that fits your trading.</h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
           <ShimmerButton href="/prop-firms" background="rgba(124, 58, 237, 0.8)" className="mt-6 px-4 py-3 text-xs sm:text-sm">
-            Prop Firms Directory →
+              View Prop Rules →
           </ShimmerButton>
         </section>
         {matchedFirms.length >= 2 && <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-purple-500/40 bg-purple-500/10 px-5 py-4 text-center text-sm font-semibold text-purple-100 shadow-lg shadow-purple-900/20">🎉 Matched with {matchedFirms.length} Prop Firms! Your strategy is eligible for {matchedFirms.slice(0, 3).map((firm) => firm.firm.name).join(", ")}, and more.</div>}

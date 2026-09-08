@@ -19,8 +19,8 @@ export default function PropFirmsPage() {
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 pb-20 pt-32 sm:px-6 lg:px-8">
         <section className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-300">Propfident Intelligence</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-6xl">Prop Firm Rule Directory (2026)</h1>
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-300">📊 OFFICIAL PROP FIRM RULE MATRIX</p>
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-6xl">Prop Rules (2026)</h1>
           <p className="mt-5 text-base leading-7 text-slate-400">Compare the core challenge rules used by the firms available in Prop Match. Always confirm final terms with the firm before purchasing.</p>
         </section>
 

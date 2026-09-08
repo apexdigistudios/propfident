@@ -38,7 +38,7 @@ export default function PlaybookPage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               {chapters.map(([number, title, summary]) => <article key={number} className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-xl backdrop-blur-xl"><p className="text-xs font-bold tracking-[0.2em] text-purple-400">{number}</p><h2 className="mt-3 text-lg font-bold text-white">{title}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{summary}</p></article>)}
             </div>
-            <Link href="/tools/firm-fit" className="mt-8 inline-flex min-h-[42px] items-center rounded-xl border border-purple-400/30 bg-purple-600/30 px-5 py-3 text-sm font-medium text-purple-100 transition hover:bg-purple-600/50">Run a Prop Match check</Link>
+            <Link href="/prop-firms" className="mt-8 inline-flex min-h-[42px] items-center rounded-xl border border-purple-400/30 bg-purple-600/30 px-5 py-3 text-sm font-medium text-purple-100 transition hover:bg-purple-600/50">View Prop Rules →</Link>
           </div>
         </div>
       </section>

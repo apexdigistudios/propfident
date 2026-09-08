@@ -62,6 +62,9 @@ export default function HomePage() {
               >
                 Open Propfident Playbook ↗
               </a>
+              <a href="/prop-firms" className="mt-3 inline-flex items-center justify-center rounded-xl border border-purple-400/30 px-5 py-2.5 text-sm font-semibold text-purple-200 transition hover:bg-purple-500/10 sm:mt-4">
+                View Prop Rules →
+              </a>
             </div>
           </section>
         </Reveal>
