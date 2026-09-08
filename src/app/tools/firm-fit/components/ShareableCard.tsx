@@ -86,7 +86,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
                     className="h-6 w-6 rounded object-contain sm:h-7 sm:w-7"
                     onError={(event) => { event.currentTarget.style.display = "none"; }}
                   />
-                  <span className="truncate text-slate-200 transition hover:text-purple-300">{match.firm.name}</span>
+                  <span className="truncate text-slate-200 transition hover:text-purple-300">{match.firm.name} · {match.model.account_model}</span>
                 </Link>
                 <div className="h-2 overflow-hidden rounded-full bg-slate-800">
                   <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500" style={{ width: `${match.matchPercentage}%` }} />

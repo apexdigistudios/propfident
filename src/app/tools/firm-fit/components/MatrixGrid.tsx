@@ -41,7 +41,10 @@ export function MatrixGrid({ results, onDetails }: MatrixGridProps) {
                   <Link href={`/prop-firms#${result.firm.id}`} className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 p-1 text-lg font-black text-purple-300">
                     <img src={result.firm.logo} alt={`${result.firm.name} logo`} className="h-full w-full object-contain" />
                   </Link>
-                  <Link href={`/prop-firms#${result.firm.id}`} className="text-base font-bold text-white transition hover:text-purple-300 sm:text-lg">{result.firm.name}</Link>
+                  <div>
+                    <Link href={`/prop-firms#${result.firm.id}`} className="text-base font-bold text-white transition hover:text-purple-300 sm:text-lg">{result.firm.name}</Link>
+                    <p className="mt-1 text-xs text-purple-300">{result.model.account_model} · ${result.model.account_size.toLocaleString()}</p>
+                  </div>
                 </div>
                 <p className="mt-3 text-sm text-slate-400">{result.status.replace("_", " ")}</p>
               </div>
@@ -58,8 +61,9 @@ export function MatrixGrid({ results, onDetails }: MatrixGridProps) {
               <span className="flex items-center gap-2"><Target className="h-4 w-4 text-purple-300" /> View Prop Match Rule Matrix</span><ChevronDown className={`h-4 w-4 text-purple-300 transition-transform ${expanded ? "rotate-180" : ""}`} />
             </button>
             {expanded && <div className="mt-3 grid gap-2 rounded-xl border border-slate-800 bg-slate-950/70 p-4 text-xs text-slate-300">
-              <p><span className="text-slate-500">Daily drawdown:</span> {percent(rules.maxDailyDrawdown)} ({rules.dailyDrawdownType})</p>
+              <p><span className="text-slate-500">Daily drawdown:</span> {rules.maxDailyDrawdown === null ? "No limit supplied" : `${percent(rules.maxDailyDrawdown)} (${rules.dailyDrawdownType})`}</p>
               <p><span className="text-slate-500">Total drawdown:</span> {percent(rules.maxTotalDrawdown)} ({rules.totalDrawdownType})</p>
+              <p><span className="text-slate-500">Max DD strictness:</span> <strong className={result.drawdownStrictness === "trailing" ? "text-amber-300" : "text-emerald-300"}>{result.drawdownStrictness}</strong></p>
               <p><span className="text-slate-500">News trading:</span> {rules.allowNewsTrading ? "Allowed" : `Blocked within ${rules.newsWindowMinutes} minutes`}</p>
               <p><span className="text-slate-500">Weekend holding:</span> {rules.allowWeekendHolding ? "Allowed" : "Not allowed"}</p>
               <p><span className="text-slate-500">Minimum trading days:</span> {rules.minTradingDays || "None"}</p>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import EmailCaptureModal from "@/components/EmailCaptureModal";
-import { evaluateAllFirms, type FirmEvaluation } from "@/lib/firm-fit/evaluator";
+import { bestModelPerFirm, evaluateAllFirms, type FirmEvaluation } from "@/lib/firm-fit/evaluator";
 import { parseTradeExport, type NormalizedTrade } from "@/lib/firm-fit/parser";
 import { Dropzone } from "@/app/tools/firm-fit/components/Dropzone";
 import { DiagnosticsModal } from "@/app/tools/firm-fit/components/DiagnosticsModal";
@@ -17,7 +17,7 @@ export default function PropMatchWorkspace() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState<0 | 1 | 2>(0);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const matchedFirms = results.filter((result) => result.matchPercentage >= 80);
+  const matchedFirms = bestModelPerFirm(results);
 
   useEffect(() => {
     if (!isAnalyzing) return;
@@ -87,11 +87,11 @@ export default function PropMatchWorkspace() {
             <div className="mt-3 flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500"><span>Analyzing</span><span>{Math.round(((analysisStep + 1) / 3) * 100)}%</span></div>
           </section>
         )}
-        {!isAnalyzing && results.length > 0 ? (
+        {!isAnalyzing && matchedFirms.length > 0 ? (
           <section className="mt-12 rounded-3xl border border-purple-900/30 bg-slate-900/70 p-4 backdrop-blur-xl sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-300">Your results</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">Best rule matches</h2><p className="mt-2 text-sm text-slate-400">Compared {trades.length} normalized trades.</p></div><button type="button" onClick={() => setWaitlistOpen(true)} className="min-h-[42px] rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 shadow-lg shadow-purple-500/20 transition-all hover:bg-purple-500/20 sm:px-4 sm:text-sm">Get daily breach alerts</button></div>
-            <div className="mt-5"><MatrixGrid results={results} onDetails={setSelected} /></div>
-            <ShareableCard results={results} />
+            <div className="mt-5"><MatrixGrid results={matchedFirms} onDetails={setSelected} /></div>
+            <ShareableCard results={matchedFirms} />
           </section>
         ) : <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-purple-900/30 bg-slate-900/70 p-6 text-center text-sm text-slate-400 backdrop-blur-xl">Your comparison will appear here after you upload a trade export.</div>}
         <EmailCaptureModal isOpen={waitlistOpen} onClose={() => setWaitlistOpen(false)} source="prop_match_daily_alerts" />
