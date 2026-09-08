@@ -1,8 +1,8 @@
 [
   {
     "id": "ftmo",
-    "name": "FTMO (Normal)",
-    "logoUrl": "/logos/ftmo.svg",
+    "name": "FTMO",
+    "logoUrl": "/logos/ftmo-logo.png",
     "affiliateUrl": "https://ftmo.com/?ref=PROPFIDENT",
     "discountCode": "PROPFIDENT",
     "discountPercentage": 5,
@@ -20,36 +20,16 @@
     }
   },
   {
-    "id": "fundingpips",
-    "name": "FundingPips (2-Step)",
-    "logoUrl": "/logos/fundingpips.svg",
-    "affiliateUrl": "https://fundingpips.com/ref/PROPFIDENT",
-    "discountCode": "PROPFIDENT",
-    "discountPercentage": 5,
-    "rules": {
-      "maxDailyDrawdown": 0.05,
-      "dailyDrawdownType": "equity_balance_higher",
-      "maxTotalDrawdown": 0.1,
-      "totalDrawdownType": "static",
-      "allowNewsTrading": true,
-      "newsWindowMinutes": 2,
-      "allowWeekendHolding": true,
-      "minTradingDays": 0,
-      "consistencyRule": false,
-      "lotSizeCap": null
-    }
-  },
-  {
     "id": "topstep",
-    "name": "Topstep (50k Futures)",
-    "logoUrl": "/logos/topstep.svg",
+    "name": "Topstep",
+    "logoUrl": "/logos/topstep-logo.png",
     "affiliateUrl": "https://topstep.com/ref/PROPFIDENT",
-    "discountCode": "PROPFIDENT",
-    "discountPercentage": 10,
+    "discountCode": "PROPFIDENT20",
+    "discountPercentage": 20,
     "rules": {
       "maxDailyDrawdown": 0.04,
       "dailyDrawdownType": "end_of_day",
-      "maxTotalDrawdown": 0.06,
+      "maxTotalDrawdown": 0.04,
       "totalDrawdownType": "trailing_unrealized",
       "allowNewsTrading": true,
       "newsWindowMinutes": 0,
@@ -62,8 +42,8 @@
   },
   {
     "id": "the5ers",
-    "name": "The5ers (High Stakes)",
-    "logoUrl": "/logos/the5ers.svg",
+    "name": "The5ers",
+    "logoUrl": "/logos/5ers-Logo.png",
     "affiliateUrl": "https://the5ers.com/ref/PROPFIDENT",
     "discountCode": "PROPFIDENT",
     "discountPercentage": 10,
@@ -81,20 +61,82 @@
     }
   },
   {
+    "id": "alphacapital",
+    "name": "Alpha Capital Group",
+    "logoUrl": "/logos/Alpha-Capital-prop-firm-logo.webp",
+    "affiliateUrl": "https://alphacapitalgroup.uk/?ref=PROPFIDENT",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 5,
+    "rules": {
+      "maxDailyDrawdown": 0.05,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 0.1,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 0,
+      "allowWeekendHolding": true,
+      "minTradingDays": 0,
+      "consistencyRule": true,
+      "consistencyThreshold": 0.4,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "fundednext",
+    "name": "FundedNext",
+    "logoUrl": "/logos/fundednext-logo.webp",
+    "affiliateUrl": "https://fundednext.com/?ref=PROPFIDENT",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 5,
+    "rules": {
+      "maxDailyDrawdown": 0.05,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 0.1,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 0,
+      "allowWeekendHolding": true,
+      "minTradingDays": 0,
+      "consistencyRule": true,
+      "consistencyThreshold": 0.4,
+      "lotSizeCap": null
+    }
+  },
+  {
+    "id": "aquafunded",
+    "name": "AquaFunded",
+    "logoUrl": "/logos/aqua-funded-logo.webp",
+    "affiliateUrl": "https://aquafunded.com/?ref=PROPFIDENT",
+    "discountCode": "PROPFIDENT",
+    "discountPercentage": 5,
+    "rules": {
+      "maxDailyDrawdown": 0.05,
+      "dailyDrawdownType": "equity_balance_higher",
+      "maxTotalDrawdown": 0.1,
+      "totalDrawdownType": "static",
+      "allowNewsTrading": true,
+      "newsWindowMinutes": 0,
+      "allowWeekendHolding": true,
+      "minTradingDays": 0,
+      "consistencyRule": false,
+      "lotSizeCap": null
+    }
+  },
+  {
     "id": "goatfunded",
-    "name": "Goat Funded Trader",
-    "logoUrl": "/logos/goatfunded.svg",
+    "name": "Goat Funded",
+    "logoUrl": "/logos/Goat-Funded-Trader-logo.jpg",
     "affiliateUrl": "https://goatfundedtrader.com/ref/PROPFIDENT",
     "discountCode": "PROPFIDENT",
     "discountPercentage": 10,
     "rules": {
       "maxDailyDrawdown": 0.05,
       "dailyDrawdownType": "static",
-      "maxTotalDrawdown": 0.08,
+      "maxTotalDrawdown": 0.1,
       "totalDrawdownType": "static",
       "allowNewsTrading": true,
-      "newsWindowMinutes": 2,
-      "allowWeekendHolding": false,
+      "newsWindowMinutes": 0,
+      "allowWeekendHolding": true,
       "minTradingDays": 0,
       "consistencyRule": false,
       "lotSizeCap": null

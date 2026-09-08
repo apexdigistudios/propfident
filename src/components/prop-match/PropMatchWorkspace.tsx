@@ -16,6 +16,7 @@ export default function PropMatchWorkspace() {
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState<0 | 1 | 2>(0);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const matchedFirms = results.filter((result) => result.matchPercentage >= 80);
 
   useEffect(() => {
@@ -37,8 +38,17 @@ export default function PropMatchWorkspace() {
     if (!nextTrades.length) throw new Error("No trades found");
     setTrades(nextTrades);
     setResults(evaluateAllFirms(nextTrades));
+    setUploadedFileName(file.name);
     setAnalysisStep(0);
     setIsAnalyzing(true);
+  }
+
+  function replaceFile() {
+    setTrades([]);
+    setResults([]);
+    setSelected(null);
+    setUploadedFileName(null);
+    setIsAnalyzing(false);
   }
 
   return (
@@ -50,7 +60,14 @@ export default function PropMatchWorkspace() {
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
         </section>
         {matchedFirms.length >= 2 && <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-purple-500/40 bg-purple-500/10 px-5 py-4 text-center text-sm font-semibold text-purple-100 shadow-lg shadow-purple-900/20">🎉 Matched with {matchedFirms.length} Prop Firms! Your strategy is eligible for {matchedFirms.slice(0, 3).map((firm) => firm.firm.name).join(", ")}, and more.</div>}
-        <div className="mx-auto mt-10 max-w-3xl"><Dropzone onFile={handleFile} /></div>
+        <div className="mx-auto mt-10 max-w-3xl">
+          {uploadedFileName ? (
+            <div className="flex items-center justify-between gap-4 rounded-2xl border border-purple-500/30 bg-slate-900/80 px-4 py-3 text-sm shadow-xl shadow-purple-950/20 backdrop-blur-xl">
+              <span className="min-w-0 truncate text-slate-200">📄 Active Strategy File: <strong className="font-semibold text-white">{uploadedFileName}</strong></span>
+              <button type="button" onClick={replaceFile} className="shrink-0 text-xs font-bold text-purple-300 transition hover:text-white">Replace File</button>
+            </div>
+          ) : <Dropzone onFile={handleFile} />}
+        </div>
         {isAnalyzing && (
           <section className="mx-auto mt-10 max-w-lg rounded-2xl border border-purple-500/30 bg-slate-900/80 p-8 text-center shadow-2xl shadow-purple-950/50 backdrop-blur-2xl" aria-live="polite">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-purple-400/40 bg-purple-500/10 shadow-[0_0_40px_rgba(168,85,247,0.45)]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, ChevronDown, Target } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import type { FirmEvaluation } from "@/lib/firm-fit/evaluator";
 
@@ -37,8 +38,10 @@ export function MatrixGrid({ results, onDetails }: MatrixGridProps) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 p-1 text-lg font-black text-purple-300"><img src={result.firm.logo} alt="" className="h-full w-full object-contain" /></div>
-                  <h2 className="text-base font-bold text-white sm:text-lg">{result.firm.name}</h2>
+                  <Link href={`/prop-firms#${result.firm.id}`} className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 p-1 text-lg font-black text-purple-300">
+                    <img src={result.firm.logo} alt={`${result.firm.name} logo`} className="h-full w-full object-contain" />
+                  </Link>
+                  <Link href={`/prop-firms#${result.firm.id}`} className="text-base font-bold text-white transition hover:text-purple-300 sm:text-lg">{result.firm.name}</Link>
                 </div>
                 <p className="mt-3 text-sm text-slate-400">{result.status.replace("_", " ")}</p>
               </div>
