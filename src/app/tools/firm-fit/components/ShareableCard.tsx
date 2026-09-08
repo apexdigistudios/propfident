@@ -9,13 +9,15 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [traderName, setTraderName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const displayName = traderName.trim() || "Propfident Trader";
   const topResults = results.slice(0, 3);
   const result = topResults[0];
   const verifiedAt = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
   const consistency = result.maxTradeProfitRatio * 100;
 
-  async function downloadCard() {
+  async function handleDownloadCard() {
     if (!cardRef.current) return;
     setBusy(true);
     try {
@@ -43,12 +45,12 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
       <div ref={cardRef} className="relative mx-auto mt-4 aspect-[1200/630] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-5 text-white shadow-2xl shadow-purple-950/30 sm:p-8">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+          className="pointer-events-none absolute inset-0 z-0 rounded-2xl bg-cover bg-center"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cdefs%3E%3Cpattern id='grid' width='32' height='32' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 32 0 L 0 0 0 32' fill='none' stroke='%23a855f7' stroke-opacity='.28' stroke-width='1'/%3E%3Ccircle cx='0' cy='0' r='1.5' fill='%23c084fc' fill-opacity='.42'/%3E%3C/pattern%3E%3ClinearGradient id='mesh' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237e22ce' stop-opacity='.5'/%3E%3Cstop offset='.5' stop-color='%231e1b4b' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%234c1d95' stop-opacity='.55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='%230f0725'/%3E%3Crect width='160' height='160' fill='url(%23mesh)'/%3E%3Crect width='160' height='160' fill='url(%23grid)'/%3E%3C/svg%3E")`,
+            backgroundImage: "url('/images/scorecard.png')",
           }}
         />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-purple-950/40 via-slate-950/80 to-slate-950/95" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 rounded-2xl bg-slate-950/60 backdrop-blur-[2px]" />
         <div className="relative z-10 flex h-full flex-col justify-between">
           <div className="flex items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
             <div className="flex min-w-0 items-center gap-3">
@@ -81,10 +83,23 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-3">
-        <button type="button" disabled={busy} onClick={() => void downloadCard()} className="inline-flex min-h-[42px] items-center gap-2 rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50">
+        <button type="button" disabled={busy} onClick={() => { if (userEmail.trim()) void handleDownloadCard(); else setIsEmailModalOpen(true); }} className="inline-flex min-h-[42px] items-center gap-2 rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50">
           <Download className="h-4 w-4" /> Download Scorecard (PNG)
         </button>
       </div>
+      {isEmailModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-purple-500/30 bg-slate-950/90 p-6 shadow-2xl shadow-purple-950/50 backdrop-blur-2xl">
+            <h2 className="text-xl font-bold text-white">Unlock Your High-Res Scorecard 📊</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Enter your email to download your official Prop Match strategy breakdown and receive weekly prop firm rule updates.</p>
+            <form className="mt-5 space-y-3" onSubmit={(event) => { event.preventDefault(); if (!event.currentTarget.reportValidity()) return; try { window.localStorage.setItem("propfident-scorecard-email", userEmail.trim()); } catch { /* Storage may be unavailable in private browsing. */ } setIsEmailModalOpen(false); void handleDownloadCard(); }}>
+              <input type="email" required value={userEmail} onChange={(event) => setUserEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-purple-500/20 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:border-purple-500 focus:outline-none" autoFocus />
+              <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-600/30 transition-all hover:from-purple-500 hover:to-indigo-500">Confirm &amp; Download PNG 🚀</button>
+            </form>
+            <button type="button" onClick={() => setIsEmailModalOpen(false)} className="mt-3 w-full py-2 text-sm text-slate-400 transition hover:text-white">Cancel</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

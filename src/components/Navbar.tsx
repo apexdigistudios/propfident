@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import Logo from "./Logo";
@@ -15,6 +15,14 @@ export default function Navbar() {
     { name: 'Pricing', href: '#pricing' },
     { name: 'FAQ', href: '#faq' },
   ];
+
+  function handlePlaybookClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (window.location.pathname === '/') {
+      event.preventDefault();
+      document.getElementById('playbook-banner')?.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  }
 
   return (
     <header className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex justify-center px-3 pt-2 sm:px-4 sm:pt-4">
@@ -33,6 +41,9 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          <Link className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white" href="/#playbook-banner" onClick={handlePlaybookClick}>
+            Playbook
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
@@ -70,6 +81,9 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            <Link href="/#playbook-banner" onClick={handlePlaybookClick} className="text-base font-medium text-slate-200 hover:text-white">
+              Playbook
+            </Link>
             <hr className="my-2 border-white/10" />
             <Link
               href="/login"
