@@ -21,18 +21,30 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
     if (!cardRef.current) return;
     setBusy(true);
     try {
+      await document.fonts.ready;
+      const exportWidth = 1200;
+      const exportHeight = 675;
       const dataUrl = await toPng(cardRef.current, {
-        quality: 0.95,
+        quality: 1,
         pixelRatio: 2,
-        canvasWidth: 1200,
-        canvasHeight: 630,
+        width: exportWidth,
+        height: exportHeight,
+        style: {
+          transform: "none",
+          width: `${exportWidth}px`,
+          height: `${exportHeight}px`,
+          borderRadius: "0px",
+          overflow: "visible",
+        },
         cacheBust: true,
-        includeQueryParams: true,
+        filter: (node) => !(node as HTMLElement).classList?.contains("no-export"),
       });
       const link = document.createElement("a");
-      link.download = `${result.firm.id}-prop-match.png`;
+      link.download = `Propfident_Scorecard_${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
+    } catch (error) {
+      console.error("Failed to export scorecard PNG:", error);
     } finally {
       setBusy(false);
     }
@@ -42,7 +54,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
     <section className="mt-6">
       <label className="block text-sm font-semibold text-slate-200" htmlFor="trader-name">Trader name or handle</label>
       <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-purple-500" />
-      <div ref={cardRef} className="relative mx-auto mt-4 aspect-[1200/630] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-5 text-white shadow-2xl shadow-purple-950/30 sm:p-8">
+      <div ref={cardRef} className="relative mx-auto mt-4 aspect-[1200/675] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-8 text-white shadow-2xl shadow-purple-950/30">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 rounded-2xl bg-cover bg-center"
