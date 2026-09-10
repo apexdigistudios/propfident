@@ -1,8 +1,13 @@
-import { createCanvas, loadImage } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas";
 import { NextResponse } from "next/server";
 import path from "node:path";
 
 export const runtime = "nodejs";
+
+const fontPath = path.join(process.cwd(), "public", "fonts", "Inter-Regular.ttf");
+const boldFontPath = path.join(process.cwd(), "public", "fonts", "Inter-Bold.ttf");
+GlobalFonts.registerFromPath(fontPath, "Inter");
+GlobalFonts.registerFromPath(boldFontPath, "Inter");
 
 interface ScorecardFirm {
   firm_name?: string;
@@ -57,10 +62,10 @@ export async function POST(request: Request) {
     ctx.fillRect(0, 0, width, 6);
 
     ctx.fillStyle = "#c084fc";
-    ctx.font = "bold 20px sans-serif";
+    ctx.font = "bold 20px Inter";
     ctx.fillText("PROPFIDENT - PROP MATCH RISK AUDIT", 60, 65);
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 36px sans-serif";
+    ctx.font = "bold 36px Inter";
     ctx.fillText("Strategy Rule Match Breakdown", 60, 115);
 
     ctx.fillStyle = "rgba(34, 197, 94, 0.15)";
@@ -69,7 +74,7 @@ export async function POST(request: Request) {
     ctx.lineWidth = 1.5;
     ctx.stroke();
     ctx.fillStyle = "#4ade80";
-    ctx.font = "bold 15px sans-serif";
+    ctx.font = "bold 15px Inter";
     ctx.fillText("AUDIT VERIFIED", 975, 82);
 
     ctx.fillStyle = "rgba(30, 41, 59, 0.75)";
@@ -86,15 +91,15 @@ export async function POST(request: Request) {
     ];
     metrics.forEach((metric) => {
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "bold 13px sans-serif";
+      ctx.font = "bold 13px Inter";
       ctx.fillText(metric.label, metric.x, 190);
       ctx.fillStyle = metric.color;
-      ctx.font = "bold 28px sans-serif";
+      ctx.font = "bold 28px Inter";
       ctx.fillText(metric.value, metric.x, 232);
     });
 
     ctx.fillStyle = "#cbd5e1";
-    ctx.font = "bold 20px sans-serif";
+    ctx.font = "bold 20px Inter";
     ctx.fillText("Top 3 Matched Prop Firms", 60, 310);
 
     const firms = (body.topFirms || []).slice(0, 3);
@@ -119,10 +124,10 @@ export async function POST(request: Request) {
       }
 
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 20px sans-serif";
+      ctx.font = "bold 20px Inter";
       ctx.fillText(firm.firm_name || firm.name || "Prop Firm", textXOffset, yPos + 40);
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "14px sans-serif";
+      ctx.font = "14px Inter";
       ctx.fillText(firm.account_model || "Standard Challenge", textXOffset, yPos + 62);
 
       const score = Math.max(0, Math.min(100, firm.passScore || firm.matchScore || firm.matchPercentage || 100));
@@ -135,15 +140,15 @@ export async function POST(request: Request) {
       ctx.fillStyle = "rgba(168, 85, 247, 0.2)";
       drawRoundedRect(ctx, 950, yPos + 22, 160, 36, 18);
       ctx.fillStyle = "#c084fc";
-      ctx.font = "bold 16px sans-serif";
+      ctx.font = "bold 16px Inter";
       ctx.fillText(`${score}% MATCH`, 985, yPos + 45);
     }
 
     ctx.fillStyle = "#64748b";
-    ctx.font = "13px sans-serif";
+    ctx.font = "13px Inter";
     ctx.fillText("Generated automatically by Propfident Risk Engine - propfident.online", 60, 645);
     ctx.fillStyle = "#475569";
-    ctx.font = "12px sans-serif";
+    ctx.font = "12px Inter";
     ctx.fillText(new Date().toISOString().split("T")[0], 1060, 645);
 
     return new NextResponse(new Uint8Array(canvas.toBuffer("image/png")), {

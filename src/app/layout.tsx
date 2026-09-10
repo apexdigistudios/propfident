@@ -17,14 +17,14 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://propfident.online"),
   title: {
-    default: "Propfident | Prop Trading Risk Shield & Prop Match™",
+    default: "Propfident - Never Breach Prop Firm Account Again",
     template: "%s | Propfident",
   },
-  description:
-    "Real-time drawdown protection, dynamic lot sizing, automated trading journals, and hands-free MT4/MT5 syncing through MetaApi.",
+  description: "High-performance prop firm rule matching engine, strategy stress-testing, and automated risk scoring to pass challenges effortlessly.",
+  authors: [{ name: "Propfident" }],
   icons: {
-    icon: "/propfidentlogo.png",
-    apple: "/propfidentlogo.png",
+    icon: [{ url: "/propfidentlogo.png" }, { url: "/icon.png", type: "image/png", sizes: "32x32" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
     shortcut: "/propfidentlogo.png",
   },
   manifest: "/manifest.webmanifest",
@@ -34,24 +34,31 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   keywords: [
-    "Propfident",
-    "prop firm",
-    "trailing drawdown",
-    "lot size calculator",
-    "trading journal",
-    "MT4",
-    "MT5",
-    "MetaApi",
-    "funded trading",
+    "prop firm rules",
+    "FTMO rules",
+    "Topstep",
+    "prop match",
+    "drawdown calculator",
+    "trading playbook",
   ],
   openGraph: {
-    title: "Propfident | Prop Trading Risk Shield",
-    description:
-      "Protect every funded account with live drawdown tracking, exact risk sizing, and automated MT4/MT5 journaling.",
+    title: "Propfident - Never Breach Prop Firm Account Again",
+    description: "Stress-test your trading strategy against 30+ prop firm rule models.",
     type: "website",
     url: "https://propfident.online",
     siteName: "Propfident",
-    images: [{ url: "/propfidentlogo.png", width: 512, height: 512, alt: "Propfident Logo" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Propfident Strategy Audit" }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
