@@ -30,9 +30,9 @@ export default function Navbar() {
   }
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-4 z-50 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="relative pointer-events-auto flex items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/80 px-4 py-2.5 shadow-2xl shadow-purple-950/40 backdrop-blur-2xl transition-all duration-300 sm:px-6 sm:py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5" onClick={closeMobileMenu}>
+    <header className="pointer-events-none fixed inset-x-0 top-3 z-50 mx-auto max-w-7xl overflow-x-clip px-3 sm:px-6">
+      <div className="relative pointer-events-auto flex items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/85 px-3.5 py-2.5 shadow-xl shadow-purple-950/50 backdrop-blur-2xl transition-all duration-300 sm:px-6 sm:py-3">
+        <Link href="/" className="flex min-h-11 min-w-11 shrink-0 items-center gap-2.5" onClick={closeMobileMenu}>
           <img src="/propfidentlogo.png" alt="Propfident" className="h-7 w-7 object-contain sm:h-9 sm:w-9" />
           <span className="bg-gradient-to-r from-purple-400 via-violet-300 to-indigo-400 bg-clip-text text-base font-bold tracking-tight text-transparent sm:text-xl">PROPFIDENT</span>
         </Link>
@@ -50,28 +50,28 @@ export default function Navbar() {
             Log in
           </Link>
           <Link href="/signup">
-            <ShimmerButton href="/signup" background="rgba(124, 58, 237, 0.85)" className="px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-purple-600/30">
+            <ShimmerButton background="rgba(124, 58, 237, 0.85)" className="px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-purple-600/30">
               Get Started →
             </ShimmerButton>
           </Link>
         </div>
 
-        <button type="button" onClick={() => setIsMobileMenuOpen((open) => !open)} className="flex rounded-full border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-purple-500/15 hover:text-white md:hidden" aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMobileMenuOpen}>
+        <button type="button" onClick={() => setIsMobileMenuOpen((open) => !open)} className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 p-2.5 text-slate-200 transition-transform active:scale-95 hover:bg-purple-500/15 hover:text-white md:hidden" aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMobileMenuOpen}>
           {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         {isMobileMenuOpen && (
-          <div className="absolute inset-x-0 top-full mt-3 flex flex-col gap-4 rounded-3xl border border-purple-500/30 bg-slate-950/95 p-5 shadow-2xl shadow-purple-950/80 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 md:hidden">
+          <div className="absolute inset-x-0 top-full mt-2 flex flex-col gap-2.5 rounded-3xl border border-purple-500/25 bg-slate-950/95 p-4 shadow-2xl shadow-purple-950/90 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 sm:p-5 md:hidden">
             {navigationLinks.map((link) => (
-              <Link key={link.label} href={`/#${link.id}`} onClick={(event) => scrollToSection(event, link.id)} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition-all hover:border-purple-500/30 hover:bg-purple-500/10">
+              <Link key={link.label} href={`/#${link.id}`} onClick={(event) => scrollToSection(event, link.id)} className="flex min-h-11 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3 text-sm font-medium text-slate-200 transition-all active:bg-purple-500/15 hover:border-purple-500/30 hover:bg-purple-500/10">
                 {link.label}
               </Link>
             ))}
-            <Link href="/login" onClick={closeMobileMenu} className="w-full rounded-2xl border border-purple-500/30 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition-all hover:border-purple-500/50 hover:bg-purple-500/10">
+            <Link href="/login" onClick={closeMobileMenu} className="flex min-h-11 w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 py-3 text-sm font-semibold text-slate-200 transition-all hover:bg-white/10">
               Log in
             </Link>
             <Link href="/signup" onClick={closeMobileMenu} className="mt-2 w-full">
-              <ShimmerButton background="rgba(124, 58, 237, 0.9)" className="w-full py-3 text-sm font-semibold text-white shadow-xl shadow-purple-600/40">
+              <ShimmerButton background="rgba(124, 58, 237, 0.9)" className="min-h-11 w-full py-3 text-sm font-semibold text-white shadow-xl shadow-purple-600/40">
                 Get Started 🚀
               </ShimmerButton>
             </Link>
