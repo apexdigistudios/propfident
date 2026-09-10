@@ -6,18 +6,21 @@ import { Menu, X } from "lucide-react";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 const navigationLinks = [
-  { label: "Prop Match", href: "/tools/prop-match" },
-  { label: "Prop Rules", href: "/prop-firms" },
-  { label: "Pricing", href: "/#pricing" },
+  { label: "Features", id: "features" },
+  { label: "Trader Results", id: "trader-results" },
+  { label: "How It Works", id: "how-it-works" },
+  { label: "Pricing", id: "pricing" },
+  { label: "FAQ", id: "faq" },
+  { label: "Playbook", id: "playbook-banner" },
 ];
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  function handlePlaybookClick(event: MouseEvent<HTMLAnchorElement>) {
+  function scrollToSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
     if (window.location.pathname === "/") {
       event.preventDefault();
-      document.getElementById("playbook-banner")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setIsMobileMenuOpen(false);
   }
@@ -36,13 +39,10 @@ export default function Navbar() {
 
         <nav className="hidden items-center gap-6 text-xs font-medium text-slate-300 sm:text-sm md:flex">
           {navigationLinks.map((link) => (
-            <Link key={link.label} href={link.href} className="rounded-full px-2 py-1.5 transition hover:bg-white/10 hover:text-white">
+            <Link key={link.label} href={`/#${link.id}`} onClick={(event) => scrollToSection(event, link.id)} className="rounded-full px-2 py-1.5 transition hover:bg-white/10 hover:text-white">
               {link.label}
             </Link>
           ))}
-          <Link href="/#playbook-banner" onClick={handlePlaybookClick} className="rounded-full px-2 py-1.5 transition hover:bg-white/10 hover:text-white">
-            Playbook
-          </Link>
         </nav>
 
         <ShimmerButton href="/tools/prop-match" background="rgba(124, 58, 237, 0.85)" className="hidden px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-purple-600/30 md:flex">
@@ -56,13 +56,10 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="absolute inset-x-0 top-full mt-3 flex flex-col gap-4 rounded-3xl border border-purple-500/30 bg-slate-950/95 p-5 shadow-2xl shadow-purple-950/80 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 md:hidden">
             {navigationLinks.map((link) => (
-              <Link key={link.label} href={link.href} onClick={closeMobileMenu} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition-all hover:border-purple-500/30 hover:bg-purple-500/10">
+              <Link key={link.label} href={`/#${link.id}`} onClick={(event) => scrollToSection(event, link.id)} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition-all hover:border-purple-500/30 hover:bg-purple-500/10">
                 {link.label}
               </Link>
             ))}
-            <Link href="/#playbook-banner" onClick={handlePlaybookClick} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition-all hover:border-purple-500/30 hover:bg-purple-500/10">
-              Playbook
-            </Link>
             <Link href="/tools/prop-match" onClick={closeMobileMenu} className="mt-2 w-full">
               <ShimmerButton background="rgba(124, 58, 237, 0.9)" className="w-full py-3 text-sm font-semibold text-white shadow-xl shadow-purple-600/40">
                 Get Started 🚀

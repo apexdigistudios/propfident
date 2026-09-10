@@ -11,7 +11,7 @@ export default function Pricing() {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
-    <section id="pricing" className="scroll-mt-20 border-b border-slate-200 bg-white py-16 md:py-24 dark:border-purple-500/20 dark:bg-slate-950">
+    <section id="pricing" className="scroll-mt-28 border-b border-slate-200 bg-white py-16 md:py-24 dark:border-purple-500/20 dark:bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400">Always free to start</span>

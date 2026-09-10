@@ -42,7 +42,7 @@ export default function Faq() {
   return (
     <section
       id="faq"
-      className="border-b border-slate-200 bg-white py-16 dark:border-purple-500/20 dark:bg-slate-950 md:py-24"
+      className="scroll-mt-28 border-b border-slate-200 bg-white py-16 dark:border-purple-500/20 dark:bg-slate-950 md:py-24"
     >
       <div className="mx-auto max-w-4xl px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">

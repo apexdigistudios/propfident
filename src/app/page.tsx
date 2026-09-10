@@ -22,7 +22,7 @@ export default function HomePage() {
           <HowItWorks />
         </Reveal>
         <Reveal delay={0.1}>
-          <PayoutsMarquee />
+          <div id="trader-results" className="scroll-mt-28"><PayoutsMarquee /></div>
         </Reveal>
         <Reveal delay={0.15}>
           <FeatureShowcase />
@@ -34,7 +34,7 @@ export default function HomePage() {
           <Faq />
         </Reveal>
         <Reveal delay={0.27}>
-          <section id="playbook-banner" className="scroll-mt-24 w-full border-t border-b border-purple-500/20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 py-6 sm:py-8 md:px-6 md:py-10 lg:px-8">
+          <section id="playbook-banner" className="scroll-mt-28 w-full border-t border-b border-purple-500/20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4 py-6 sm:py-8 md:px-6 md:py-10 lg:px-8">
             <div className="mx-auto max-w-5xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-purple-300">
                 Free Guide

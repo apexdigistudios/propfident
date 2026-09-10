@@ -31,6 +31,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
           topFirms: topThreeFirms.map((firm) => ({
             firm_name: firm.firm.name,
             account_model: firm.model.account_model,
+            logo: firm.firm.logo,
             matchPercentage: firm.matchPercentage,
           })),
         }),

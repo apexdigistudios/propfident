@@ -133,7 +133,7 @@ export default function FeatureShowcase() {
   return (
     <section
       id="features"
-      className="w-full max-w-full overflow-hidden border-b border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950"
+      className="scroll-mt-28 w-full max-w-full overflow-hidden border-b border-slate-200 bg-white dark:border-purple-500/20 dark:bg-slate-950"
     >
       <div className="mx-auto w-full max-w-7xl overflow-hidden px-4 py-16 md:px-6 md:py-24 lg:px-8">
         {/* Header */}
