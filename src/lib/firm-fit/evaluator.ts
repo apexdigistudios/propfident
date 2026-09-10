@@ -168,7 +168,7 @@ export function evaluateAllFirms(trades: NormalizedTrade[], options: EvaluateOpt
 
 export function bestModelPerFirm(results: FirmEvaluation[]) {
   const best = new Map<string, FirmEvaluation>();
-  for (const result of results.filter((item) => item.status === "PASSED")) {
+  for (const result of results.filter((item) => item.matchPercentage >= 70 || item.status === "PASSED")) {
     const current = best.get(result.firm.id);
     if (!current || result.model.rules.profit_split_percent > current.model.rules.profit_split_percent || (result.model.rules.profit_split_percent === current.model.rules.profit_split_percent && (result.model.rules.profit_target_p1_percent ?? 0) < (current.model.rules.profit_target_p1_percent ?? 0))) best.set(result.firm.id, result);
   }

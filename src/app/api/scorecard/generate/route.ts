@@ -32,7 +32,6 @@ export async function POST(request: Request) {
       maxDrawdown?: number;
       dailyDrawdown?: number;
       passRate?: number;
-      accountSize?: number;
     };
     const width = 1200;
     const height = 675;
@@ -84,10 +83,9 @@ export async function POST(request: Request) {
     ctx.stroke();
 
     const metrics = [
-      { label: "ACCOUNT SIZE", value: `$${(body.accountSize || 100000).toLocaleString()}`, x: 90, color: "#ffffff" },
-      { label: "MAX DRAWDOWN", value: `${body.maxDrawdown || 0}%`, x: 360, color: "#f87171" },
-      { label: "DAILY DRAWDOWN", value: `${body.dailyDrawdown || 0}%`, x: 630, color: "#fb923c" },
-      { label: "OVERALL PASS RATE", value: `${body.passRate || 0}%`, x: 900, color: "#4ade80" },
+      { label: "MAX DRAWDOWN", value: `${body.maxDrawdown || 0}%`, x: 120, color: "#f87171" },
+      { label: "DAILY DRAWDOWN", value: `${body.dailyDrawdown || 0}%`, x: 500, color: "#fb923c" },
+      { label: "OVERALL PASS RATE", value: `${body.passRate || 0}%`, x: 880, color: "#4ade80" },
     ];
     metrics.forEach((metric) => {
       ctx.fillStyle = "#94a3b8";

@@ -24,7 +24,6 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          accountSize: result.model.account_size,
           maxDrawdown: result.userMaxTotalDD,
           dailyDrawdown: result.userMaxDailyDD,
           passRate: Math.round(topThreeFirms.reduce((sum, firm) => sum + firm.matchPercentage, 0) / Math.max(topThreeFirms.length, 1)),
