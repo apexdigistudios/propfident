@@ -75,12 +75,12 @@ export default function PropMatchWorkspace() {
   }
 
   return (
-    <main className="min-h-screen max-w-full overflow-x-hidden bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-slate-950 to-slate-950 px-4 py-12 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen max-w-full overflow-x-hidden bg-slate-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-100 via-slate-50 to-slate-50 px-4 py-12 text-slate-900 dark:from-purple-900/20 dark:via-slate-950 dark:to-slate-950 dark:bg-slate-950 dark:text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <section className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-300">Prop Match™</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Find the prop firm that fits your trading.</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-purple-700 dark:text-purple-300">Prop Match™</p>
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 dark:text-white sm:text-6xl">Find the prop firm that fits your trading.</h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400">Upload your trade history and compare your habits with the rules of leading prop firms.</p>
           <ShimmerButton href="/prop-firms" background="rgba(124, 58, 237, 0.8)" className="mt-6 px-4 py-3 text-xs sm:text-sm">
               View Prop Rules →
           </ShimmerButton>
@@ -88,8 +88,8 @@ export default function PropMatchWorkspace() {
         {matchedFirms.length >= 2 && <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-purple-500/40 bg-purple-500/10 px-5 py-4 text-center text-sm font-semibold text-purple-100 shadow-lg shadow-purple-900/20">🎉 Matched with {matchedFirms.length} Prop Firms! Your strategy is eligible for {matchedFirms.slice(0, 3).map((firm) => firm.firm.name).join(", ")}, and more.</div>}
         <div className="mx-auto mt-10 max-w-3xl">
           {uploadedFileName ? (
-            <div className="flex items-center justify-between gap-4 rounded-2xl border border-purple-500/30 bg-slate-900/80 px-4 py-3 text-sm shadow-xl shadow-purple-950/20 backdrop-blur-xl">
-              <span className="min-w-0 truncate text-slate-200">📄 Active Strategy File: <strong className="font-semibold text-white">{uploadedFileName}</strong></span>
+            <div className="flex items-center justify-between gap-4 rounded-2xl border border-purple-200 bg-white/90 px-4 py-3 text-sm shadow-xl shadow-slate-200/30 backdrop-blur-xl dark:border-purple-500/30 dark:bg-slate-900/80 dark:shadow-purple-950/20">
+              <span className="min-w-0 truncate text-slate-700 dark:text-slate-200">📄 Active Strategy File: <strong className="font-semibold text-slate-950 dark:text-white">{uploadedFileName}</strong></span>
               <button type="button" onClick={replaceFile} className="shrink-0 text-xs font-bold text-purple-300 transition hover:text-white">Replace File</button>
             </div>
           ) : <Dropzone onFile={handleFile} />}

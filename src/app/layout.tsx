@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
 import AdSlot from "@/components/AdSlot";
+import ThemeProvider from "@/components/ThemeProvider";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreachNotificationListener from "@/components/BreachNotificationListener";
 import { Toaster } from "sonner";
@@ -64,8 +65,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="min-h-screen w-full bg-background antialiased overflow-x-hidden">
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen w-full bg-slate-50 text-slate-900 antialiased overflow-x-hidden dark:bg-[#07090e] dark:text-slate-100">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -86,7 +87,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-        <div className="relative w-full">{children}</div>
+        <ThemeProvider>
+          <div className="relative w-full">{children}</div>
+        </ThemeProvider>
         <PWAInstallPrompt />
         <BreachNotificationListener />
         <Toaster richColors closeButton theme="dark" position="top-right" />

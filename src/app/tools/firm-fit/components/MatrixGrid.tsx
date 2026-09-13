@@ -36,7 +36,7 @@ export function MatrixGrid({ results, recommendedId, onDetails }: MatrixGridProp
         const expanded = expandedId === result.firm.id;
 
         return (
-          <article key={result.firm.id} className={`min-w-0 rounded-2xl border bg-slate-900/70 p-2.5 shadow-xl backdrop-blur-xl transition-all duration-300 sm:p-3.5 ${result.firm.id === recommendedId ? "border-purple-500/50 shadow-purple-900/30" : "border-purple-900/30 shadow-indigo-950/20 hover:border-purple-500/40"}`}>
+          <article key={result.firm.id} className={`min-w-0 rounded-2xl border bg-white/90 p-2.5 shadow-xl backdrop-blur-xl transition-all duration-300 dark:bg-slate-900/70 sm:p-3.5 ${result.firm.id === recommendedId ? "border-purple-500/50 shadow-purple-900/30" : "border-purple-200 shadow-slate-200/30 hover:border-purple-400 dark:border-purple-900/30 dark:shadow-indigo-950/20 dark:hover:border-purple-500/40"}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
@@ -44,7 +44,7 @@ export function MatrixGrid({ results, recommendedId, onDetails }: MatrixGridProp
                     <img src={result.firm.logo} alt={`${result.firm.name} logo`} className="h-full w-full object-contain" />
                   </Link>
                   <div>
-                    <div className="flex items-center gap-2"><Link href={`/prop-firms#${result.firm.id}`} className="text-base font-bold text-white transition hover:text-purple-300 sm:text-lg">{result.firm.name}</Link>{result.firm.id === recommendedId && <span className="rounded-full border border-purple-400/40 bg-purple-500/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-purple-200">Recommended</span>}</div>
+                    <div className="flex items-center gap-2"><Link href={`/prop-firms#${result.firm.id}`} className="text-base font-bold text-slate-950 transition hover:text-purple-700 dark:text-white dark:hover:text-purple-300 sm:text-lg">{result.firm.name}</Link>{result.firm.id === recommendedId && <span className="rounded-full border border-purple-300 bg-purple-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-purple-800 dark:border-purple-400/40 dark:bg-purple-500/15 dark:text-purple-200">Recommended</span>}</div>
                     <p className="mt-1 text-xs text-purple-300">{result.model.account_model} · ${result.model.account_size.toLocaleString()}</p>
                   </div>
                 </div>

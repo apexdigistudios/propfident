@@ -15,15 +15,23 @@
 /* Adaptive brand gradient: lighter in light mode, deeper in dark mode */
 :root {
   --brand-gradient: linear-gradient(to right, #a855f7, #6366f1);
+  --canvas: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.9);
+  --ink: #0f172a;
+  --muted: #475569;
 }
 
 .dark {
   --brand-gradient: linear-gradient(to right, #9333ea, #4f46e5);
+  --canvas: #07090e;
+  --surface: rgba(2, 6, 23, 0.8);
+  --ink: #f8fafc;
+  --muted: #94a3b8;
 }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
@@ -34,12 +42,22 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #020617;
-  color: #f1f5f9;
+  background-color: var(--canvas);
+  color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.dark { color-scheme: dark; }
+
+.theme-grid {
+  background-image:
+    linear-gradient(rgba(100, 116, 139, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
 
 /* Light mode uses lighter purple/indigo, dark mode uses deeper tones */

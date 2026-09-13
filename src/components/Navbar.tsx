@@ -2,8 +2,9 @@
 
 import { useState, type MouseEvent } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { useTheme } from "next-themes";
 
 const navigationLinks = [
   { label: "Features", id: "features" },
@@ -16,6 +17,7 @@ const navigationLinks = [
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
 
   function scrollToSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
     if (window.location.pathname === "/") {
@@ -31,13 +33,13 @@ export default function Navbar() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-3 z-50 mx-auto max-w-7xl overflow-x-clip px-3 sm:px-6">
-      <div className="relative pointer-events-auto flex items-center justify-between rounded-full border border-purple-500/20 bg-slate-950/85 px-3.5 py-2.5 shadow-xl shadow-purple-950/50 backdrop-blur-2xl transition-all duration-300 sm:px-6 sm:py-3">
+      <div className="relative pointer-events-auto flex items-center justify-between rounded-full border border-purple-200 bg-white/90 px-3.5 py-2.5 shadow-xl shadow-slate-200/50 backdrop-blur-2xl transition-all duration-300 dark:border-purple-500/20 dark:bg-slate-950/85 dark:shadow-purple-950/50 sm:px-6 sm:py-3">
         <Link href="/" className="flex min-h-11 min-w-11 shrink-0 items-center gap-2.5" onClick={closeMobileMenu}>
           <img src="/propfidentlogo.png" alt="Propfident" className="h-7 w-7 object-contain sm:h-9 sm:w-9" />
-          <span className="bg-gradient-to-r from-purple-400 via-violet-300 to-indigo-400 bg-clip-text text-base font-bold tracking-tight text-transparent sm:text-xl">PROPFIDENT</span>
+          <span className="bg-gradient-to-r from-purple-700 via-violet-600 to-indigo-600 bg-clip-text text-base font-bold tracking-tight text-transparent dark:from-purple-400 dark:via-violet-300 dark:to-indigo-400 sm:text-xl">PROPFIDENT</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-xs font-medium text-slate-300 sm:text-sm md:flex">
+        <nav className="hidden items-center gap-6 text-xs font-medium text-slate-600 sm:text-sm dark:text-slate-300 md:flex">
           {navigationLinks.map((link) => (
             <Link key={link.label} href={`/#${link.id}`} onClick={(event) => scrollToSection(event, link.id)} className="rounded-full px-2 py-1.5 transition hover:bg-white/10 hover:text-white">
               {link.label}
@@ -46,7 +48,10 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login" className="rounded-xl px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:bg-white/5 hover:text-white sm:text-sm">
+          <button type="button" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="rounded-xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-purple-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Toggle color theme">
+            {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+          <Link href="/login" className="rounded-xl px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white sm:text-sm">
             Log in
           </Link>
           <Link href="/signup">
