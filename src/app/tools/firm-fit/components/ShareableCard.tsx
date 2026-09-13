@@ -5,6 +5,8 @@ import { Download } from "lucide-react";
 import Link from "next/link";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import type { FirmEvaluation } from "@/lib/firm-fit/evaluator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const [busy, setBusy] = useState(false);
@@ -19,6 +21,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
 
   async function handleDownloadCard() {
     setBusy(true);
+    toast.loading("Rendering PNG Scorecard...", { id: "png-export" });
     try {
       const response = await fetch("/api/scorecard/generate", {
         method: "POST",
@@ -45,8 +48,10 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      toast.success("Scorecard Downloaded!", { id: "png-export" });
     } catch (error) {
       console.error("Failed to export scorecard PNG:", error);
+      toast.error("Scorecard export failed", { id: "png-export" });
     } finally {
       setBusy(false);
     }
@@ -57,6 +62,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
       <label className="block text-sm font-semibold text-slate-200" htmlFor="trader-name">Trader name or handle</label>
       <input id="trader-name" value={traderName} onChange={(event) => setTraderName(event.target.value)} placeholder="Enter Trader Name or Handle" className="mt-2 w-full max-w-md rounded-xl border border-slate-700/60 bg-slate-800/60 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-purple-500" />
       <div className="relative mx-auto mt-4 aspect-[1200/675] w-full max-w-3xl overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-950 p-8 text-white shadow-2xl shadow-purple-950/30">
+        {busy && <Skeleton className="absolute inset-0 z-20 rounded-2xl" />}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 rounded-2xl bg-cover bg-center"

@@ -9,6 +9,8 @@ import { DiagnosticsModal } from "@/app/tools/firm-fit/components/DiagnosticsMod
 import { MatrixGrid } from "@/app/tools/firm-fit/components/MatrixGrid";
 import { ShareableCard } from "@/app/tools/firm-fit/components/ShareableCard";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export default function PropMatchWorkspace() {
   const [trades, setTrades] = useState<NormalizedTrade[]>([]);
@@ -57,6 +59,7 @@ export default function PropMatchWorkspace() {
   }, [isAnalyzing]);
 
   async function handleFile(file: File) {
+    setIsAnalyzing(true);
     const nextTrades = parseTradeExport(await file.text());
     if (!nextTrades.length) throw new Error("No trades found");
     setTrades(nextTrades);
@@ -64,6 +67,8 @@ export default function PropMatchWorkspace() {
     setUploadedFileName(file.name);
     setAnalysisStep(0);
     setIsAnalyzing(true);
+    toast.success("CSV Parsed Successfully", { description: `Extracted ${nextTrades.length} trades. Evaluating drawdown against 29 firm models.` });
+    if (evaluateAllFirms(nextTrades).some((result) => !result.passed)) toast.error("Drawdown Breach Warning", { description: "Strategy exceeds one or more firm model limits." });
   }
 
   function replaceFile() {
@@ -113,6 +118,7 @@ export default function PropMatchWorkspace() {
             <div className="mt-3 flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500"><span>Analyzing</span><span>{Math.round(((analysisStep + 1) / 3) * 100)}%</span></div>
           </section>
         )}
+        {isAnalyzing && <div className="mx-auto mt-8 grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"><Skeleton className="h-44" /><Skeleton className="h-44" /><Skeleton className="h-44" /></div>}
         {!isAnalyzing && passedModels.length > 0 ? (
           <section className="mt-12 rounded-3xl border border-purple-900/30 bg-slate-900/70 p-4 backdrop-blur-xl sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-300">Matched / Passed Models</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">Best rule matches</h2><p className="mt-2 text-sm text-slate-400">Compared {trades.length} normalized trades.</p></div><button type="button" onClick={() => setWaitlistOpen(true)} className="min-h-[42px] rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 shadow-lg shadow-purple-500/20 transition-all hover:bg-purple-500/20 sm:px-4 sm:text-sm">Get daily breach alerts</button></div>

@@ -3,9 +3,9 @@ import Script from "next/script";
 import type { ReactNode } from "react";
 import AdSlot from "@/components/AdSlot";
 import ThemeProvider from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/toaster";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreachNotificationListener from "@/components/BreachNotificationListener";
-import { Toaster } from "sonner";
 import "./globals.css";
 
 export const viewport = {
@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </ThemeProvider>
         <PWAInstallPrompt />
         <BreachNotificationListener />
-        <Toaster richColors closeButton theme="dark" position="top-right" />
+        <Toaster />
         <AdSlot />
       </body>
     </html>

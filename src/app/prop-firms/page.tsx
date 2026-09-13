@@ -5,10 +5,12 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { PROP_FIRMS } from "@/config/firms";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PropFirmsPage() {
   const [activeFirm, setActiveFirm] = useState("all");
   const [query, setQuery] = useState("");
+  const [isFiltering, setIsFiltering] = useState(false);
   const filteredFirms = useMemo(() => PROP_FIRMS.filter((firm) => {
     const matchesTab = activeFirm === "all" || firm.id === activeFirm;
     return matchesTab && firm.name.toLowerCase().includes(query.toLowerCase());
@@ -27,10 +29,10 @@ export default function PropFirmsPage() {
 
         <section className="relative mt-10 rounded-3xl border border-purple-200 bg-white/90 p-4 shadow-xl shadow-slate-200/40 backdrop-blur-xl dark:border-purple-500/20 dark:bg-slate-950/80 dark:shadow-purple-950/20 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search prop firms..." className="w-full rounded-xl border border-purple-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-purple-500 dark:border-purple-500/20 dark:bg-slate-950/70 dark:text-white dark:placeholder-slate-500 lg:max-w-xs" />
+            <input value={query} onChange={(event) => { setIsFiltering(true); setQuery(event.target.value); window.setTimeout(() => setIsFiltering(false), 180); }} placeholder="Search prop firms..." className="w-full rounded-xl border border-purple-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-purple-500 dark:border-purple-500/20 dark:bg-slate-950/70 dark:text-white dark:placeholder-slate-500 lg:max-w-xs" />
             <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[{ id: "all", name: "All Firms" }, ...PROP_FIRMS].map((firm) => (
-                <button key={firm.id} type="button" onClick={() => setActiveFirm(firm.id)} className={`shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition ${activeFirm === firm.id ? "border-purple-400/50 bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-200" : "border-slate-200 bg-slate-50 text-slate-500 hover:border-purple-300 hover:text-purple-800 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-400 dark:hover:border-purple-500/40 dark:hover:text-white"}`}>
+                <button key={firm.id} type="button" onClick={() => { setIsFiltering(true); setActiveFirm(firm.id); window.setTimeout(() => setIsFiltering(false), 180); }} className={`shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition ${activeFirm === firm.id ? "border-purple-400/50 bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-200" : "border-slate-200 bg-slate-50 text-slate-500 hover:border-purple-300 hover:text-purple-800 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-400 dark:hover:border-purple-500/40 dark:hover:text-white"}`}>
                   {firm.name}
                 </button>
               ))}
@@ -38,7 +40,7 @@ export default function PropFirmsPage() {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {isFiltering ? <section className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3"><Skeleton className="h-64" /><Skeleton className="h-64" /><Skeleton className="h-64" /></section> : <section className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredFirms.map((firm) => (
             <article id={firm.id} key={firm.id} className="scroll-mt-28 rounded-2xl border border-purple-200 bg-white/90 p-5 shadow-xl shadow-slate-200/30 backdrop-blur-xl dark:border-purple-500/20 dark:bg-slate-950/80 dark:shadow-purple-950/10">
               <div className="flex items-center gap-3 border-b border-slate-200 pb-4 dark:border-slate-800/80">
@@ -58,7 +60,7 @@ export default function PropFirmsPage() {
               <Link href={`/tools/prop-match#${firm.id}`} className="mt-5 inline-flex text-sm font-semibold text-purple-300 transition hover:text-white">Test your strategy against {firm.name} →</Link>
             </article>
           ))}
-        </section>
+        </section>}
       </main>
       <Footer />
     </div>
