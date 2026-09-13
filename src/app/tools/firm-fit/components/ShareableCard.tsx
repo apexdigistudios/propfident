@@ -12,7 +12,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
   const [userEmail, setUserEmail] = useState("");
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const displayName = traderName.trim() || "Propfident Trader";
-  const topThreeFirms = results.filter((firm) => firm.matchPercentage >= 70).sort((a, b) => b.matchPercentage - a.matchPercentage).slice(0, 3);
+  const topThreeFirms = [...results].filter((firm) => firm.passed && firm.matchPercentage >= 70).sort((a, b) => b.matchPercentage - a.matchPercentage || b.model.rules.profit_split_percent - a.model.rules.profit_split_percent).slice(0, 3);
   const result = topThreeFirms[0] || results[0];
   const verifiedAt = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
   const consistency = result.maxTradeProfitRatio * 100;
@@ -77,6 +77,11 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
               <p className="text-[9px] text-slate-500">{verifiedAt}</p>
             </div>
           </div>
+          <div className="grid grid-cols-3 gap-3 border-b border-slate-800/80 py-4 text-left">
+            <div><p className="text-[9px] font-bold tracking-wider text-slate-400">MAX DRAWDOWN</p><p className="mt-1 text-lg font-black text-rose-300">{result.userMaxTotalDD.toFixed(1)}%</p></div>
+            <div><p className="text-[9px] font-bold tracking-wider text-slate-400">DAILY DRAWDOWN</p><p className="mt-1 text-lg font-black text-orange-300">{result.userMaxDailyDD.toFixed(1)}%</p></div>
+            <div><p className="text-[9px] font-bold tracking-wider text-slate-400">OVERALL PASS RATE</p><p className="mt-1 text-lg font-black text-emerald-300">{Math.round(topThreeFirms.reduce((sum, firm) => sum + firm.matchPercentage, 0) / Math.max(topThreeFirms.length, 1))}%</p></div>
+          </div>
           <div className="flex flex-1 flex-col justify-center gap-3 py-4 sm:py-6">
             {topThreeFirms.map((match) => (
               <div key={match.firm.id} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_minmax(3rem,0.8fr)_auto] items-center gap-2.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:text-sm">
@@ -96,11 +101,7 @@ export function ShareableCard({ results }: { results: FirmEvaluation[] }) {
               </div>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-800/80 pt-3 text-[10px] text-slate-300 sm:text-xs">
-            <span>Max DD Recorded: {result.userMaxTotalDD.toFixed(1)}%</span>
-            <span>Consistency Ratio: {consistency.toFixed(0)}%</span>
-            <span>Weekend Trades: {result.weekendTradesCount === 0 ? "Pass" : "Review"}</span>
-          </div>
+          <div className="border-t border-slate-800/80 pt-3 text-[10px] text-slate-300 sm:text-xs">Verified by Propfident Risk Engine · {result.model.account_model} · {consistency.toFixed(0)}% consistency</div>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-3">

@@ -11,6 +11,8 @@ export interface ShimmerButtonProps
   className?: string;
   children?: React.ReactNode;
   href?: string;
+  target?: string;
+  rel?: string;
 }
 
 export const ShimmerButton = React.forwardRef<HTMLButtonElement, ShimmerButtonProps>(

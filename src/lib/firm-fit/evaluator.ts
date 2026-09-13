@@ -40,6 +40,8 @@ export interface UserMetrics {
   overnightTradesCount: number;
   missingStopLossCount: number;
   lotStressCount: number;
+  winRate: number;
+  profitFactor: number;
 }
 
 export interface FirmEvaluation extends UserMetrics {
@@ -51,6 +53,7 @@ export interface FirmEvaluation extends UserMetrics {
   maxDrawdownPass: boolean;
   dailyDrawdownPass: boolean;
   drawdownStrictness: "static" | "trailing" | "other";
+  passed: boolean;
 }
 
 export interface NewsEvent { start: Date; end: Date; }
@@ -106,6 +109,7 @@ function calculateMetrics(trades: NormalizedTrade[], startingBalance: number): U
   }
   const maxDailyLoss = Math.max(0, ...Array.from(dailyPnl.values()).map((value) => -value));
   const profits = ordered.filter((trade) => trade.pnl > 0).reduce((sum, trade) => sum + trade.pnl, 0);
+  const losses = Math.abs(ordered.filter((trade) => trade.pnl < 0).reduce((sum, trade) => sum + trade.pnl, 0));
   return {
     userMaxDailyDD: startingBalance > 0 ? (maxDailyLoss / startingBalance) * 100 : 0,
     userMaxTotalDD: startingBalance > 0 ? (maxLoss / startingBalance) * 100 : 0,
@@ -115,6 +119,8 @@ function calculateMetrics(trades: NormalizedTrade[], startingBalance: number): U
     overnightTradesCount: ordered.filter(isOvernight).length,
     missingStopLossCount: ordered.filter((trade) => !trade.stopLoss || trade.stopLoss <= 0).length,
     lotStressCount: ordered.filter((trade) => trade.lots >= 5).length,
+    winRate: ordered.length ? (ordered.filter((trade) => trade.pnl > 0).length / ordered.length) * 100 : 0,
+    profitFactor: losses > 0 ? profits / losses : profits > 0 ? 3 : 0,
   };
 }
 
@@ -157,20 +163,29 @@ export function evaluateFirm(model: PropFirmModel, trades: NormalizedTrade[], op
   if (!dailyDrawdownPass) breaches.push(`Daily drawdown breach: ${metrics.userMaxDailyDD.toFixed(1)}% vs ${model.rules.daily_drawdown_percent}% limit.`);
   if (!definition.rules.allowWeekendHolding && metrics.weekendTradesCount > 0) breaches.push(`Weekend holding is not allowed for ${model.account_model}.`);
   const weekendPass = definition.rules.allowWeekendHolding || metrics.weekendTradesCount === 0;
-  const matchPercentage = maxDrawdownPass && dailyDrawdownPass && weekendPass ? 100 : Math.max(0, 100 - breaches.length * 30);
+  const maxDdRatio = metrics.userMaxTotalDD / Math.max(model.rules.max_drawdown_percent, 0.01);
+  const dailyDdRatio = model.rules.daily_drawdown_percent === null ? 0 : metrics.userMaxDailyDD / Math.max(model.rules.daily_drawdown_percent, 0.01);
+  let score = 100;
+  score -= Math.min(30, maxDdRatio * 25);
+  score -= Math.min(20, dailyDdRatio * 20);
+  if (metrics.winRate > 0) score += (metrics.winRate - 50) * 0.15;
+  if (metrics.profitFactor > 0) score += Math.min(5, (metrics.profitFactor - 1.5) * 2);
+  if (!weekendPass) score -= 15;
+  const passed = maxDrawdownPass && dailyDrawdownPass && weekendPass;
+  const matchPercentage = Math.min(100, Math.max(12, Math.round(score * 10) / 10));
   const drawdownStrictness = model.rules.max_drawdown_type.includes("static") ? "static" : model.rules.max_drawdown_type.includes("trailing") ? "trailing" : "other";
-  return { ...metrics, firm: definition, model, maxDrawdownPass, dailyDrawdownPass, drawdownStrictness, matchPercentage, status: matchPercentage >= 80 ? "PASSED" : matchPercentage >= 50 ? "HIGH_RISK" : "FAILED", breaches };
+  return { ...metrics, firm: definition, model, passed, maxDrawdownPass, dailyDrawdownPass, drawdownStrictness, matchPercentage, status: passed && matchPercentage >= 70 ? "PASSED" : matchPercentage >= 50 ? "HIGH_RISK" : "FAILED", breaches };
 }
 
 export function evaluateAllFirms(trades: NormalizedTrade[], options: EvaluateOptions = {}) {
-  return (firmModels as PropFirmModel[]).map((model) => evaluateFirm(model, trades, options)).sort((a, b) => b.matchPercentage - a.matchPercentage);
+  return (firmModels as PropFirmModel[]).map((model) => evaluateFirm(model, trades, options)).sort((a, b) => b.matchPercentage - a.matchPercentage || b.model.rules.profit_split_percent - a.model.rules.profit_split_percent);
 }
 
 export function bestModelPerFirm(results: FirmEvaluation[]) {
   const best = new Map<string, FirmEvaluation>();
-  for (const result of results.filter((item) => item.matchPercentage >= 70 || item.status === "PASSED")) {
+  for (const result of results.filter((item) => item.passed && item.matchPercentage >= 70)) {
     const current = best.get(result.firm.id);
     if (!current || result.model.rules.profit_split_percent > current.model.rules.profit_split_percent || (result.model.rules.profit_split_percent === current.model.rules.profit_split_percent && (result.model.rules.profit_target_p1_percent ?? 0) < (current.model.rules.profit_target_p1_percent ?? 0))) best.set(result.firm.id, result);
   }
-  return [...best.values()];
+  return [...best.values()].sort((a, b) => b.matchPercentage - a.matchPercentage || b.model.rules.profit_split_percent - a.model.rules.profit_split_percent);
 }

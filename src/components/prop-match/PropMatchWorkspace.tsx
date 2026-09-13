@@ -18,7 +18,7 @@ export default function PropMatchWorkspace() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState<0 | 1 | 2>(0);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const passedModels = results.filter((result) => result.matchPercentage >= 70 || result.status === "PASSED");
+  const passedModels = results.filter((result) => result.passed && result.matchPercentage >= 70).sort((a, b) => b.matchPercentage - a.matchPercentage || b.model.rules.profit_split_percent - a.model.rules.profit_split_percent);
   const failedModels = results.filter((result) => !passedModels.includes(result));
   const matchedFirms = bestModelPerFirm(passedModels);
   const recommendation = [...passedModels].sort((a, b) => {
@@ -117,7 +117,7 @@ export default function PropMatchWorkspace() {
           <section className="mt-12 rounded-3xl border border-purple-900/30 bg-slate-900/70 p-4 backdrop-blur-xl sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-300">Matched / Passed Models</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">Best rule matches</h2><p className="mt-2 text-sm text-slate-400">Compared {trades.length} normalized trades.</p></div><button type="button" onClick={() => setWaitlistOpen(true)} className="min-h-[42px] rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-300 shadow-lg shadow-purple-500/20 transition-all hover:bg-purple-500/20 sm:px-4 sm:text-sm">Get daily breach alerts</button></div>
             {recommendation && <RecommendationCard recommendation={recommendation} closest={recommendationIsClosest} planDailyLimit={planDailyLimit} dailyCushion={dailyCushion} riskPerTrade={riskPerTrade} adjustmentPercent={adjustmentPercent} />}
-            <div className="mt-5"><MatrixGrid results={matchedFirms} onDetails={setSelected} /></div>
+            <div className="mt-5"><MatrixGrid results={matchedFirms} recommendedId={recommendation?.firm.id} onDetails={setSelected} /></div>
             <ShareableCard results={matchedFirms} />
             {failedModels.length > 0 && <FailedModels results={failedModels} onDetails={setSelected} />}
           </section>
