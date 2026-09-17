@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase/client";
 
+const APP_ORIGIN = "https://www.propfident.online";
+
 export default function LoginPage() {
-  const router = useRouter();
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +30,10 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push("/dashboard");
-      router.refresh();
+      window.location.href =
+        window.location.hostname === "localhost"
+          ? "/dashboard"
+          : `${APP_ORIGIN}/dashboard`;
     }
   }
 
