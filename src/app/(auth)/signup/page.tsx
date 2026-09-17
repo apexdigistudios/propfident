@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, User, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase/client";
 
+const APP_ORIGIN = "https://www.propfident.online";
+
 export default function SignupPage() {
-  const router = useRouter();
   const supabase = createClient();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -54,8 +54,10 @@ export default function SignupPage() {
         );
         setLoading(false);
       } else {
-        router.push("/onboarding");
-        router.refresh();
+        window.location.href =
+          window.location.hostname === "localhost"
+            ? "/onboarding"
+            : `${APP_ORIGIN}/onboarding`;
       }
     } catch {
       setError("Unable to create account right now. Please check your connection and try again.");
