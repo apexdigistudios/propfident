@@ -9,6 +9,17 @@ export async function proxy(request: NextRequest) {
     },
   });
 
+  const hostname = request.headers.get("x-forwarded-host") ?? request.nextUrl.hostname;
+
+  // The auth subdomain is dedicated to login/signup.
+  // Visiting the bare auth domain opens the login page instead of the marketing homepage.
+  if (
+    hostname === "auth.propfident.online" &&
+    request.nextUrl.pathname === "/"
+  ) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
